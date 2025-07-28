@@ -38,6 +38,18 @@ Ekspor laporan penjualan dan data lainnya ke format PDF.
 
 Manajemen Pengguna: Pengelolaan akun untuk admin dan kasir dengan level akses yang berbeda.
 
+Tampilan Aplikasi
+Berikut adalah beberapa tampilan dari aplikasi Gerai UMKM Mart:
+
+Halaman Login Admin
+<img width="1918" height="878" alt="Image" src="https://github.com/user-attachments/assets/07a1f26e-a8f9-45b0-a0bd-98dbec7b720d" />
+
+Halaman Login Kasir
+<img width="1916" height="885" alt="Image" src="https://github.com/user-attachments/assets/6e656933-9def-460e-a64f-0743210c8744" />
+
+Halaman Dashboard Utama
+<img width="1918" height="888" alt="Image" src="https://github.com/user-attachments/assets/d566e251-7076-45eb-8b13-01f04821e482" />
+
 Teknologi yang Digunakan
 Backend: Laravel 8
 
@@ -62,37 +74,46 @@ Clone proyek dari repositori GitHub:
 
 git clone https://github.com/badfellas/Gerai-umkm-mart-finalisasi
 
+
 Masuk ke direktori proyek:
 
 cd Gerai-umkm-mart-finalisasi
+
 
 Install semua dependency yang dibutuhkan:
 
 composer install
 
+
 Salin file .env.example menjadi .env dan konfigurasikan koneksi database Anda:
 
 cp .env.example .env
+
 
 Generate kunci aplikasi Laravel:
 
 php artisan key:generate
 
+
 Buat symbolic link untuk storage:
 
 php artisan storage:link
+
 
 Jalankan migrasi database untuk membuat semua tabel yang dibutuhkan:
 
 php artisan migrate
 
+
 (Opsional) Jalankan seeder untuk mengisi data awal ke database:
 
 php artisan db:seed
 
+
 Jalankan server pengembangan:
 
 php artisan serve
+
 
 Aplikasi sekarang dapat diakses di http://127.0.0.1:8000.
 
