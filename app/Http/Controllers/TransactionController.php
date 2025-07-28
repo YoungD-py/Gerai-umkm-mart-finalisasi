@@ -1,0 +1,228 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Good;
+use App\Http\Requests\StoreTransactionRequest;
+use App\Http\Requests\UpdateTransactionRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log; // [REKOMENDASI] Gunakan fasad Log yang benar
+
+class TransactionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // [MODIFIED] Add search functionality by 'no_nota'
+        $transactions = Transaction::latest();
+
+        if(request('search')) {
+            $transactions->where('no_nota', 'like', '%' . request('search') . '%');
+        }
+
+        return view('dashboard.transactions.index', [
+            'active' => 'transactions',
+            'transactions' => $transactions->paginate(10)->withQueryString()
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreTransactionRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreTransactionRequest $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Transaction $transaction)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Transaction $transaction)
+    {
+        return view('dashboard.transactions.edit', [
+            'active' => 'transaction',
+            'transaction' => $transaction,
+            'users' => User::all(),
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateTransactionRequest  $request
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateTransactionRequest $request, Transaction $transaction)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'status' => 'required|in:LUNAS,BELUM BAYAR,gagal',
+            'bayar' => 'required|numeric|min:0',
+            // 'kembalian' => 'required|numeric', // Dihapus karena akan dihitung ulang
+        ]);
+
+        // [PERBAIKAN] Hitung ulang kembalian dengan logika yang benar
+        // Rumus: Uang Bayar - Total Harga
+        $validatedData['kembalian'] = $validatedData['bayar'] - $transaction->total_harga;
+
+        // Simpan status lama sebelum update
+        $oldStatus = strtolower(trim($transaction->status));
+        $newStatus = strtolower(trim($validatedData['status']));
+
+        // Log untuk debugging
+        Log::info("Transaction Update - Old Status: {$oldStatus}, New Status: {$newStatus}");
+
+        // Update transaction
+        $transaction->update($validatedData);
+
+        // Handle stock changes based on status change
+        $this->handleStockUpdate($transaction->no_nota, $oldStatus, $newStatus);
+
+        return redirect('/dashboard/transactions')->with('success', 'Transaksi berhasil diperbarui dan stok barang telah disesuaikan!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Transaction $transaction)
+    {
+        // If transaction was paid (LUNAS), restore stock before deleting
+        if (strtolower(trim($transaction->status)) === 'lunas') {
+            $this->restoreStock($transaction->no_nota);
+        }
+
+        // Delete related orders first
+        Order::where('no_nota', $transaction->no_nota)->delete();
+        
+        // Delete transaction
+        Transaction::destroy($transaction->id);
+        
+        return redirect('/dashboard/transactions')->with('success', 'Transaksi telah dihapus dan stok barang telah dikembalikan.');
+    }
+
+    /**
+     * Export transactions to PDF
+     */
+    public function exportpdf()
+    {
+        $transactions = Transaction::with('user')->get();
+        $pdf = PDF::loadview('transactions_pdf', ['transactions' => $transactions]);
+        return $pdf->download('laporan-transaksi.pdf');
+    }
+
+    /**
+     * Handle stock update based on status change
+     */
+    private function handleStockUpdate($no_nota, $oldStatus, $newStatus)
+    {
+        Log::info("HandleStockUpdate called - No Nota: {$no_nota}, Old: {$oldStatus}, New: {$newStatus}");
+        
+        $orders = Order::where('no_nota', $no_nota)->get();
+        
+        if ($orders->isEmpty()) {
+            Log::info("No orders found for no_nota: {$no_nota}");
+            return;
+        }
+
+        // Jika berubah dari status non-lunas ke lunas (stok harus berkurang)
+        if ($oldStatus !== 'lunas' && $newStatus === 'lunas') {
+            Log::info("Reducing stock - changing from {$oldStatus} to {$newStatus}");
+            
+            foreach ($orders as $order) {
+                $good = Good::find($order->good_id);
+                if ($good) {
+                    $oldStock = $good->stok;
+                    
+                    if ($good->stok >= $order->qty) {
+                        // Kurangi stok
+                        $newStock = $good->stok - $order->qty;
+                        $good->update(['stok' => $newStock]);
+                        
+                        Log::info("Stock reduced for good ID {$good->id}: {$oldStock} -> {$newStock} (qty: {$order->qty})");
+                    } else {
+                        Log::warning("Insufficient stock for good ID {$good->id}. Available: {$good->stok}, Required: {$order->qty}");
+                    }
+                }
+            }
+        }
+        // Jika berubah dari lunas ke non-lunas (stok harus dikembalikan)
+        elseif ($oldStatus === 'lunas' && $newStatus !== 'lunas') {
+            Log::info("Restoring stock - changing from {$oldStatus} to {$newStatus}");
+            
+            foreach ($orders as $order) {
+                $good = Good::find($order->good_id);
+                if ($good) {
+                    $oldStock = $good->stok;
+                    
+                    // Kembalikan stok
+                    $newStock = $good->stok + $order->qty;
+                    $good->update(['stok' => $newStock]);
+                    
+                    Log::info("Stock restored for good ID {$good->id}: {$oldStock} -> {$newStock} (qty: {$order->qty})");
+                }
+            }
+        } else {
+            Log::info("No stock change needed - both statuses are similar");
+        }
+    }
+
+    /**
+     * Restore stock when transaction is deleted
+     */
+    private function restoreStock($no_nota)
+    {
+        Log::info("Restoring stock for deleted transaction: {$no_nota}");
+        
+        $orders = Order::where('no_nota', $no_nota)->get();
+        
+        foreach ($orders as $order) {
+            $good = Good::find($order->good_id);
+            if ($good) {
+                $oldStock = $good->stok;
+                $newStock = $good->stok + $order->qty;
+                $good->update(['stok' => $newStock]);
+                
+                Log::info("Stock restored for deleted transaction - Good ID {$good->id}: {$oldStock} -> {$newStock}");
+            }
+        }
+    }
+}
