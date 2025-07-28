@@ -1,100 +1,100 @@
+Gerai UMKM Mart - Sistem Manajemen Kasir & Inventaris
+Gerai UMKM Mart adalah sistem manajemen kasir (Point of Sale) dan inventaris berbasis web yang dibangun menggunakan Framework Laravel 8. Sistem ini dirancang khusus untuk memenuhi kebutuhan UMKM, terutama dalam mengelola penjualan produk yang berasal dari berbagai mitra binaan.
 
-![Logo](https://i.ibb.co/7v5GWr2/Screenshot-2022-06-18-010901.png)
+Tujuan utama dari sistem ini adalah untuk memodernisasi dan mempermudah proses pencatatan transaksi, manajemen stok, serta menyediakan analisis data penjualan yang akurat untuk mendukung pengambilan keputusan bisnis.
 
+Fitur Utama
+Sistem ini dilengkapi dengan berbagai fitur untuk mendukung operasional bisnis UMKM secara menyeluruh:
 
-# Cashier Management System (KasirKu)
+Dashboard Analitik: Tampilan utama yang menyajikan ringkasan performa bisnis secara visual, termasuk pendapatan, laba kotor & bersih, produk terlaris, dan status inventaris kritis (stok menipis & barang akan expired).
 
-The Cashier Management System (KasirKu) is a website-based system
-with the Laravel 8 Framework. KasirKu functions to make things easier
-cashier management. This system takes the case of one of the building retail stores in Bengkulu.
+Manajemen Produk:
 
+CRUD (Create, Read, Update, Delete) data barang.
 
+Pengelolaan stok, harga asli (modal), dan harga jual.
 
-## Integration
-Apart from using Laravel 8, this system also integrates the Framework
-Bootstrap as front-end. This system uses SQL database and in 
-The development uses MySQL Workbench software.
+Dukungan skema harga dinamis seperti harga grosir dan tebus murah.
 
+Pencatatan tanggal masuk dan tanggal kedaluwarsa.
 
-## User Features
+Manajemen Mitra: Pengelolaan data mitra (supplier) yang memasok produk ke gerai.
 
-- Data Processing Management
-- Cashier Management
-- Recapitulation Management
+Sistem Kasir (Point of Sale): Antarmuka kasir yang intuitif untuk mencatat transaksi penjualan dengan cepat dan akurat.
 
+Manajemen Transaksi: Melihat riwayat transaksi, mencetak ulang nota, dan mengelola status pembayaran.
 
+Manajemen Inventaris:
 
+Fitur Restock untuk mencatat penambahan stok barang.
 
+Fitur Return untuk mengelola pengembalian barang.
 
-## System Features
+Laporan Keuangan:
 
-- Laravel 8
-- Using Eloquent from Laravel
-- Templates for headers and footers
-- Full CRUD integration
-- Authentication from Laravel
-- Pagination
-- Search Data
-- Automatic Cashier Logic
-- Automatic Transaction Notes
-- Export PDF
-- 
-## Optimization
+Pencatatan Biaya Operasional untuk perhitungan laba bersih.
 
-N+1 Problems
+Ekspor laporan penjualan dan data lainnya ke format PDF.
 
-## Run Locally
+Manajemen Pengguna: Pengelolaan akun untuk admin dan kasir dengan level akses yang berbeda.
 
-Clone the project
+Teknologi yang Digunakan
+Backend: Laravel 8
 
-```bash
-  git clone https://github.com/paley777/kasirku.git
-```
+Frontend: Bootstrap 5, ApexCharts.js
 
-Go to the project directory
+Database: MySQL
 
-```bash
-  cd kasirku
-```
+Fitur Lainnya:
 
-Install dependencies
+Eloquent ORM untuk interaksi database.
 
-```bash
-  composer install
-```
+Sistem otentikasi bawaan Laravel.
 
-Delete Cache
+Pencarian data, paginasi, dan logika kasir otomatis.
 
-```bash
-  php artisan cache:clear
-```
-Generate Laravel Key
+Pembuatan nota transaksi otomatis.
 
-```bash
-  php artisan key:generate
-```
-Make Storage Link
+Instalasi & Menjalankan Proyek Secara Lokal
+Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah berikut:
 
-```bash
-  php artisan storage:link
-```
-Migrate
+Clone proyek dari repositori GitHub:
 
-```bash
-   php artisan migrate
-```
-Start the server
+git clone https://github.com/badfellas/Gerai-umkm-mart-finalisasi
 
-```bash
-   php artisan serve
-```
+Masuk ke direktori proyek:
 
+cd Gerai-umkm-mart-finalisasi
 
-## Screenshots
+Install semua dependency yang dibutuhkan:
 
-![App Screenshot](https://i.ibb.co/ZY8bYMG/Screenshot-2022-06-18-011302.png)
+composer install
 
+Salin file .env.example menjadi .env dan konfigurasikan koneksi database Anda:
 
-## Suggestion
+cp .env.example .env
 
-For suggestions and input on this system, please email valleryan1212@gmail.com
+Generate kunci aplikasi Laravel:
+
+php artisan key:generate
+
+Buat symbolic link untuk storage:
+
+php artisan storage:link
+
+Jalankan migrasi database untuk membuat semua tabel yang dibutuhkan:
+
+php artisan migrate
+
+(Opsional) Jalankan seeder untuk mengisi data awal ke database:
+
+php artisan db:seed
+
+Jalankan server pengembangan:
+
+php artisan serve
+
+Aplikasi sekarang dapat diakses di http://127.0.0.1:8000.
+
+Kontak
+Untuk saran dan masukan terkait pengembangan sistem ini, silakan kirim email ke: deruanggoro26@gmail.com
