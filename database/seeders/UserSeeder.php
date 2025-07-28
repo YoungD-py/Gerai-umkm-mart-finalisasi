@@ -22,17 +22,17 @@ class UserSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         User::create([
-            'nama' => 'Deru',
-            'username' => 'deru',
+            'nama' => 'Admin',
+            'username' => 'admin',
             'role' => 'ADMIN',
-            'password' => 'deru123',
+            'password' => 'admin123',
         ]);
 
         User::create([
-            'nama' => 'Rey',
-            'username' => 'rey',
+            'nama' => 'Kasir-1',
+            'username' => 'kasir',
             'role' => 'KASIR',
-            'password' => 'rey123',
+            'password' => 'kasir123',
         ]);
     }
 }
