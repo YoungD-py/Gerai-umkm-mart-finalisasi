@@ -1,7 +1,5 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+<?php $__env->startSection('container'); ?>
+<meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
 <style>
     /* Existing styles */
@@ -49,24 +47,26 @@
 <div class="d-flex justify-content-between flex-wrap align-items-center py-3 px-3 mb-3 border-bottom" style="background: linear-gradient(90deg, #4e54c8, #8f94fb); border-radius: 10px;">
     <h1 class="h4 text-light mb-2 mb-md-0">
         <i class="bi bi-cart-plus-fill me-2"></i> Buat Pesanan - Nota:
-        <span class="text-warning fw-semibold">{{ $no_nota }}</span>
+        <span class="text-warning fw-semibold"><?php echo e($no_nota); ?></span>
     </h1>
 </div>
 
 <div class="container-fluid">
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+            <i class="bi bi-check-circle-fill"></i> <?php echo e(session('success')); ?>
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-            <i class="bi bi-exclamation-triangle-fill"></i> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
+
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> <?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- Dynamic Alert Container -->
     <div id="dynamic-alerts"></div>
@@ -222,8 +222,8 @@
                 </div>
                 <div class="card-body p-4">
                     <form id="manual-form">
-                        @csrf
-                        <input type="hidden" name="no_nota" value="{{ $no_nota }}">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
                         <input type="hidden" name="good_id" id="manual-good-id">
 
                         <div class="mb-4 position-relative">
@@ -312,12 +312,12 @@
                 <div class="card-header bg-warning text-dark py-3">
                     <h4 class="mb-0 fw-bold">
                         <i class="bi bi-cart3 fs-3"></i> PESANAN SAAT INI
-                        <span class="badge bg-dark ms-2 fs-6" id="order-count">{{ $orders->count() }}</span>
+                        <span class="badge bg-dark ms-2 fs-6" id="order-count"><?php echo e($orders->count()); ?></span>
                     </h4>
                     <small>Daftar produk yang akan dibeli</small>
                 </div>
                 <div class="card-body p-0" id="orders-content">
-                    @if($orders->count() > 0)
+                    <?php if($orders->count() > 0): ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead class="bg-light">
@@ -328,30 +328,31 @@
                                     </tr>
                                 </thead>
                                 <tbody id="orders-tbody">
-                                    @foreach($orders as $order)
+                                    <?php $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td class="py-3 px-3">
-                                            <div class="fw-semibold">{{ $order->good->nama }}</div>
-                                            <small class="text-muted">@ Rp {{ number_format($order->price, 0, ',', '.') }}</small>
-                                            @if($order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir)
+                                            <div class="fw-semibold"><?php echo e($order->good->nama); ?></div>
+                                            <small class="text-muted">@ Rp <?php echo e(number_format($order->price, 0, ',', '.')); ?></small>
+                                            <?php if($order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir): ?>
                                                 <br><small class="text-success fw-bold">
                                                     <i class="bi bi-cart-plus"></i> Harga Grosir
                                                 </small>
-                                            @endif
-                                            @if($order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah)
+                                            <?php endif; ?>
+                                            <?php if($order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah): ?>
                                                 <br><small class="text-danger fw-bold">
                                                     <i class="bi bi-percent"></i> Harga Tebus Murah
                                                 </small>
-                                            @endif
+                                            <?php endif; ?>
                                         </td>
                                         <td class="py-3 text-center">
-                                            <span class="badge bg-secondary fs-6">{{ $order->qty }}</span>
+                                            <span class="badge bg-secondary fs-6"><?php echo e($order->qty); ?></span>
                                         </td>
                                         <td class="py-3 text-end px-3 fw-bold text-success">
-                                            Rp {{ number_format($order->subtotal, 0, ',', '.') }}
+                                            Rp <?php echo e(number_format($order->subtotal, 0, ',', '.')); ?>
+
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
                         </div>
@@ -360,33 +361,35 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="mb-0 fw-bold">TOTAL BELANJA:</h5>
                                 <h4 class="mb-0 fw-bold text-success" id="total-amount">
-                                    Rp {{ number_format($orders->sum('subtotal'), 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($orders->sum('subtotal'), 0, ',', '.')); ?>
+
                                 </h4>
                             </div>
 
                             <!-- Tebus Murah Notification -->
-                            @php
+                            <?php
                                 $totalTransaction = $orders->sum('subtotal');
                                 $tebusMusahProducts = $goods->filter(function($good) use ($totalTransaction) {
                                     return $good->is_tebus_murah_active && $totalTransaction >= $good->min_total_tebus_murah;
                                 });
-                            @endphp
+                            ?>
 
-                            @if($tebusMusahProducts->count() > 0)
+                            <?php if($tebusMusahProducts->count() > 0): ?>
                                 <div class="alert alert-danger border-0 shadow-sm mb-3">
                                     <h6 class="fw-bold text-danger mb-2">
                                         <i class="bi bi-percent"></i> TEBUS MURAH AKTIF!
                                     </h6>
                                     <small class="text-muted">
-                                        {{ $tebusMusahProducts->count() }} produk memenuhi syarat tebus murah dengan total transaksi Rp {{ number_format($totalTransaction, 0, ',', '.') }}
+                                        <?php echo e($tebusMusahProducts->count()); ?> produk memenuhi syarat tebus murah dengan total transaksi Rp <?php echo e(number_format($totalTransaction, 0, ',', '.')); ?>
+
                                     </small>
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <form method="post" action="/dashboard/cashiers/checkout">
-                                @csrf
-                                <input type="hidden" name="no_nota" value="{{ $no_nota }}">
-                                <input type="hidden" name="total_harga" value="{{ $orders->sum('subtotal') }}" id="checkout-total">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
+                                <input type="hidden" name="total_harga" value="<?php echo e($orders->sum('subtotal')); ?>" id="checkout-total">
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-success btn-lg py-3 fw-bold">
                                         <i class="bi bi-credit-card"></i> LANJUT KE PEMBAYARAN
@@ -394,13 +397,13 @@
                                 </div>
                             </form>
                         </div>
-                    @else
+                    <?php else: ?>
                         <div class="text-center py-5" id="empty-orders">
                             <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
                             <h5 class="mt-3 text-muted">Belum Ada Pesanan</h5>
                             <p class="text-muted">Scan barcode atau pilih produk untuk memulai</p>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -432,7 +435,7 @@
 <script>
 // Global variables for current product and transaction total
 let currentProduct = null;
-let currentTransactionTotal = {{ $orders->sum('subtotal') }};
+let currentTransactionTotal = <?php echo e($orders->sum('subtotal')); ?>;
 let manualSelectedProduct = null; // New variable for manually selected product
 
 // HTML5-QRCode Scanner variables
@@ -810,7 +813,7 @@ document.getElementById('add-scanned-item').addEventListener('click', function()
         body: JSON.stringify({
             barcode: barcode,
             qty: parseInt(qty),
-            no_nota: '{{ $no_nota }}'
+            no_nota: '<?php echo e($no_nota); ?>'
         })
     })
     .then(response => response.json())
@@ -983,4 +986,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/cashiers/order/create.blade.php ENDPATH**/ ?>
