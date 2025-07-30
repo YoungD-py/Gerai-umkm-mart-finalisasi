@@ -47,7 +47,7 @@
     }
 
     .umkm-card-body {
-        padding: 30px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
         background: white;
     }
 
@@ -89,7 +89,7 @@
         border-left: none;
     }
 
-    .btn-umkm {
+    .btn-umkm, .btn-secondary-umkm {
         background: linear-gradient(135deg, #28a745, #20c997);
         border: none;
         border-radius: 15px;
@@ -102,6 +102,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
@@ -114,16 +115,6 @@
 
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
-        border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .btn-secondary-umkm:hover {
@@ -132,7 +123,7 @@
         color: white;
         text-decoration: none;
     }
-
+    
     .alert-umkm {
         border-radius: 15px;
         border: none;
@@ -149,7 +140,7 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -177,48 +168,19 @@
         gap: 10px;
     }
 
-    .required {
-        color: #dc3545;
-    }
+    .required { color: #dc3545; }
 
-    .expired-section {
+    .expired-section, .wholesale-section, .tebus-murah-section {
         display: none;
-        background: rgba(255, 193, 7, 0.1);
-        border-radius: 15px;
-        padding: 15px;
-        border: 2px solid rgba(255, 193, 7, 0.3);
-        margin-top: 15px;
-    }
-
-    .expired-section.show {
-        display: block;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .wholesale-section {
-        display: none;
-        background: rgba(40, 167, 69, 0.1);
         border-radius: 15px;
         padding: 20px;
-        border: 2px solid rgba(40, 167, 69, 0.3);
         margin-top: 15px;
     }
+    .expired-section { background: rgba(255, 193, 7, 0.1); border: 2px solid rgba(255, 193, 7, 0.3); }
+    .wholesale-section { background: rgba(40, 167, 69, 0.1); border: 2px solid rgba(40, 167, 69, 0.3); }
+    .tebus-murah-section { background: rgba(220, 53, 69, 0.1); border: 2px solid rgba(220, 53, 69, 0.3); }
 
-    .wholesale-section.show {
-        display: block;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .tebus-murah-section {
-        display: none;
-        background: rgba(220, 53, 69, 0.1);
-        border-radius: 15px;
-        padding: 20px;
-        border: 2px solid rgba(220, 53, 69, 0.3);
-        margin-top: 15px;
-    }
-
-    .tebus-murah-section.show {
+    .expired-section.show, .wholesale-section.show, .tebus-murah-section.show {
         display: block;
         animation: fadeIn 0.3s ease;
     }
@@ -228,33 +190,27 @@
         border-color: #28a745;
     }
 
-    .wholesale-info {
-        background: rgba(40, 167, 69, 0.05);
+    .price-info, .wholesale-info, .tebus-murah-info {
         border-radius: 10px;
         padding: 15px;
         margin-top: 15px;
-        border-left: 4px solid #28a745;
     }
-
-    .tebus-murah-info {
-        background: rgba(220, 53, 69, 0.05);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 15px;
-        border-left: 4px solid #dc3545;
-    }
-
-    .price-info {
-        background: rgba(23, 162, 184, 0.05);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 15px;
-        border-left: 4px solid #17a2b8;
-    }
+    .price-info { background: rgba(23, 162, 184, 0.05); border-left: 4px solid #17a2b8; }
+    .wholesale-info { background: rgba(40, 167, 69, 0.05); border-left: 4px solid #28a745; }
+    .tebus-murah-info { background: rgba(220, 53, 69, 0.05); border-left: 4px solid #dc3545; }
 
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 30px;
+        }
     }
 </style>
 
@@ -265,7 +221,7 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
@@ -295,19 +251,16 @@
                                 <i class="bi bi-info-circle"></i>
                                 Informasi Dasar
                             </div>
-
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="category_id" class="form-label">
                                         <i class="bi bi-building text-success"></i>
                                         Mitra <span class="required">*</span>
                                     </label>
-                                    <select class="form-select @error('category_id') is-invalid @enderror"
-                                            name="category_id" id="category_id" required>
-                                        <option value="">-- Pilih Mitra  --</option>
+                                    <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category_id" required>
+                                        <option value="">-- Pilih Mitra --</option>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}"
-                                                    {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                                 {{ $category->nama }}
                                             </option>
                                         @endforeach
@@ -316,29 +269,23 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <div class="col-md-6 mb-3">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="tgl_masuk" class="form-label">
                                         <i class="bi bi-calendar-event text-success"></i>
                                         Tanggal Masuk <span class="required">*</span>
                                     </label>
-                                    <input type="date" class="form-control @error('tgl_masuk') is-invalid @enderror"
-                                           id="tgl_masuk" name="tgl_masuk"
-                                           value="{{ old('tgl_masuk', date('Y-m-d')) }}" required>
+                                    <input type="date" class="form-control @error('tgl_masuk') is-invalid @enderror" id="tgl_masuk" name="tgl_masuk" value="{{ old('tgl_masuk', date('Y-m-d')) }}" required>
                                     @error('tgl_masuk')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-
                             <div class="mb-3">
                                 <label for="nama" class="form-label">
                                     <i class="bi bi-box text-success"></i>
                                     Nama Barang <span class="required">*</span>
                                 </label>
-                                <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                                       id="nama" name="nama" value="{{ old('nama') }}" required autofocus
-                                       placeholder="Masukkan nama barang...">
+                                <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required autofocus placeholder="Masukkan nama barang...">
                                 @error('nama')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -351,24 +298,16 @@
                                 <i class="bi bi-tags"></i>
                                 Jenis & Masa Berlaku
                             </div>
-
                             <div class="mb-3">
                                 <label for="type" class="form-label">
                                     <i class="bi bi-collection text-success"></i>
                                     Jenis Barang <span class="required">*</span>
                                 </label>
-                                <select class="form-select @error('type') is-invalid @enderror"
-                                        name="type" id="type" required onchange="toggleExpiredField(); calculateSellingPrice();">
+                                <select class="form-select @error('type') is-invalid @enderror" name="type" id="type" required onchange="toggleExpiredField(); calculateSellingPrice();">
                                     <option value="">-- Pilih Jenis Barang --</option>
-                                    <option value="makanan" {{ old('type') == 'makanan' ? 'selected' : '' }}>
-                                        Makanan & Minuman
-                                    </option>
-                                    <option value="non_makanan" {{ old('type') == 'non_makanan' ? 'selected' : '' }}>
-                                        Non Makanan & Minuman
-                                    </option>
-                                    <option value="lainnya" {{ old('type') == 'lainnya' ? 'selected' : '' }}>
-                                        Lainnya
-                                    </option>
+                                    <option value="makanan" {{ old('type') == 'makanan' ? 'selected' : '' }}>Makanan & Minuman</option>
+                                    <option value="non_makanan" {{ old('type') == 'non_makanan' ? 'selected' : '' }}>Non Makanan & Minuman</option>
+                                    <option value="lainnya" {{ old('type') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                                     <option value="handycraft" {{ old('type') == 'handycraft' ? 'selected' : '' }}>Handycraft</option>
                                     <option value="fashion" {{ old('type') == 'fashion' ? 'selected' : '' }}>Fashion</option>
                                 </select>
@@ -376,23 +315,16 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div id="expired-section" class="expired-section">
                                 <label for="expired_date" class="form-label">
                                     <i class="bi bi-calendar-x text-warning"></i>
                                     Tanggal Expired <span class="required">*</span>
                                 </label>
-                                <input type="date" class="form-control @error('expired_date') is-invalid @enderror"
-                                       id="expired_date" name="expired_date"
-                                       value="{{ old('expired_date') }}"
-                                       min="{{ date('Y-m-d', strtotime('+1 day')) }}">
+                                <input type="date" class="form-control @error('expired_date') is-invalid @enderror" id="expired_date" name="expired_date" value="{{ old('expired_date') }}" min="{{ date('Y-m-d', strtotime('+1 day')) }}">
                                 @error('expired_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle"></i>
-                                    Tanggal expired harus setelah hari ini
-                                </small>
+                                <small class="text-muted mt-2 d-block"><i class="bi bi-info-circle"></i> Tanggal expired harus setelah hari ini</small>
                             </div>
                         </div>
 
@@ -402,36 +334,29 @@
                                 <i class="bi bi-currency-dollar"></i>
                                 Harga & Stok
                             </div>
-
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="harga_asli_display" class="form-label">
                                         <i class="bi bi-cash text-success"></i>
                                         Harga Asli <span class="required">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">Rp</span>
-                                        {{-- [PERUBAHAN 1] Mengubah input harga asli --}}
-                                        <input type="text" class="form-control @error('harga_asli') is-invalid @enderror"
-                                               id="harga_asli_display" value="{{ old('harga_asli') }}"
-                                               required placeholder="0" oninput="formatRupiah(this); calculateSellingPrice();">
+                                        <input type="text" class="form-control @error('harga_asli') is-invalid @enderror" id="harga_asli_display" value="{{ old('harga_asli') }}" required placeholder="0" oninput="formatRupiah(this); calculateSellingPrice();">
                                         <input type="hidden" name="harga_asli" id="harga_asli" value="{{ old('harga_asli') }}">
                                     </div>
                                     @error('harga_asli')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="text-muted">Harga asli sebelum markup</small>
+                                    <small class="text-muted mt-2 d-block">Harga asli sebelum markup</small>
                                 </div>
-
-                                <div class="col-md-6 mb-3">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="stok" class="form-label">
                                         <i class="bi bi-boxes text-success"></i>
                                         Stok <span class="required">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control @error('stok') is-invalid @enderror"
-                                               id="stok" name="stok" value="{{ old('stok') }}"
-                                               required min="0" placeholder="0">
+                                        <input type="number" class="form-control @error('stok') is-invalid @enderror" id="stok" name="stok" value="{{ old('stok') }}" required min="0" placeholder="0">
                                         <span class="input-group-text">unit</span>
                                     </div>
                                     @error('stok')
@@ -439,11 +364,8 @@
                                     @enderror
                                 </div>
                             </div>
-
                             <div id="price-info" class="price-info" style="display: none;">
-                                <h6 class="text-info mb-2">
-                                    <i class="bi bi-calculator"></i> Informasi Harga Jual
-                                </h6>
+                                <h6 class="text-info mb-2"><i class="bi bi-calculator"></i> Informasi Harga Jual</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p class="mb-1"><strong>Harga Asli:</strong> <span id="display-harga-asli" class="text-muted">Rp 0</span></p>
@@ -459,68 +381,35 @@
 
                         <!-- Wholesale Section -->
                         <div class="form-section">
-                            <div class="section-title">
-                                <i class="bi bi-cart-plus"></i>
-                                Pengaturan Grosir
-                            </div>
-
+                            <div class="section-title"><i class="bi bi-cart-plus"></i> Pengaturan Grosir</div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="1"
-                                       id="is_grosir_active" name="is_grosir_active"
-                                       {{ old('is_grosir_active') ? 'checked' : '' }}
-                                       onchange="toggleWholesaleSection()">
-                                <label class="form-check-label fw-bold" for="is_grosir_active">
-                                    <i class="bi bi-shop text-success"></i>
-                                    Aktifkan Harga Grosir
-                                </label>
-                                <small class="text-muted d-block">
-                                    Centang untuk memberikan harga khusus untuk pembelian dalam jumlah besar
-                                </small>
+                                <input class="form-check-input" type="checkbox" value="1" id="is_grosir_active" name="is_grosir_active" {{ old('is_grosir_active') ? 'checked' : '' }} onchange="toggleWholesaleSection()">
+                                <label class="form-check-label fw-bold" for="is_grosir_active"><i class="bi bi-shop text-success"></i> Aktifkan Harga Grosir</label>
+                                <small class="text-muted d-block">Centang untuk memberikan harga khusus untuk pembelian dalam jumlah besar</small>
                             </div>
-
                             <div id="wholesale-section" class="wholesale-section">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="min_qty_grosir" class="form-label">
-                                            <i class="bi bi-123 text-success"></i>
-                                            Minimal Pembelian Grosir
-                                        </label>
+                                        <label for="min_qty_grosir" class="form-label"><i class="bi bi-123 text-success"></i> Minimal Pembelian Grosir</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control @error('min_qty_grosir') is-invalid @enderror"
-                                                   id="min_qty_grosir" name="min_qty_grosir"
-                                                   value="{{ old('min_qty_grosir') }}"
-                                                   min="2" placeholder="10" onchange="calculateWholesaleSavings()">
+                                            <input type="number" class="form-control @error('min_qty_grosir') is-invalid @enderror" id="min_qty_grosir" name="min_qty_grosir" value="{{ old('min_qty_grosir') }}" min="2" placeholder="10" onchange="calculateWholesaleSavings()">
                                             <span class="input-group-text">unit</span>
                                         </div>
-                                        @error('min_qty_grosir')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        @error('min_qty_grosir')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                         <small class="text-muted">Minimal 2 unit untuk grosir</small>
                                     </div>
-
                                     <div class="col-md-6 mb-3">
-                                        <label for="harga_grosir" class="form-label">
-                                            <i class="bi bi-cash-coin text-success"></i>
-                                            Harga Grosir per Unit
-                                        </label>
+                                        <label for="harga_grosir" class="form-label"><i class="bi bi-cash-coin text-success"></i> Harga Grosir per Unit</label>
                                         <div class="input-group">
                                             <span class="input-group-text">Rp</span>
-                                            <input type="number" class="form-control @error('harga_grosir') is-invalid @enderror"
-                                                   id="harga_grosir" name="harga_grosir"
-                                                   value="{{ old('harga_grosir') }}"
-                                                   min="0" placeholder="0" onchange="calculateWholesaleSavings()">
+                                            <input type="number" class="form-control @error('harga_grosir') is-invalid @enderror" id="harga_grosir" name="harga_grosir" value="{{ old('harga_grosir') }}" min="0" placeholder="0" onchange="calculateWholesaleSavings()">
                                         </div>
-                                        @error('harga_grosir')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        @error('harga_grosir')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                         <small class="text-muted">Harga per unit untuk pembelian grosir</small>
                                     </div>
                                 </div>
-
                                 <div id="wholesale-info" class="wholesale-info" style="display: none;">
-                                    <h6 class="text-success mb-2">
-                                        <i class="bi bi-calculator"></i> Informasi Penghematan Grosir
-                                    </h6>
+                                    <h6 class="text-success mb-2"><i class="bi bi-calculator"></i> Informasi Penghematan Grosir</h6>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p class="mb-1"><strong>Hemat per unit:</strong> <span id="savings-per-unit" class="text-success">Rp 0</span></p>
@@ -539,68 +428,35 @@
 
                         <!-- Tebus Murah Section -->
                         <div class="form-section">
-                            <div class="section-title">
-                                <i class="bi bi-tag-fill" style="color: #dc3545;"></i>
-                                Pengaturan Tebus Murah
-                            </div>
-
+                            <div class="section-title"><i class="bi bi-tag-fill" style="color: #dc3545;"></i> Pengaturan Tebus Murah</div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="1"
-                                       id="is_tebus_murah_active" name="is_tebus_murah_active"
-                                       {{ old('is_tebus_murah_active') ? 'checked' : '' }}
-                                       onchange="toggleTebusMusahSection()" style="background-color: #dc3545; border-color: #dc3545;">
-                                <label class="form-check-label fw-bold" for="is_tebus_murah_active">
-                                    <i class="bi bi-percent text-danger"></i>
-                                    Aktifkan Harga Tebus Murah untuk Barang Ini
-                                </label>
-                                <small class="text-muted d-block">
-                                    Centang untuk memberikan harga khusus ketika total pembelian mencapai nilai tertentu
-                                </small>
+                                <input class="form-check-input" type="checkbox" value="1" id="is_tebus_murah_active" name="is_tebus_murah_active" {{ old('is_tebus_murah_active') ? 'checked' : '' }} onchange="toggleTebusMusahSection()" style="background-color: #dc3545; border-color: #dc3545;">
+                                <label class="form-check-label fw-bold" for="is_tebus_murah_active"><i class="bi bi-percent text-danger"></i> Aktifkan Harga Tebus Murah</label>
+                                <small class="text-muted d-block">Centang untuk memberikan harga khusus ketika total pembelian mencapai nilai tertentu</small>
                             </div>
-
                             <div id="tebus-murah-section" class="tebus-murah-section">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="min_total_tebus_murah" class="form-label">
-                                            <i class="bi bi-cash-stack text-danger"></i>
-                                            Minimal Pembelian Tebus Murah
-                                        </label>
+                                        <label for="min_total_tebus_murah" class="form-label"><i class="bi bi-cash-stack text-danger"></i> Minimal Pembelian</label>
                                         <div class="input-group">
                                             <span class="input-group-text" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">Rp</span>
-                                            <input type="number" class="form-control @error('min_total_tebus_murah') is-invalid @enderror"
-                                                   id="min_total_tebus_murah" name="min_total_tebus_murah"
-                                                   value="{{ old('min_total_tebus_murah') }}"
-                                                   min="0" placeholder="100000" onchange="calculateTebusMusahSavings()">
+                                            <input type="number" class="form-control @error('min_total_tebus_murah') is-invalid @enderror" id="min_total_tebus_murah" name="min_total_tebus_murah" value="{{ old('min_total_tebus_murah') }}" min="0" placeholder="100000" onchange="calculateTebusMusahSavings()">
                                         </div>
-                                        @error('min_total_tebus_murah')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                        <small class="text-muted">Total nilai transaksi minimal untuk mendapat harga tebus murah</small>
+                                        @error('min_total_tebus_murah')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <small class="text-muted">Total nilai transaksi minimal</small>
                                     </div>
-
                                     <div class="col-md-6 mb-3">
-                                        <label for="harga_tebus_murah" class="form-label">
-                                            <i class="bi bi-tag text-danger"></i>
-                                            Harga Tebus Murah
-                                        </label>
+                                        <label for="harga_tebus_murah" class="form-label"><i class="bi bi-tag text-danger"></i> Harga Tebus Murah</label>
                                         <div class="input-group">
                                             <span class="input-group-text" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">Rp</span>
-                                            <input type="number" class="form-control @error('harga_tebus_murah') is-invalid @enderror"
-                                                   id="harga_tebus_murah" name="harga_tebus_murah"
-                                                   value="{{ old('harga_tebus_murah') }}"
-                                                   min="0" placeholder="0" onchange="calculateTebusMusahSavings()">
+                                            <input type="number" class="form-control @error('harga_tebus_murah') is-invalid @enderror" id="harga_tebus_murah" name="harga_tebus_murah" value="{{ old('harga_tebus_murah') }}" min="0" placeholder="0" onchange="calculateTebusMusahSavings()">
                                         </div>
-                                        @error('harga_tebus_murah')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                        <small class="text-muted">Harga khusus untuk barang ini ketika syarat terpenuhi</small>
+                                        @error('harga_tebus_murah')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <small class="text-muted">Harga khusus untuk barang ini</small>
                                     </div>
                                 </div>
-
                                 <div id="tebus-murah-info" class="tebus-murah-info" style="display: none;">
-                                    <h6 class="text-danger mb-2">
-                                        <i class="bi bi-calculator"></i> Informasi Penghematan Tebus Murah
-                                    </h6>
+                                    <h6 class="text-danger mb-2"><i class="bi bi-calculator"></i> Informasi Penghematan Tebus Murah</h6>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p class="mb-1"><strong>Hemat per unit:</strong> <span id="tebus-savings-per-unit" class="text-danger">Rp 0</span></p>
@@ -616,7 +472,6 @@
                             </div>
                         </div>
 
-                        <!-- Barcode Info -->
                         <div class="alert alert-umkm">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-info-circle-fill text-info me-3" style="font-size: 1.5rem;"></i>
@@ -627,13 +482,12 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between pt-3">
-                            <a href="/dashboard/goods" class="btn-secondary-umkm">
+                        <div class="d-grid d-sm-flex justify-content-sm-between gap-2 pt-3 mt-3">
+                            <a href="/dashboard/goods" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn-umkm">
+                            <button type="submit" class="btn btn-umkm">
                                 <i class="bi bi-save"></i>
                                 Simpan Barang
                             </button>
@@ -646,40 +500,26 @@
 </div>
 
 <script>
-// [BARU] Fungsi untuk format Rupiah
 function formatRupiah(input) {
-    // Ambil nilai dari input
     let value = input.value;
-
-    // 1. Hapus semua karakter kecuali angka
     let number_string = value.replace(/[^,\d]/g, '').toString();
-    
-    // 2. Simpan angka bersih ke input tersembunyi
     document.getElementById('harga_asli').value = number_string;
-
-    // 3. Format angka dengan titik sebagai pemisah ribuan
     let split = number_string.split(',');
     let sisa = split[0].length % 3;
     let rupiah = split[0].substr(0, sisa);
     let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
     if (ribuan) {
         let separator = sisa ? '.' : '';
         rupiah += separator + ribuan.join('.');
     }
-
     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-    
-    // 4. Tampilkan kembali ke input yang terlihat
     input.value = rupiah;
 }
-
 
 function toggleExpiredField() {
     const typeSelect = document.getElementById('type');
     const expiredSection = document.getElementById('expired-section');
     const expiredInput = document.getElementById('expired_date');
-
     if (typeSelect.value === 'makanan' || typeSelect.value === 'non_makanan') {
         expiredSection.classList.add('show');
         expiredInput.required = true;
@@ -691,22 +531,18 @@ function toggleExpiredField() {
 }
 
 function calculateSellingPrice() {
-    // [PERUBAHAN 2] Ambil nilai dari input tersembunyi
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
     const priceInfo = document.getElementById('price-info');
-    
     if (hargaAsli > 0 && typeSelect.value) {
         const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
         const hargaJual = hargaAsli + (hargaAsli * markup);
         const profit = hargaJual - hargaAsli;
         const markupPercent = (markup * 100).toFixed(0);
-        
         document.getElementById('display-harga-asli').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(hargaAsli);
         document.getElementById('markup-percent').textContent = markupPercent + '%';
         document.getElementById('display-harga-jual').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(hargaJual);
         document.getElementById('display-profit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(profit);
-        
         priceInfo.style.display = 'block';
     } else {
         priceInfo.style.display = 'none';
@@ -718,7 +554,6 @@ function toggleWholesaleSection() {
     const wholesaleSection = document.getElementById('wholesale-section');
     const minQtyInput = document.getElementById('min_qty_grosir');
     const wholesalePriceInput = document.getElementById('harga_grosir');
-
     if (checkbox.checked) {
         wholesaleSection.classList.add('show');
         minQtyInput.required = true;
@@ -738,7 +573,6 @@ function toggleTebusMusahSection() {
     const tebusMusahSection = document.getElementById('tebus-murah-section');
     const minTotalInput = document.getElementById('min_total_tebus_murah');
     const tebusMusahPriceInput = document.getElementById('harga_tebus_murah');
-
     if (checkbox.checked) {
         tebusMusahSection.classList.add('show');
         minTotalInput.required = true;
@@ -754,31 +588,26 @@ function toggleTebusMusahSection() {
 }
 
 function calculateWholesaleSavings() {
-    // [PERUBAHAN 3] Ambil nilai dari input tersembunyi
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
     const wholesalePrice = parseFloat(document.getElementById('harga_grosir').value) || 0;
     const minQty = parseInt(document.getElementById('min_qty_grosir').value) || 10;
     const wholesaleInfo = document.getElementById('wholesale-info');
-
     if (hargaAsli > 0 && typeSelect.value) {
         const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
         const retailPrice = hargaAsli + (hargaAsli * markup);
-        
         if (wholesalePrice > 0 && wholesalePrice < retailPrice) {
             const savingsPerUnit = retailPrice - wholesalePrice;
             const savingsPercent = ((savingsPerUnit / retailPrice) * 100).toFixed(1);
             const retailTotal = retailPrice * minQty;
             const wholesaleTotal = wholesalePrice * minQty;
             const totalSavings = retailTotal - wholesaleTotal;
-
             document.getElementById('savings-per-unit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(savingsPerUnit);
             document.getElementById('savings-percent').textContent = savingsPercent + '%';
             document.getElementById('example-qty').textContent = minQty;
             document.getElementById('retail-total').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(retailTotal);
             document.getElementById('wholesale-total').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(wholesaleTotal);
             document.getElementById('total-savings').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSavings);
-
             wholesaleInfo.style.display = 'block';
         } else {
             wholesaleInfo.style.display = 'none';
@@ -789,27 +618,22 @@ function calculateWholesaleSavings() {
 }
 
 function calculateTebusMusahSavings() {
-    // [PERUBAHAN 4] Ambil nilai dari input tersembunyi
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
     const tebusMusahPrice = parseFloat(document.getElementById('harga_tebus_murah').value) || 0;
     const minTotal = parseFloat(document.getElementById('min_total_tebus_murah').value) || 0;
     const tebusMusahInfo = document.getElementById('tebus-murah-info');
-
     if (hargaAsli > 0 && typeSelect.value) {
         const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
         const retailPrice = hargaAsli + (hargaAsli * markup);
-        
         if (tebusMusahPrice > 0 && tebusMusahPrice < retailPrice && minTotal > 0) {
             const savingsPerUnit = retailPrice - tebusMusahPrice;
             const savingsPercent = ((savingsPerUnit / retailPrice) * 100).toFixed(1);
-
             document.getElementById('tebus-savings-per-unit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(savingsPerUnit);
             document.getElementById('tebus-savings-percent').textContent = savingsPercent + '%';
             document.getElementById('min-total-display').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(minTotal);
             document.getElementById('normal-price').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(retailPrice);
             document.getElementById('tebus-price').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(tebusMusahPrice);
-
             tebusMusahInfo.style.display = 'block';
         } else {
             tebusMusahInfo.style.display = 'none';
@@ -819,7 +643,6 @@ function calculateTebusMusahSavings() {
     }
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     toggleExpiredField();
     toggleWholesaleSection();

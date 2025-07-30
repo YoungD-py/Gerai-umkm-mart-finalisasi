@@ -1,9 +1,5 @@
 <?php $__env->startSection('container'); ?>
 <style>
-    body {
-        background-color: #D3D3D3;
-    }
-
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -15,8 +11,8 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
+        background: linear-gradient(135deg, #ffc107, #e0a800);
+        color: #000;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
@@ -46,7 +42,6 @@
 
     .umkm-card-body {
         padding: 30px;
-        background: white;
     }
 
     .form-label {
@@ -68,15 +63,22 @@
     }
 
     .form-control:focus, .form-select:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
         background: white;
         transform: translateY(-1px);
     }
 
+    .form-control:read-only {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #6c757d;
+        cursor: not-allowed;
+    }
+
     .input-group-text {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
+        background: linear-gradient(135deg, #ffc107, #e0a800);
+        color: #000;
         border: none;
         border-radius: 15px 0 0 15px;
         font-weight: 600;
@@ -87,13 +89,13 @@
         border-left: none;
     }
 
-    .btn-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
+    .btn-warning-umkm {
+        background: linear-gradient(135deg, #ffc107, #e0a800);
         border: none;
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
-        color: white;
+        color: #000;
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -103,10 +105,10 @@
         gap: 8px;
     }
 
-    .btn-umkm:hover {
+    .btn-warning-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-        color: white;
+        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        color: #000;
         text-decoration: none;
     }
 
@@ -131,12 +133,70 @@
         text-decoration: none;
     }
 
-    .alert-umkm {
+    .btn-outline-umkm {
+        background: transparent;
+        border: 2px solid #28a745;
         border-radius: 15px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #28a745;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .btn-outline-umkm:hover {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .btn-info-restock {
+        background: linear-gradient(135deg, #17a2b8, #138496);
         border: none;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .btn-info-restock:hover {
+        background: linear-gradient(135deg, #138496, #117a8b);
+        color: white;
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .barcode-section {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+        border-radius: 15px;
+        padding: 20px;
+        border: 2px solid rgba(40, 167, 69, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .barcode-info {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 4px solid #28a745;
+    }
+
+    .alert-warning-umkm {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(224, 168, 0, 0.1));
+        border-radius: 15px;
+        border: 2px solid rgba(255, 193, 7, 0.3);
         padding: 15px 20px;
-        background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(19, 132, 150, 0.1));
-        border-left: 4px solid #17a2b8;
     }
 
     .page-title {
@@ -166,7 +226,7 @@
     }
 
     .section-title {
-        color: #28a745;
+        color: #ffc107;
         font-weight: 700;
         font-size: 1.1rem;
         margin-bottom: 15px;
@@ -194,52 +254,71 @@
     }
 
     .wholesale-section {
-        display: none;
-        background: rgba(40, 167, 69, 0.1);
+        background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 152, 0, 0.1));
         border-radius: 15px;
         padding: 20px;
-        border: 2px solid rgba(40, 167, 69, 0.3);
+        border: 2px solid rgba(255, 87, 34, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .wholesale-toggle {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 4px solid #ff5722;
+        margin-bottom: 15px;
+    }
+
+    .wholesale-fields {
+        display: none;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        padding: 15px;
         margin-top: 15px;
     }
 
-    .wholesale-section.show {
+    .wholesale-fields.show {
         display: block;
         animation: fadeIn 0.3s ease;
     }
 
     .tebus-murah-section {
-        display: none;
-        background: rgba(220, 53, 69, 0.1);
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(200, 35, 51, 0.1));
         border-radius: 15px;
         padding: 20px;
-        border: 2px solid rgba(220, 53, 69, 0.3);
+        border: 2px solid rgba(220, 53, 69, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .tebus-murah-toggle {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 4px solid #dc3545;
+        margin-bottom: 15px;
+    }
+
+    .tebus-murah-fields {
+        display: none;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        padding: 15px;
         margin-top: 15px;
     }
 
-    .tebus-murah-section.show {
+    .tebus-murah-fields.show {
         display: block;
         animation: fadeIn 0.3s ease;
     }
 
     .form-check-input:checked {
-        background-color: #28a745;
-        border-color: #28a745;
+        background-color: #ff5722;
+        border-color: #ff5722;
     }
 
-    .wholesale-info {
-        background: rgba(40, 167, 69, 0.05);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 15px;
-        border-left: 4px solid #28a745;
-    }
-
-    .tebus-murah-info {
-        background: rgba(220, 53, 69, 0.05);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 15px;
-        border-left: 4px solid #dc3545;
+    .form-check-input:focus {
+        border-color: #ff5722;
+        box-shadow: 0 0 0 0.25rem rgba(255, 87, 34, 0.25);
     }
 
     .price-info {
@@ -247,6 +326,14 @@
         border-radius: 10px;
         padding: 15px;
         margin-top: 15px;
+        border-left: 4px solid #17a2b8;
+    }
+
+    .stock-readonly-info {
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(19, 132, 150, 0.1));
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 10px;
         border-left: 4px solid #17a2b8;
     }
 
@@ -258,8 +345,8 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>➕ TAMBAH BARANG BARU</h1>
-        <p>Tambahkan produk baru ke inventori GERAI UMKM MART</p>
+        <h1>✏️ EDIT BARANG</h1>
+        <p>Perbarui informasi barang di inventori GERAI UMKM MART</p>
     </div>
 
     <div class="row justify-content-center">
@@ -267,8 +354,8 @@
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
-                        <i class="bi bi-plus-circle"></i>
-                        Form Tambah Barang
+                        <i class="bi bi-pencil-square"></i>
+                        Form Edit Barang
                     </h3>
                 </div>
 
@@ -284,8 +371,10 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="/dashboard/goods" enctype="multipart/form-data">
+                    <form method="post" action="/dashboard/goods/<?php echo e($good->id); ?>" enctype="multipart/form-data">
+                        <?php echo method_field('put'); ?>
                         <?php echo csrf_field(); ?>
+                        <input type="hidden" name="id" value="<?php echo e($good->id); ?>">
 
                         <!-- Basic Information -->
                         <div class="form-section">
@@ -297,8 +386,8 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="category_id" class="form-label">
-                                        <i class="bi bi-building text-success"></i>
-                                        Mitra <span class="required">*</span>
+                                        <i class="bi bi-building text-warning"></i>
+                                        Supplier <span class="required">*</span>
                                     </label>
                                     <select class="form-select <?php $__errorArgs = ['category_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -309,10 +398,10 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                             name="category_id" id="category_id" required>
-                                        <option value="">-- Pilih Mitra  --</option>
+                                        <option value="">-- Pilih Supplier --</option>
                                         <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($category->id); ?>"
-                                                    <?php echo e(old('category_id') == $category->id ? 'selected' : ''); ?>>
+                                                    <?php echo e(old('category_id', $good->category_id) == $category->id ? 'selected' : ''); ?>>
                                                 <?php echo e($category->nama); ?>
 
                                             </option>
@@ -332,7 +421,7 @@ unset($__errorArgs, $__bag); ?>
 
                                 <div class="col-md-6 mb-3">
                                     <label for="tgl_masuk" class="form-label">
-                                        <i class="bi bi-calendar-event text-success"></i>
+                                        <i class="bi bi-calendar-event text-warning"></i>
                                         Tanggal Masuk <span class="required">*</span>
                                     </label>
                                     <input type="date" class="form-control <?php $__errorArgs = ['tgl_masuk'];
@@ -344,7 +433,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                            id="tgl_masuk" name="tgl_masuk"
-                                           value="<?php echo e(old('tgl_masuk', date('Y-m-d'))); ?>" required>
+                                           value="<?php echo e(old('tgl_masuk', $good->tgl_masuk->format('Y-m-d'))); ?>" required>
                                     <?php $__errorArgs = ['tgl_masuk'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -360,7 +449,7 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="mb-3">
                                 <label for="nama" class="form-label">
-                                    <i class="bi bi-box text-success"></i>
+                                    <i class="bi bi-box text-warning"></i>
                                     Nama Barang <span class="required">*</span>
                                 </label>
                                 <input type="text" class="form-control <?php $__errorArgs = ['nama'];
@@ -371,8 +460,8 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                       id="nama" name="nama" value="<?php echo e(old('nama')); ?>" required autofocus
-                                       placeholder="Masukkan nama barang...">
+                                       id="nama" name="nama" value="<?php echo e(old('nama', $good->nama)); ?>"
+                                       required autofocus placeholder="Masukkan nama barang...">
                                 <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -395,7 +484,7 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="mb-3">
                                 <label for="type" class="form-label">
-                                    <i class="bi bi-collection text-success"></i>
+                                    <i class="bi bi-collection text-warning"></i>
                                     Jenis Barang <span class="required">*</span>
                                 </label>
                                 <select class="form-select <?php $__errorArgs = ['type'];
@@ -408,17 +497,17 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                         name="type" id="type" required onchange="toggleExpiredField(); calculateSellingPrice();">
                                     <option value="">-- Pilih Jenis Barang --</option>
-                                    <option value="makanan" <?php echo e(old('type') == 'makanan' ? 'selected' : ''); ?>>
+                                    <option value="makanan" <?php echo e(old('type', $good->type) == 'makanan' ? 'selected' : ''); ?>>
                                         Makanan & Minuman
                                     </option>
-                                    <option value="non_makanan" <?php echo e(old('type') == 'non_makanan' ? 'selected' : ''); ?>>
+                                    <option value="non_makanan" <?php echo e(old('type', $good->type) == 'non_makanan' ? 'selected' : ''); ?>>
                                         Non Makanan & Minuman
                                     </option>
-                                    <option value="lainnya" <?php echo e(old('type') == 'lainnya' ? 'selected' : ''); ?>>
+                                    <option value="lainnya" <?php echo e(old('type', $good->type) == 'lainnya' ? 'selected' : ''); ?>>
                                         Lainnya
                                     </option>
-                                    <option value="handycraft" <?php echo e(old('type') == 'handycraft' ? 'selected' : ''); ?>>Handycraft</option>
-                                    <option value="fashion" <?php echo e(old('type') == 'fashion' ? 'selected' : ''); ?>>Fashion</option>
+                                    <option value="handycraft" <?php echo e(old('type', $good->type) == 'handycraft' ? 'selected' : ''); ?>>Handycraft</option>
+                                    <option value="fashion" <?php echo e(old('type', $good->type) == 'fashion' ? 'selected' : ''); ?>>Fashion</option>
                                 </select>
                                 <?php $__errorArgs = ['type'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -446,7 +535,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                        id="expired_date" name="expired_date"
-                                       value="<?php echo e(old('expired_date')); ?>"
+                                       value="<?php echo e(old('expired_date', $good->expired_date ? $good->expired_date->format('Y-m-d') : '')); ?>"
                                        min="<?php echo e(date('Y-m-d', strtotime('+1 day'))); ?>">
                                 <?php $__errorArgs = ['expired_date'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -474,14 +563,13 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="harga_asli_display" class="form-label">
-                                        <i class="bi bi-cash text-success"></i>
+                                    <label for="harga_asli" class="form-label">
+                                        <i class="bi bi-cash text-warning"></i>
                                         Harga Asli <span class="required">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">Rp</span>
-                                        
-                                        <input type="text" class="form-control <?php $__errorArgs = ['harga_asli'];
+                                        <input type="number" class="form-control <?php $__errorArgs = ['harga_asli'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -489,9 +577,8 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                               id="harga_asli_display" value="<?php echo e(old('harga_asli')); ?>"
-                                               required placeholder="0" oninput="formatRupiah(this); calculateSellingPrice();">
-                                        <input type="hidden" name="harga_asli" id="harga_asli" value="<?php echo e(old('harga_asli')); ?>">
+                                               id="harga_asli" name="harga_asli" value="<?php echo e(old('harga_asli', $good->harga_asli)); ?>"
+                                               required min="0" onchange="calculateSellingPrice();" oninput="calculateSellingPrice();">
                                     </div>
                                     <?php $__errorArgs = ['harga_asli'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -508,80 +595,80 @@ unset($__errorArgs, $__bag); ?>
 
                                 <div class="col-md-6 mb-3">
                                     <label for="stok" class="form-label">
-                                        <i class="bi bi-boxes text-success"></i>
-                                        Stok <span class="required">*</span>
+                                        <i class="bi bi-boxes text-warning"></i>
+                                        Stok Saat Ini
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control <?php $__errorArgs = ['stok'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                               id="stok" name="stok" value="<?php echo e(old('stok')); ?>"
-                                               required min="0" placeholder="0">
+                                        <input type="number" class="form-control"
+                                               id="stok" name="stok" value="<?php echo e($good->stok); ?>"
+                                               readonly>
                                         <span class="input-group-text">unit</span>
                                     </div>
-                                    <?php $__errorArgs = ['stok'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                    <div class="stock-readonly-info">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-info">
+                                                    <i class="bi bi-info-circle"></i>
+                                                    Stok tidak dapat diubah di halaman ini
+                                                </small>
+                                            </div>
+                                            <a href="/dashboard/restock/<?php echo e($good->id); ?>/edit" class="btn-info-restock">
+                                                <i class="bi bi-plus-circle"></i>
+                                                Restock
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div id="price-info" class="price-info" style="display: none;">
+                            <div id="price-info" class="price-info">
                                 <h6 class="text-info mb-2">
                                     <i class="bi bi-calculator"></i> Informasi Harga Jual
                                 </h6>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <p class="mb-1"><strong>Harga Asli:</strong> <span id="display-harga-asli" class="text-muted">Rp 0</span></p>
-                                        <p class="mb-1"><strong>Markup:</strong> <span id="markup-percent" class="text-info">0%</span></p>
+                                        <p class="mb-1"><strong>Harga Asli:</strong> <span id="display-harga-asli" class="text-muted">Rp <?php echo e(number_format($good->harga_asli ?? 0, 0, ',', '.')); ?></span></p>
+                                        <p class="mb-1"><strong>Markup:</strong> <span id="markup-percent" class="text-info"><?php echo e($good->type === 'makanan' ? '2%' : '5%'); ?></span></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <p class="mb-1"><strong>Harga Jual:</strong> <span id="display-harga-jual" class="text-success fw-bold">Rp 0</span></p>
-                                        <p class="mb-0"><strong>Keuntungan:</strong> <span id="display-profit" class="text-success">Rp 0</span></p>
+                                        <p class="mb-1"><strong>Harga Jual:</strong> <span id="display-harga-jual" class="text-success fw-bold">Rp <?php echo e(number_format($good->harga ?? 0, 0, ',', '.')); ?></span></p>
+                                        <p class="mb-0"><strong>Keuntungan:</strong> <span id="display-profit" class="text-success">Rp <?php echo e(number_format(($good->harga ?? 0) - ($good->harga_asli ?? 0), 0, ',', '.')); ?></span></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Wholesale Section -->
-                        <div class="form-section">
+                        <div class="wholesale-section">
                             <div class="section-title">
-                                <i class="bi bi-cart-plus"></i>
+                                <i class="bi bi-tags-fill" style="color: #ff5722;"></i>
                                 Pengaturan Grosir
                             </div>
 
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="1"
-                                       id="is_grosir_active" name="is_grosir_active"
-                                       <?php echo e(old('is_grosir_active') ? 'checked' : ''); ?>
+                            <div class="wholesale-toggle">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="is_grosir_active" name="is_grosir_active" value="1"
+                                           <?php echo e(old('is_grosir_active', $good->is_grosir_active) ? 'checked' : ''); ?>
 
-                                       onchange="toggleWholesaleSection()">
-                                <label class="form-check-label fw-bold" for="is_grosir_active">
-                                    <i class="bi bi-shop text-success"></i>
-                                    Aktifkan Harga Grosir
-                                </label>
-                                <small class="text-muted d-block">
-                                    Centang untuk memberikan harga khusus untuk pembelian dalam jumlah besar
+                                           onchange="toggleWholesaleFields()">
+                                    <label class="form-check-label fw-bold" for="is_grosir_active">
+                                        <i class="bi bi-shop"></i>
+                                        Aktifkan Harga Grosir
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    Aktifkan untuk memberikan harga khusus pembelian dalam jumlah besar
                                 </small>
                             </div>
 
-                            <div id="wholesale-section" class="wholesale-section">
+                            <div id="wholesale-fields" class="wholesale-fields <?php echo e(old('is_grosir_active', $good->is_grosir_active) ? 'show' : ''); ?>">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="min_qty_grosir" class="form-label">
-                                            <i class="bi bi-123 text-success"></i>
-                                            Minimal Pembelian Grosir
+                                            <i class="bi bi-box-seam" style="color: #ff5722;"></i>
+                                            Minimal Pembelian Grosir <span class="required">*</span>
                                         </label>
                                         <div class="input-group">
                                             <input type="number" class="form-control <?php $__errorArgs = ['min_qty_grosir'];
@@ -593,8 +680,8 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                    id="min_qty_grosir" name="min_qty_grosir"
-                                                   value="<?php echo e(old('min_qty_grosir')); ?>"
-                                                   min="2" placeholder="10" onchange="calculateWholesaleSavings()">
+                                                   value="<?php echo e(old('min_qty_grosir', $good->min_qty_grosir)); ?>"
+                                                   min="2" placeholder="Contoh: 10">
                                             <span class="input-group-text">unit</span>
                                         </div>
                                         <?php $__errorArgs = ['min_qty_grosir'];
@@ -607,13 +694,13 @@ $message = $__bag->first($__errorArgs[0]); ?>
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                                        <small class="text-muted">Minimal 2 unit untuk grosir</small>
+                                        <small class="text-muted">Minimal 2 unit untuk harga grosir</small>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="harga_grosir" class="form-label">
-                                            <i class="bi bi-cash-coin text-success"></i>
-                                            Harga Grosir per Unit
+                                            <i class="bi bi-cash-coin" style="color: #ff5722;"></i>
+                                            Harga Grosir <span class="required">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">Rp</span>
@@ -626,8 +713,8 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                    id="harga_grosir" name="harga_grosir"
-                                                   value="<?php echo e(old('harga_grosir')); ?>"
-                                                   min="0" placeholder="0" onchange="calculateWholesaleSavings()">
+                                                   value="<?php echo e(old('harga_grosir', $good->harga_grosir)); ?>"
+                                                   min="0" placeholder="Harga lebih murah dari harga eceran">
                                         </div>
                                         <?php $__errorArgs = ['harga_grosir'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -639,58 +726,58 @@ $message = $__bag->first($__errorArgs[0]); ?>
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                                        <small class="text-muted">Harga per unit untuk pembelian grosir</small>
+                                        <small class="text-muted">Harga harus lebih kecil dari harga eceran</small>
                                     </div>
                                 </div>
 
-                                <div id="wholesale-info" class="wholesale-info" style="display: none;">
-                                    <h6 class="text-success mb-2">
-                                        <i class="bi bi-calculator"></i> Informasi Penghematan Grosir
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Hemat per unit:</strong> <span id="savings-per-unit" class="text-success">Rp 0</span></p>
-                                            <p class="mb-1"><strong>Persentase hemat:</strong> <span id="savings-percent" class="text-success">0%</span></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Contoh pembelian <span id="example-qty">10</span> unit:</strong></p>
-                                            <p class="mb-1">Eceran: <span id="retail-total" class="text-muted">Rp 0</span></p>
-                                            <p class="mb-1">Grosir: <span id="wholesale-total" class="text-success fw-bold">Rp 0</span></p>
-                                            <p class="mb-0">Hemat: <span id="total-savings" class="text-success fw-bold">Rp 0</span></p>
+                                <?php if($good->is_grosir_active && $good->min_qty_grosir && $good->harga_grosir): ?>
+                                <div class="alert alert-info">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <div>
+                                            <strong>Pengaturan Grosir Saat Ini:</strong><br>
+                                            <small>
+                                                Minimal <?php echo e($good->min_qty_grosir); ?> unit = Rp <?php echo e(number_format($good->harga_grosir, 0, ',', '.')); ?>/unit
+                                                (Hemat Rp <?php echo e(number_format($good->harga - $good->harga_grosir, 0, ',', '.')); ?>/unit)
+                                            </small>
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                         <!-- Tebus Murah Section -->
-                        <div class="form-section">
+                        <div class="tebus-murah-section">
                             <div class="section-title">
                                 <i class="bi bi-tag-fill" style="color: #dc3545;"></i>
                                 Pengaturan Tebus Murah
                             </div>
 
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="1"
-                                       id="is_tebus_murah_active" name="is_tebus_murah_active"
-                                       <?php echo e(old('is_tebus_murah_active') ? 'checked' : ''); ?>
+                            <div class="tebus-murah-toggle">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="is_tebus_murah_active" name="is_tebus_murah_active" value="1"
+                                           <?php echo e(old('is_tebus_murah_active', $good->is_tebus_murah_active) ? 'checked' : ''); ?>
 
-                                       onchange="toggleTebusMusahSection()" style="background-color: #dc3545; border-color: #dc3545;">
-                                <label class="form-check-label fw-bold" for="is_tebus_murah_active">
-                                    <i class="bi bi-percent text-danger"></i>
-                                    Aktifkan Harga Tebus Murah untuk Barang Ini
-                                </label>
-                                <small class="text-muted d-block">
-                                    Centang untuk memberikan harga khusus ketika total pembelian mencapai nilai tertentu
+                                           onchange="toggleTebusMusahFields()" style="background-color: #dc3545; border-color: #dc3545;">
+                                    <label class="form-check-label fw-bold" for="is_tebus_murah_active">
+                                        <i class="bi bi-percent"></i>
+                                        Aktifkan Harga Tebus Murah untuk Barang Ini
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    Aktifkan untuk memberikan harga khusus ketika total pembelian mencapai nilai tertentu
                                 </small>
                             </div>
 
-                            <div id="tebus-murah-section" class="tebus-murah-section">
+                            <div id="tebus-murah-fields" class="tebus-murah-fields <?php echo e(old('is_tebus_murah_active', $good->is_tebus_murah_active) ? 'show' : ''); ?>">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="min_total_tebus_murah" class="form-label">
-                                            <i class="bi bi-cash-stack text-danger"></i>
-                                            Minimal Pembelian Tebus Murah
+                                            <i class="bi bi-cash-stack" style="color: #dc3545;"></i>
+                                            Minimal Pembelian Tebus Murah <span class="required">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">Rp</span>
@@ -703,8 +790,8 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                    id="min_total_tebus_murah" name="min_total_tebus_murah"
-                                                   value="<?php echo e(old('min_total_tebus_murah')); ?>"
-                                                   min="0" placeholder="100000" onchange="calculateTebusMusahSavings()">
+                                                   value="<?php echo e(old('min_total_tebus_murah', $good->min_total_tebus_murah)); ?>"
+                                                   min="0" placeholder="Contoh: 100000">
                                         </div>
                                         <?php $__errorArgs = ['min_total_tebus_murah'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -721,8 +808,8 @@ unset($__errorArgs, $__bag); ?>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="harga_tebus_murah" class="form-label">
-                                            <i class="bi bi-tag text-danger"></i>
-                                            Harga Tebus Murah
+                                            <i class="bi bi-tag" style="color: #dc3545;"></i>
+                                            Harga Tebus Murah <span class="required">*</span>
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">Rp</span>
@@ -735,8 +822,8 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                    id="harga_tebus_murah" name="harga_tebus_murah"
-                                                   value="<?php echo e(old('harga_tebus_murah')); ?>"
-                                                   min="0" placeholder="0" onchange="calculateTebusMusahSavings()">
+                                                   value="<?php echo e(old('harga_tebus_murah', $good->harga_tebus_murah)); ?>"
+                                                   min="0" placeholder="Harga lebih murah dari harga normal">
                                         </div>
                                         <?php $__errorArgs = ['harga_tebus_murah'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -752,35 +839,63 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
 
-                                <div id="tebus-murah-info" class="tebus-murah-info" style="display: none;">
-                                    <h6 class="text-danger mb-2">
-                                        <i class="bi bi-calculator"></i> Informasi Penghematan Tebus Murah
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Hemat per unit:</strong> <span id="tebus-savings-per-unit" class="text-danger">Rp 0</span></p>
-                                            <p class="mb-1"><strong>Persentase hemat:</strong> <span id="tebus-savings-percent" class="text-danger">0%</span></p>
+                                <?php if($good->is_tebus_murah_active && $good->min_total_tebus_murah && $good->harga_tebus_murah): ?>
+                                <div class="alert alert-danger">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <div>
+                                            <strong>Pengaturan Tebus Murah Saat Ini:</strong><br>
+                                            <small>
+                                                Min. total transaksi Rp <?php echo e(number_format($good->min_total_tebus_murah, 0, ',', '.')); ?> = Harga Rp <?php echo e(number_format($good->harga_tebus_murah, 0, ',', '.')); ?>
+
+                                                (Hemat Rp <?php echo e(number_format($good->harga - $good->harga_tebus_murah, 0, ',', '.')); ?>)
+                                            </small>
                                         </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Syarat:</strong> Total transaksi min. <span id="min-total-display" class="text-danger fw-bold">Rp 0</span></p>
-                                            <p class="mb-1">Harga normal: <span id="normal-price" class="text-muted">Rp 0</span></p>
-                                            <p class="mb-0">Harga tebus murah: <span id="tebus-price" class="text-danger fw-bold">Rp 0</span></p>
-                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Barcode Section -->
+                        <?php if($good->barcode): ?>
+                        <div class="barcode-section">
+                            <div class="section-title">
+                                <i class="bi bi-qr-code"></i>
+                                Informasi Barcode
+                            </div>
+                            <div class="barcode-info">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 text-success"><?php echo e($good->barcode); ?></h6>
+                                        <small class="text-muted">Barcode saat ini</small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="/dashboard/goods/<?php echo e($good->id); ?>/print-barcode"
+                                           class="btn-outline-umkm">
+                                            <i class="bi bi-printer"></i> <i class="bi bi-download"></i>
+                                            Print / Download
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Barcode Info -->
-                        <div class="alert alert-umkm">
+                        <?php else: ?>
+                        <div class="alert-warning-umkm">
                             <div class="d-flex align-items-center">
-                                <i class="bi bi-info-circle-fill text-info me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <strong>Informasi Barcode</strong>
-                                    <p class="mb-0">Barcode akan dibuat otomatis setelah barang berhasil disimpan. Anda dapat mencetak barcode dari halaman edit barang.</p>
+                                <i class="bi bi-exclamation-triangle-fill text-warning me-3" style="font-size: 1.5rem;"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Perhatian!</strong>
+                                    <p class="mb-0">Barang ini belum memiliki barcode.</p>
                                 </div>
+                                <a href="/dashboard/goods/<?php echo e($good->id); ?>/generate-barcode"
+                                   class="btn-warning-umkm">
+                                    <i class="bi bi-qr-code"></i>
+                                    Generate Barcode
+                                </a>
                             </div>
                         </div>
+                        <?php endif; ?>
 
                         <!-- Action Buttons -->
                         <div class="d-flex justify-content-between pt-3">
@@ -788,9 +903,9 @@ unset($__errorArgs, $__bag); ?>
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn-umkm">
+                            <button type="submit" class="btn-warning-umkm">
                                 <i class="bi bi-save"></i>
-                                Simpan Barang
+                                Update Barang
                             </button>
                         </div>
                     </form>
@@ -801,35 +916,6 @@ unset($__errorArgs, $__bag); ?>
 </div>
 
 <script>
-// [BARU] Fungsi untuk format Rupiah
-function formatRupiah(input) {
-    // Ambil nilai dari input
-    let value = input.value;
-
-    // 1. Hapus semua karakter kecuali angka
-    let number_string = value.replace(/[^,\d]/g, '').toString();
-    
-    // 2. Simpan angka bersih ke input tersembunyi
-    document.getElementById('harga_asli').value = number_string;
-
-    // 3. Format angka dengan titik sebagai pemisah ribuan
-    let split = number_string.split(',');
-    let sisa = split[0].length % 3;
-    let rupiah = split[0].substr(0, sisa);
-    let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-    if (ribuan) {
-        let separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-    }
-
-    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-    
-    // 4. Tampilkan kembali ke input yang terlihat
-    input.value = rupiah;
-}
-
-
 function toggleExpiredField() {
     const typeSelect = document.getElementById('type');
     const expiredSection = document.getElementById('expired-section');
@@ -846,7 +932,6 @@ function toggleExpiredField() {
 }
 
 function calculateSellingPrice() {
-    // [PERUBAHAN 2] Ambil nilai dari input tersembunyi
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
     const priceInfo = document.getElementById('price-info');
@@ -863,125 +948,55 @@ function calculateSellingPrice() {
         document.getElementById('display-profit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(profit);
         
         priceInfo.style.display = 'block';
-    } else {
-        priceInfo.style.display = 'none';
     }
 }
 
-function toggleWholesaleSection() {
+function toggleWholesaleFields() {
     const checkbox = document.getElementById('is_grosir_active');
-    const wholesaleSection = document.getElementById('wholesale-section');
+    const wholesaleFields = document.getElementById('wholesale-fields');
     const minQtyInput = document.getElementById('min_qty_grosir');
-    const wholesalePriceInput = document.getElementById('harga_grosir');
+    const hargaGrosirInput = document.getElementById('harga_grosir');
 
     if (checkbox.checked) {
-        wholesaleSection.classList.add('show');
+        wholesaleFields.classList.add('show');
         minQtyInput.required = true;
-        wholesalePriceInput.required = true;
+        hargaGrosirInput.required = true;
     } else {
-        wholesaleSection.classList.remove('show');
+        wholesaleFields.classList.remove('show');
         minQtyInput.required = false;
-        wholesalePriceInput.required = false;
+        hargaGrosirInput.required = false;
         minQtyInput.value = '';
-        wholesalePriceInput.value = '';
-        document.getElementById('wholesale-info').style.display = 'none';
+        hargaGrosirInput.value = '';
     }
 }
 
-function toggleTebusMusahSection() {
+function toggleTebusMusahFields() {
     const checkbox = document.getElementById('is_tebus_murah_active');
-    const tebusMusahSection = document.getElementById('tebus-murah-section');
+    const tebusMusahFields = document.getElementById('tebus-murah-fields');
     const minTotalInput = document.getElementById('min_total_tebus_murah');
-    const tebusMusahPriceInput = document.getElementById('harga_tebus_murah');
+    const hargaTebusMusahInput = document.getElementById('harga_tebus_murah');
 
     if (checkbox.checked) {
-        tebusMusahSection.classList.add('show');
+        tebusMusahFields.classList.add('show');
         minTotalInput.required = true;
-        tebusMusahPriceInput.required = true;
+        hargaTebusMusahInput.required = true;
     } else {
-        tebusMusahSection.classList.remove('show');
+        tebusMusahFields.classList.remove('show');
         minTotalInput.required = false;
-        tebusMusahPriceInput.required = false;
+        hargaTebusMusahInput.required = false;
         minTotalInput.value = '';
-        tebusMusahPriceInput.value = '';
-        document.getElementById('tebus-murah-info').style.display = 'none';
-    }
-}
-
-function calculateWholesaleSavings() {
-    // [PERUBAHAN 3] Ambil nilai dari input tersembunyi
-    const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
-    const typeSelect = document.getElementById('type');
-    const wholesalePrice = parseFloat(document.getElementById('harga_grosir').value) || 0;
-    const minQty = parseInt(document.getElementById('min_qty_grosir').value) || 10;
-    const wholesaleInfo = document.getElementById('wholesale-info');
-
-    if (hargaAsli > 0 && typeSelect.value) {
-        const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
-        const retailPrice = hargaAsli + (hargaAsli * markup);
-        
-        if (wholesalePrice > 0 && wholesalePrice < retailPrice) {
-            const savingsPerUnit = retailPrice - wholesalePrice;
-            const savingsPercent = ((savingsPerUnit / retailPrice) * 100).toFixed(1);
-            const retailTotal = retailPrice * minQty;
-            const wholesaleTotal = wholesalePrice * minQty;
-            const totalSavings = retailTotal - wholesaleTotal;
-
-            document.getElementById('savings-per-unit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(savingsPerUnit);
-            document.getElementById('savings-percent').textContent = savingsPercent + '%';
-            document.getElementById('example-qty').textContent = minQty;
-            document.getElementById('retail-total').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(retailTotal);
-            document.getElementById('wholesale-total').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(wholesaleTotal);
-            document.getElementById('total-savings').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSavings);
-
-            wholesaleInfo.style.display = 'block';
-        } else {
-            wholesaleInfo.style.display = 'none';
-        }
-    } else {
-        wholesaleInfo.style.display = 'none';
-    }
-}
-
-function calculateTebusMusahSavings() {
-    // [PERUBAHAN 4] Ambil nilai dari input tersembunyi
-    const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
-    const typeSelect = document.getElementById('type');
-    const tebusMusahPrice = parseFloat(document.getElementById('harga_tebus_murah').value) || 0;
-    const minTotal = parseFloat(document.getElementById('min_total_tebus_murah').value) || 0;
-    const tebusMusahInfo = document.getElementById('tebus-murah-info');
-
-    if (hargaAsli > 0 && typeSelect.value) {
-        const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
-        const retailPrice = hargaAsli + (hargaAsli * markup);
-        
-        if (tebusMusahPrice > 0 && tebusMusahPrice < retailPrice && minTotal > 0) {
-            const savingsPerUnit = retailPrice - tebusMusahPrice;
-            const savingsPercent = ((savingsPerUnit / retailPrice) * 100).toFixed(1);
-
-            document.getElementById('tebus-savings-per-unit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(savingsPerUnit);
-            document.getElementById('tebus-savings-percent').textContent = savingsPercent + '%';
-            document.getElementById('min-total-display').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(minTotal);
-            document.getElementById('normal-price').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(retailPrice);
-            document.getElementById('tebus-price').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(tebusMusahPrice);
-
-            tebusMusahInfo.style.display = 'block';
-        } else {
-            tebusMusahInfo.style.display = 'none';
-        }
-    } else {
-        tebusMusahInfo.style.display = 'none';
+        hargaTebusMusahInput.value = '';
     }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     toggleExpiredField();
-    toggleWholesaleSection();
-    toggleTebusMusahSection();
+    toggleWholesaleFields();
+    toggleTebusMusahFields();
     calculateSellingPrice();
 });
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/goods/create.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/goods/edit.blade.php ENDPATH**/ ?>
