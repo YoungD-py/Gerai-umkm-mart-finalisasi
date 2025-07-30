@@ -104,10 +104,52 @@ class ReturnController extends Controller
     public function destroy(ReturnBarang $return)
     {
         $good = Good::find($return->good_id);
-        $good->increment('stok', $return->qty_return);
+        if ($good) {
+            $good->increment('stok', $return->qty_return);
+        }
 
         $return->delete();
 
         return redirect('/dashboard/returns')->with('success', 'Data return berhasil dihapus dan stok dikembalikan.');
+    }
+
+    /**
+     * Menghapus beberapa data return sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'selected_ids' => 'required|array',
+            // [PERBAIKAN] Menggunakan nama tabel 'returns' yang benar
+            'selected_ids.*' => 'exists:returns,id',
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/returns')->with('error', 'Tidak ada data return yang dipilih untuk dihapus.');
+        }
+
+        $returns = ReturnBarang::whereIn('id', $selectedIds)->get();
+
+        // Kembalikan stok untuk setiap barang yang di-return
+        foreach ($returns as $return) {
+            $good = Good::find($return->good_id);
+            if ($good) {
+                $good->increment('stok', $return->qty_return);
+            }
+        }
+        
+        // Hapus data return
+        $deletedCount = ReturnBarang::destroy($selectedIds);
+
+        if ($deletedCount > 0) {
+            return redirect('/dashboard/returns')->with('success', $deletedCount . ' data return berhasil dihapus dan stok telah dikembalikan.');
+        }
+
+        return redirect('/dashboard/returns')->with('error', 'Gagal menghapus data return yang dipilih.');
     }
 }

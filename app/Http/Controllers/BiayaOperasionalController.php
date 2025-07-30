@@ -14,20 +14,14 @@ class BiayaOperasionalController extends Controller
      */
     public function index()
     {
-        // Mulai query, jangan langsung ambil semua data
         $query = BiayaOperasional::query();
 
-        // Cek jika ada input 'search' dari URL
         if (request('search')) {
-            // Tambahkan kondisi WHERE untuk mencari di kolom 'uraian'
             $query->where('uraian', 'like', '%' . request('search') . '%');
         }
 
-        // Eksekusi query dengan urutan terbaru & paginasi
-        // withQueryString() agar link pagination tetap membawa parameter search
         $biayaOperasional = $query->latest()->paginate(10)->withQueryString();
 
-        // Kirim data yang sudah difilter (atau semua data) ke view
         return view('dashboard.biayaoperasional.index', compact('biayaOperasional'));
     }
 
@@ -52,7 +46,6 @@ class BiayaOperasionalController extends Controller
             'bukti_resi' => 'nullable|image|file|max:2048'
         ]);
 
-        // [PERBAIKAN] Kalikan nominal dengan kuantitas sebelum menyimpan
         $validatedData['nominal'] = $validatedData['nominal'] * $validatedData['qty'];
 
         if ($request->file('bukti_resi')) {
@@ -89,7 +82,6 @@ class BiayaOperasionalController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        // [PERBAIKAN] Kalikan nominal dengan kuantitas sebelum memperbarui
         $validatedData['nominal'] = $validatedData['nominal'] * $validatedData['qty'];
 
         if ($request->file('bukti_resi')) {
@@ -121,5 +113,43 @@ class BiayaOperasionalController extends Controller
             Log::error('Gagal menghapus biaya operasional: ' . $e->getMessage());
             return redirect('/dashboard/biayaoperasional')->with('error', 'Gagal menghapus data. Data ini mungkin terhubung dengan data lain.');
         }
+    }
+
+    /**
+     * [BARU] Menghapus beberapa biaya operasional sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'selected_ids' => 'required|array',
+            'selected_ids.*' => 'exists:biaya_operasional,id',
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/biayaoperasional')->with('error', 'Tidak ada data yang dipilih untuk dihapus.');
+        }
+
+        $biayaItems = BiayaOperasional::whereIn('id', $selectedIds)->get();
+
+        // Hapus file bukti/resi dari storage
+        foreach ($biayaItems as $item) {
+            if ($item->bukti_resi) {
+                Storage::disk('public')->delete($item->bukti_resi);
+            }
+        }
+        
+        // Hapus data dari database
+        $deletedCount = BiayaOperasional::destroy($selectedIds);
+
+        if ($deletedCount > 0) {
+            return redirect('/dashboard/biayaoperasional')->with('success', $deletedCount . ' data biaya operasional berhasil dihapus.');
+        }
+
+        return redirect('/dashboard/biayaoperasional')->with('error', 'Gagal menghapus data yang dipilih.');
     }
 }

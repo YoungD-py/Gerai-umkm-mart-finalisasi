@@ -284,10 +284,16 @@
                     <i class="bi bi-card-list"></i>
                     Data Biaya Operasional
                 </h3>
-                <a href="{{ route('biayaoperasional.create') }}" class="btn-umkm btn-umkm-sm">
-                    <i class="bi bi-plus-circle"></i>
-                    Tambah Biaya
-                </a>
+                {{-- [BARU] Container untuk tombol aksi --}}
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
+                    <a href="{{ route('biayaoperasional.create') }}" class="btn-umkm btn-umkm-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Tambah Biaya
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -316,87 +322,100 @@
                 </form>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-umkm">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 30%;">Uraian/Keterangan</th>
-                            <th style="width: 15%;">Nominal</th>
-                            <th style="width: 15%;">Tanggal</th>
-                            <th style="width: 10%;">Qty</th>
-                            <th style="width: 15%; text-align: center;">Bukti</th>
-                            <th style="width: 10%; text-align: center;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($biayaOperasional as $key => $biaya)
-                        <tr>
-                            <td><strong>{{ $biayaOperasional->firstItem() + $key }}</strong></td>
-                            <td>{{ $biaya->uraian }}</td>
-                            <td>
-                                <strong class="text-success">
-                                    Rp {{ number_format($biaya->nominal, 0, ',', '.') }}
-                                </strong>
-                            </td>
-                            <td>
-                                <i class="bi bi-calendar3 text-success me-1"></i>
-                                {{ \Carbon\Carbon::parse($biaya->tanggal)->format('d M Y') }}
-                            </td>
-                            <td>
-                                <span class="badge bg-info text-dark">{{ $biaya->qty }}</span>
-                            </td>
-                            <td class="text-center">
-                                @if($biaya->bukti_resi)
-                                    <a href="{{ asset('storage/' . $biaya->bukti_resi) }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-eye"></i> Lihat
-                                    </a>
-                                @else
-                                    <span class="badge bg-secondary">Tidak Ada</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                <div class="dropdown action-dropdown">
-                                    <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical fs-5"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('biayaoperasional.edit', $biaya->id) }}">
-                                                <i class="bi bi-pencil-square text-warning"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <form action="{{ route('biayaoperasional.destroy', $biaya->id) }}" method="post" class="dropdown-item-form" id="deleteForm{{ $biaya->id }}">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $biaya->id }}', '{{ $biaya->uraian }}')">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                    <h5>Data tidak ditemukan</h5>
-                                    <p>Tidak ada data biaya yang cocok dengan pencarian Anda.</p>
-                                    <a href="{{ route('biayaoperasional.index') }}" class="btn btn-umkm btn-umkm-sm">
-                                        <i class="bi bi-arrow-left"></i>
-                                        Kembali ke semua data
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <!-- [BARU] Form untuk bulk delete -->
+            <form id="bulk-delete-form" action="{{ route('biayaoperasional.bulkDelete') }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="table-responsive">
+                    <table class="table table-umkm">
+                        <thead>
+                            <tr>
+                                {{-- [BARU] Checkbox "Pilih Semua" --}}
+                                <th style="width: 3%; text-align: center;">
+                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                                </th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 30%;">Uraian/Keterangan</th>
+                                <th style="width: 15%;">Nominal</th>
+                                <th style="width: 15%;">Tanggal</th>
+                                <th style="width: 7%;">Qty</th>
+                                <th style="width: 15%; text-align: center;">Bukti</th>
+                                <th style="width: 10%; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($biayaOperasional as $key => $biaya)
+                            <tr>
+                                {{-- [BARU] Checkbox per baris --}}
+                                <td class="text-center">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $biaya->id }}">
+                                </td>
+                                <td><strong>{{ $biayaOperasional->firstItem() + $key }}</strong></td>
+                                <td>{{ $biaya->uraian }}</td>
+                                <td>
+                                    <strong class="text-success">
+                                        Rp {{ number_format($biaya->nominal, 0, ',', '.') }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <i class="bi bi-calendar3 text-success me-1"></i>
+                                    {{ \Carbon\Carbon::parse($biaya->tanggal)->format('d M Y') }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">{{ $biaya->qty }}</span>
+                                </td>
+                                <td class="text-center">
+                                    @if($biaya->bukti_resi)
+                                        <a href="{{ asset('storage/' . $biaya->bukti_resi) }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-eye"></i> Lihat
+                                        </a>
+                                    @else
+                                        <span class="badge bg-secondary">Tidak Ada</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <div class="dropdown action-dropdown">
+                                        <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('biayaoperasional.edit', $biaya->id) }}">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="{{ route('biayaoperasional.destroy', $biaya->id) }}" method="post" class="dropdown-item-form" id="deleteForm{{ $biaya->id }}">
+                                                    @method('delete')
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $biaya->id }}', '{{ $biaya->uraian }}')">
+                                                        <i class="bi bi-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Data tidak ditemukan</h5>
+                                        <p>Tidak ada data biaya yang cocok dengan pencarian Anda.</p>
+                                        <a href="{{ route('biayaoperasional.index') }}" class="btn btn-umkm btn-umkm-sm">
+                                            <i class="bi bi-arrow-left"></i>
+                                            Kembali ke semua data
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </form>
 
             @if($biayaOperasional->hasPages())
             <div class="d-flex justify-content-center mt-4">
@@ -409,6 +428,7 @@
     </div>
 </div>
 
+<!-- Modal Konfirmasi Hapus SATUAN -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -427,8 +447,28 @@
   </div>
 </div>
 
+<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> data biaya yang dipilih?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -454,6 +494,57 @@
                 formToSubmit.submit();
             }
         });
+
+        // --- [BARU] SCRIPT UNTUK BULK DELETE ---
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const bulkDeleteButton = document.getElementById('bulk-delete-button');
+        const bulkDeleteForm = document.getElementById('bulk-delete-form');
+        const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteConfirmationModal'));
+        const bulkDeleteCountSpan = document.getElementById('bulkDeleteCount');
+        const confirmBulkDeleteButton = document.getElementById('confirmBulkDeleteButton');
+
+        function updateBulkDeleteButtonState() {
+            const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (selectedCount > 0) {
+                bulkDeleteButton.style.display = 'inline-flex';
+                bulkDeleteButton.querySelector('.bi').nextSibling.textContent = ` Hapus ${selectedCount} Terpilih`;
+            } else {
+                bulkDeleteButton.style.display = 'none';
+            }
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
+        }
+
+        if(selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButtonState();
+            });
+        }
+
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkDeleteButtonState);
+        });
+
+        if(bulkDeleteButton) {
+            bulkDeleteButton.addEventListener('click', function() {
+                const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                if (selectedCount > 0) {
+                    bulkDeleteCountSpan.textContent = selectedCount;
+                    bulkDeleteModal.show();
+                }
+            });
+        }
+        
+        if(confirmBulkDeleteButton) {
+            confirmBulkDeleteButton.addEventListener('click', function() {
+                bulkDeleteForm.submit();
+            });
+        }
+        
+        updateBulkDeleteButtonState();
     });
 </script>
 @endsection

@@ -140,6 +140,52 @@ class TransactionController extends Controller
     }
 
     /**
+     * [BARU] Menghapus beberapa transaksi sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'selected_ids' => 'required|array',
+            'selected_ids.*' => 'exists:transactions,id',
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/transactions')->with('error', 'Tidak ada transaksi yang dipilih untuk dihapus.');
+        }
+
+        $transactions = Transaction::whereIn('id', $selectedIds)->get();
+        $noNotas = [];
+
+        foreach ($transactions as $transaction) {
+            // Kumpulkan nomor nota
+            $noNotas[] = $transaction->no_nota;
+            // Jika statusnya LUNAS, kembalikan stok
+            if (strtolower(trim($transaction->status)) === 'lunas') {
+                $this->restoreStock($transaction->no_nota);
+            }
+        }
+
+        // Hapus semua pesanan (orders) yang terkait dengan nomor nota yang dipilih
+        if (!empty($noNotas)) {
+            Order::whereIn('no_nota', $noNotas)->delete();
+        }
+        
+        // Hapus semua transaksi yang dipilih
+        $deletedCount = Transaction::destroy($selectedIds);
+
+        if ($deletedCount > 0) {
+            return redirect('/dashboard/transactions')->with('success', $deletedCount . ' transaksi berhasil dihapus dan stok (jika ada) telah dikembalikan.');
+        }
+
+        return redirect('/dashboard/transactions')->with('error', 'Gagal menghapus transaksi yang dipilih.');
+    }
+
+    /**
      * Export transactions to PDF
      */
     public function exportpdf()

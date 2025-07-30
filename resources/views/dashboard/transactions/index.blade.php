@@ -273,6 +273,10 @@
                     <i class="bi bi-receipt"></i>
                     Data Transaksi
                 </h3>
+                {{-- [BARU] Tombol untuk menghapus transaksi yang dipilih --}}
+                <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                    <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                </button>
             </div>
         </div>
 
@@ -302,105 +306,118 @@
                 </form>
             </div>
 
-            <!-- Table -->
-            <div class="table-responsive">
-                <table class="table table-umkm">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>No. Nota</th>
-                            <th>Waktu</th>
-                            <th>Petugas</th>
-                            <th>Metode Bayar</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                            <th>Bayar</th>
-                            <th>Kembalian</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($transactions as $key => $transaction)
-                        <tr>
-                            <td><strong>{{ $transactions->firstItem() + $key }}</strong></td>
-                            <td>
-                                <i class="bi bi-hash text-primary"></i>
-                                {{ $transaction->no_nota }}
-                            </td>
-                            <td style="white-space:nowrap;">
-                                <i class="bi bi-clock text-info me-1"></i>
-                                {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
-                            </td>
-                            <td>{{ $transaction->user->nama }}</td>
-                            <td>{{ $transaction->metode_pembayaran }}</td>
-                            <td>
-                                @if(strtolower(trim($transaction->status)) == 'lunas')
-                                    <span class="badge bg-success">{{ $transaction->status }}</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
-                                @endif
-                            </td>
-                            <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
-                            <td>Rp {{ number_format($transaction->bayar, 0, ',', '.') }}</td>
-                            <td>Rp {{ number_format($transaction->kembalian, 0, ',', '.') }}</td>
-                            <td class="text-center">
-                                <div class="dropdown action-dropdown">
-                                    <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$transaction->id}}" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical fs-5"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$transaction->id}}">
-                                        <li>
-                                            <form method="post" action="/dashboard/cashiers/nota" class="dropdown-item-form" onsubmit="return handleDownloadSubmit(this)">
-                                                @csrf
-                                                <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="bi bi-download text-primary"></i> Unduh Nota
-                                                </button>
-                                            </form>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="/dashboard/transactions/{{ $transaction->id }}/edit">
-                                                <i class="bi bi-credit-card text-success"></i> Pembayaran
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <form action="/dashboard/orders" method="post" class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
-                                                @csrf
-                                                <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
-                                                </button>
-                                            </form>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form action="/dashboard/transactions/{{ $transaction->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $transaction->id }}">
-                                                @method('delete')
-                                                @csrf
-                                                <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $transaction->id }}', '{{ $transaction->no_nota }}')">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="10" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-cart-x display-4 d-block mb-3"></i>
-                                    <h5>Belum ada data transaksi</h5>
-                                    <p>Belum ada transaksi yang tercatat di sistem</p>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <!-- [BARU] Form untuk bulk delete -->
+            <form id="bulk-delete-form" action="{{ route('transactions.bulkDelete') }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-umkm">
+                        <thead>
+                            <tr>
+                                {{-- [BARU] Checkbox "Pilih Semua" --}}
+                                <th style="width: 3%; text-align: center;">
+                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                                </th>
+                                <th>#</th>
+                                <th>No. Nota</th>
+                                <th>Waktu</th>
+                                <th>Petugas</th>
+                                <th>Metode Bayar</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Bayar</th>
+                                <th>Kembalian</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($transactions as $key => $transaction)
+                            <tr>
+                                {{-- [BARU] Checkbox per baris --}}
+                                <td class="text-center">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $transaction->id }}">
+                                </td>
+                                <td><strong>{{ $transactions->firstItem() + $key }}</strong></td>
+                                <td>
+                                    <i class="bi bi-hash text-primary"></i>
+                                    {{ $transaction->no_nota }}
+                                </td>
+                                <td style="white-space:nowrap;">
+                                    <i class="bi bi-clock text-info me-1"></i>
+                                    {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
+                                </td>
+                                <td>{{ $transaction->user->nama }}</td>
+                                <td>{{ $transaction->metode_pembayaran }}</td>
+                                <td>
+                                    @if(strtolower(trim($transaction->status)) == 'lunas')
+                                        <span class="badge bg-success">{{ $transaction->status }}</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
+                                    @endif
+                                </td>
+                                <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
+                                <td>Rp {{ number_format($transaction->bayar, 0, ',', '.') }}</td>
+                                <td>Rp {{ number_format($transaction->kembalian, 0, ',', '.') }}</td>
+                                <td class="text-center">
+                                    <div class="dropdown action-dropdown">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$transaction->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$transaction->id}}">
+                                            <li>
+                                                <form method="post" action="/dashboard/cashiers/nota" class="dropdown-item-form" onsubmit="return handleDownloadSubmit(this)">
+                                                    @csrf
+                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-download text-primary"></i> Unduh Nota
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="/dashboard/transactions/{{ $transaction->id }}/edit">
+                                                    <i class="bi bi-credit-card text-success"></i> Pembayaran
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="/dashboard/orders" method="post" class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
+                                                    @csrf
+                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form action="/dashboard/transactions/{{ $transaction->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $transaction->id }}">
+                                                    @method('delete')
+                                                    @csrf
+                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $transaction->id }}', '{{ $transaction->no_nota }}')">
+                                                        <i class="bi bi-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="11" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-cart-x display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data transaksi</h5>
+                                        <p>Belum ada transaksi yang tercatat di sistem</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </form>
 
             <!-- Pagination -->
             @if($transactions->hasPages())
@@ -414,7 +431,7 @@
     </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus -->
+<!-- Modal Konfirmasi Hapus SATUAN -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -433,9 +450,28 @@
   </div>
 </div>
 
+<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> transaksi yang dipilih?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-    // [PERBAIKAN TOTAL] Script untuk menangani modal konfirmasi hapus
     document.addEventListener('DOMContentLoaded', function() {
+        // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -461,6 +497,57 @@
                 formToSubmit.submit();
             }
         });
+
+        // --- [BARU] SCRIPT UNTUK BULK DELETE ---
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const bulkDeleteButton = document.getElementById('bulk-delete-button');
+        const bulkDeleteForm = document.getElementById('bulk-delete-form');
+        const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteConfirmationModal'));
+        const bulkDeleteCountSpan = document.getElementById('bulkDeleteCount');
+        const confirmBulkDeleteButton = document.getElementById('confirmBulkDeleteButton');
+
+        function updateBulkDeleteButtonState() {
+            const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (selectedCount > 0) {
+                bulkDeleteButton.style.display = 'inline-flex';
+                bulkDeleteButton.querySelector('.bi').nextSibling.textContent = ` Hapus ${selectedCount} Terpilih`;
+            } else {
+                bulkDeleteButton.style.display = 'none';
+            }
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
+        }
+
+        if(selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButtonState();
+            });
+        }
+
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkDeleteButtonState);
+        });
+
+        if(bulkDeleteButton) {
+            bulkDeleteButton.addEventListener('click', function() {
+                const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                if (selectedCount > 0) {
+                    bulkDeleteCountSpan.textContent = selectedCount;
+                    bulkDeleteModal.show();
+                }
+            });
+        }
+        
+        if(confirmBulkDeleteButton) {
+            confirmBulkDeleteButton.addEventListener('click', function() {
+                bulkDeleteForm.submit();
+            });
+        }
+        
+        updateBulkDeleteButtonState();
     });
 
     // Fungsi untuk tombol yang menyebabkan navigasi (seperti Edit Pesanan)

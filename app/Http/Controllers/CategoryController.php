@@ -125,8 +125,50 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        // [PERBAIKAN] Tambahkan pengecekan apakah mitra masih punya barang
+        if ($category->goods()->count() > 0) {
+            return redirect('/dashboard/categories')->with('error', 'Gagal menghapus! Mitra "' . $category->nama . '" masih memiliki produk terdaftar.');
+        }
+
         Category::destroy($category->id);
 
         return redirect('/dashboard/categories')->with('success', 'Mitra Binaan telah dihapus.');
+    }
+
+    /**
+     * [BARU] Menghapus beberapa mitra binaan sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'selected_ids' => 'required|array',
+            'selected_ids.*' => 'exists:categories,id',
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/categories')->with('error', 'Tidak ada mitra yang dipilih untuk dihapus.');
+        }
+
+        // Cek apakah ada mitra yang dipilih yang masih memiliki produk
+        $categoriesWithGoods = Category::whereIn('id', $selectedIds)->has('goods')->get();
+
+        if ($categoriesWithGoods->isNotEmpty()) {
+            $names = $categoriesWithGoods->pluck('nama')->implode(', ');
+            return redirect('/dashboard/categories')->with('error', 'Gagal menghapus! Mitra berikut masih memiliki produk: ' . $names);
+        }
+
+        // Lanjutkan penghapusan jika tidak ada produk terkait
+        $deletedCount = Category::whereIn('id', $selectedIds)->delete();
+
+        if ($deletedCount > 0) {
+            return redirect('/dashboard/categories')->with('success', $deletedCount . ' mitra berhasil dihapus!');
+        }
+
+        return redirect('/dashboard/categories')->with('error', 'Gagal menghapus mitra yang dipilih.');
     }
 }

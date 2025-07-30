@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
@@ -53,7 +51,6 @@
 
     .umkm-card-body {
         padding: 25px;
-        overflow: hidden;
     }
 
     .btn-umkm {
@@ -98,6 +95,10 @@
         background: white;
     }
 
+    .table-responsive {
+        overflow: visible;
+    }
+
     .table-umkm {
         background: white;
         border-radius: 15px;
@@ -119,10 +120,6 @@
         padding: 15px 12px;
         vertical-align: middle;
         border-bottom: 1px solid #f8f9fa;
-    }
-
-    .table-umkm tbody tr:last-child td {
-        border-bottom: none;
     }
 
     .table-umkm tbody tr:hover {
@@ -164,10 +161,116 @@
         border-radius: 0 15px 15px 0;
     }
 
-    .action-dropdown {
-        position: static; 
+    .type-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+        white-space: nowrap; 
+    }
+
+    .type-makanan {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .type-non-makanan {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
     }
     
+    .type-handycraft {
+        background: linear-gradient(135deg, #6f42c1, #8a2be2);
+        color: white;
+    }
+
+    .type-fashion {
+        background: linear-gradient(135deg, #e83e8c, #d63384);
+        color: white;
+    }
+
+    .type-lainnya {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        color: white;
+    }
+
+    .expired-badge {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+
+    .expired-danger {
+        background: #dc3545;
+        color: white;
+        animation: pulse 1s infinite;
+    }
+
+    .expired-warning {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .expired-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .wholesale-indicator {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        box-shadow: 0 1px 4px rgba(255, 107, 53, 0.3);
+        cursor: help;
+        animation: subtle-glow 2s ease-in-out infinite alternate;
+    }
+
+    .wholesale-indicator:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+    }
+    
+    .tebus-murah-indicator {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        box-shadow: 0 1px 4px rgba(220, 53, 69, 0.3);
+        cursor: help;
+    }
+
+    @keyframes subtle-glow {
+        from {
+            box-shadow: 0 1px 4px rgba(255, 107, 53, 0.3);
+        }
+        to {
+            box-shadow: 0 1px 6px rgba(255, 107, 53, 0.5);
+        }
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
     .action-dropdown .dropdown-toggle::after {
         display: none; 
     }
@@ -189,7 +292,6 @@
         border: 1px solid rgba(0,0,0,0.1);
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         padding: 0.5rem 0;
-        z-index: 100; 
     }
 
     .action-dropdown .dropdown-item {
@@ -227,6 +329,299 @@
         color: #c82333 !important;
     }
 
+     /* CSS BARU untuk tombol hapus terpilih */
+    .bulk-action-container {
+        transition: all 0.3s ease-in-out;
+    } 
+</style>
+
+<div class="container-fluid py-4">
+    <div class="page-title">
+        <h1>📦 MANAJEMEN DATA BARANG</h1>
+        <p>Kelola inventori dan stok barang GERAI UMKM MART</p>
+    </div>
+
+    <?php if(session()->has('success')): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    
+    
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="umkm-card">
+        <div class="umkm-card-header">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h3 class="umkm-card-title">
+                    <i class="bi bi-box-seam"></i>
+                    Data Barang
+                </h3>
+                <div class="d-flex gap-2 align-items-center">
+                    
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
+                    <a href="/dashboard/goods/cetakbarcode" class="btn-umkm btn-umkm-sm">
+                        <i class="bi bi-qr-code"></i>
+                        Cetak Barcode Barang
+                    </a>
+                    <a href="/dashboard/goods/create" class="btn-umkm btn-umkm-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Tambah Barang
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="umkm-card-body">
+            <div class="search-section">
+                <form action="/dashboard/goods" method="GET">
+                    <div class="row align-items-end">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label text-white fw-bold">
+                                <i class="bi bi-search me-2"></i>Cari Barang
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang..."
+                                    name="search" value="<?php echo e(request('search')); ?>">
+                                <button class="btn btn-umkm" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-white">
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($goods->total()); ?> barang</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            
+            <form id="bulk-delete-form" action="<?php echo e(route('goods.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
+                
+                <div class="table-responsive">
+                    <table class="table table-umkm">
+                        <thead>
+                            <tr>
+                                
+                                <th style="width: 3%; text-align: center;">
+                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                                </th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 10%;">Tgl Masuk</th>
+                                <th style="width: 24%;">Nama Barang</th>
+                                <th style="width: 13%;">Jenis</th>
+                                <th style="width: 14%;">Expired</th>
+                                <th style="width: 13%;">Mitra Binaan</th>
+                                <th style="width: 7%;">Stok</th>
+                                <th style="width: 9%;">Harga</th>
+                                <th style="width: 5%; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <tr>
+                                
+                                <td class="text-center">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($good->id); ?>">
+                                </td>
+                                <td><strong><?php echo e($goods->firstItem() + $key); ?></strong></td>
+                                <td>
+                                    <i class="bi bi-calendar3 text-success me-1"></i>
+                                    <?php echo e(\Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y')); ?>
+
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-box text-primary me-2"></i>
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <strong><?php echo e($good->nama); ?></strong>
+                                                <?php if($good->is_grosir_active): ?>
+                                                    <span class="wholesale-indicator" title="Barang Grosir - Min <?php echo e($good->min_qty_grosir); ?> unit: Rp <?php echo e(number_format($good->harga_grosir, 0, ',', '.')); ?>">
+                                                        🏷️ GROSIR
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if($good->is_tebus_murah_active): ?>
+                                                    <span class="tebus-murah-indicator" title="Tebus Murah - Min. Transaksi Rp <?php echo e(number_format($good->min_total_tebus_murah, 0, ',', '.')); ?>: Harga Spesial Rp <?php echo e(number_format($good->harga_tebus_murah, 0, ',', '.')); ?>">
+                                                        % TEBUS MURAH
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <?php if($good->barcode): ?>
+                                                <small class="text-muted"><?php echo e($good->barcode); ?></small>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="type-badge type-<?php echo e(str_replace('_', '-', $good->type)); ?>">
+                                        <?php if($good->type == 'makanan'): ?>
+                                            Makanan & Minuman
+                                        <?php elseif($good->type == 'non_makanan'): ?>
+                                            Non Makanan & Minuman
+                                        <?php elseif($good->type == 'handycraft'): ?>
+                                            Handycraft
+                                        <?php elseif($good->type == 'fashion'): ?>
+                                            Fashion
+                                        <?php else: ?>
+                                            Lainnya
+                                        <?php endif; ?>
+                                    </span>
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <?php if($good->expired_date): ?>
+                                        <div>
+                                            <small class="text-muted">
+                                                <?php echo e($good->expired_date->format('d/m/Y')); ?>
+
+                                            </small>
+                                            <?php
+                                                $status = $good->getExpirationStatus();
+                                            ?>
+                                            <?php if($status == 'expired'): ?>
+                                                <span class="expired-badge expired-danger">
+                                                    ⚠️ EXPIRED
+                                                </span>
+                                            <?php elseif($status == 'expiring_soon'): ?>
+                                                <span class="expired-badge expired-warning">
+                                                    ⏰ <?php echo e($good->getDaysUntilExpiration()); ?> hari
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="expired-badge expired-success">
+                                                    ✅ <?php echo e($good->getDaysUntilExpiration()); ?> hari
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-muted">
+                                            <i class="bi bi-dash-circle"></i> Tidak ada
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <i class="bi bi-building text-info me-1"></i>
+                                    <?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?>
+
+                                </td>
+                                <td>
+                                    <span class="badge <?php echo e($good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger')); ?>">
+                                        <?php echo e($good->stok); ?> unit
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong class="text-success">
+                                        Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>
+
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <div class="dropup action-dropdown">
+                                        <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="/dashboard/goods/<?php echo e($good->id); ?>/edit">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="/dashboard/goods/<?php echo e($good->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($good->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($good->id); ?>', '<?php echo e($good->nama); ?>')">
+                                                        <i class="bi bi-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <tr>
+                                
+                                <td colspan="10" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data barang</h5>
+                                        <p>Silakan tambah barang baru untuk memulai</p>
+                                        <a href="/dashboard/goods/create" class="btn-umkm">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Tambah Barang Pertama
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+
+            <?php if($goods->hasPages()): ?>
+            <div class="d-flex justify-content-center mt-4">
+                <div class="pagination-wrapper">
+                    <?php echo e($goods->links()); ?>
+
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Penghapusan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus barang <br><strong id="itemNameToDelete" class="text-danger"></strong>?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteButton" style="border-radius: 10px;">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> barang yang dipilih?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -253,241 +648,20 @@
     }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="page-title">
-        <h1>👥 MANAJEMEN DATA ADMIN</h1>
-        <p>Kelola data administrator dan kasir untuk sistem</p>
-    </div>
-
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-    
-    {{-- [BARU] Menambahkan notifikasi untuk error --}}
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <div class="umkm-card">
-        <div class="umkm-card-header">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <h3 class="umkm-card-title">
-                    <i class="bi bi-people-fill"></i>
-                    Data Admin & Kasir
-                </h3>
-                {{-- [BARU] Container untuk tombol aksi --}}
-                <div class="d-flex gap-2 align-items-center">
-                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
-                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
-                    </button>
-                    <a href="/dashboard/users/create" class="btn-umkm btn-umkm-sm">
-                        <i class="bi bi-plus-circle"></i>
-                        Tambah Pengguna
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="umkm-card-body">
-            <!-- Search Section -->
-            <div class="search-section">
-                <form action="/dashboard/users" method="GET">
-                    <div class="row align-items-end">
-                        <div class="col-md-8 mb-3">
-                            <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Pengguna
-                            </label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nama atau username..."
-                                       name="search" value="{{ request('search') }}">
-                                <button class="btn btn-umkm" type="submit">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="text-white">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $users->total() }} pengguna</small>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- [BARU] Form untuk bulk delete -->
-            <form id="bulk-delete-form" action="{{ route('users.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-umkm">
-                        <thead>
-                            <tr>
-                                {{-- [BARU] Checkbox "Pilih Semua" --}}
-                                <th style="width: 3%; text-align: center;">
-                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
-                                </th>
-                                <th style="width: 5%;">#</th>
-                                <th style="width: 35%;">Nama Pengguna</th>
-                                <th style="width: 20%;">Username</th>
-                                <th style="width: 12%;">Role</th>
-                                <th style="width: 15%;">Bergabung</th>
-                                <th style="width: 10%; text-align: center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($users as $key => $user)
-                            <tr>
-                                {{-- [BARU] Checkbox per baris --}}
-                                <td class="text-center">
-                                    {{-- [LOGIC] Jangan tampilkan checkbox untuk user yang sedang login --}}
-                                    @if(auth()->user()->id !== $user->id)
-                                        <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $user->id }}">
-                                    @endif
-                                </td>
-                                <td><strong>{{ $users->firstItem() + $key }}</strong></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white me-3" style="width: 40px; height: 40px; font-weight: bold;">
-                                            {{ strtoupper(substr($user->nama, 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <strong>{{ $user->nama }}</strong>
-                                            <small class="d-block text-muted">ID: {{ $user->id }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <code>{{ $user->username }}</code>
-                                </td>
-                                <td>
-                                    @if($user->role == 'ADMIN')
-                                        <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>{{ $user->role }}</span>
-                                    @else
-                                        <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i>{{ $user->role }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <i class="bi bi-calendar3 text-muted me-1"></i>
-                                    {{ $user->created_at->format('d M Y') }}
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$user->id}}" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical fs-5"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$user->id}}">
-                                            <li>
-                                                <a class="dropdown-item" href="/dashboard/users/{{ $user->id }}/edit">
-                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
-                                                </a>
-                                            </li>
-                                            {{-- [LOGIC] Jangan tampilkan tombol hapus untuk user yang sedang login --}}
-                                            @if(auth()->user()->id !== $user->id)
-                                            <li>
-                                                <form action="/dashboard/users/{{ $user->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $user->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $user->id }}', '{{ $user->nama }}')">
-                                                        <i class="bi bi-trash"></i> Hapus
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data pengguna</h5>
-                                        <p>Silakan tambah pengguna baru untuk memulai</p>
-                                        <a href="/dashboard/users/create" class="btn-umkm">
-                                            <i class="bi bi-plus-circle"></i>
-                                            Tambah Pengguna
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </form>
-
-            <!-- Pagination -->
-            @if($users->hasPages())
-            <div class="d-flex justify-content-center mt-4">
-                <div class="pagination-wrapper">
-                    {{ $users->links() }}
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
-</div>
-
-<!-- Modal Konfirmasi Hapus SATUAN -->
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 15px; border: none;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
-        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Penghapusan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
-      </div>
-      <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus pengguna <br><strong id="userNameToDelete" class="text-danger"></strong>?
-      </div>
-      <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteButton" style="border-radius: 10px;">Ya, Hapus</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
-<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 15px; border: none;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
-        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
-      </div>
-      <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> pengguna yang dipilih?
-      </div>
-      <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
-        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const userNameToDeleteSpan = document.getElementById('userNameToDelete');
+        const itemNameToDeleteSpan = document.getElementById('itemNameToDelete');
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, userId, userName) {
-            formToSubmit = document.getElementById('deleteForm' + userId);
+        window.showDeleteModal = function(button, goodId, goodName) {
+            formToSubmit = document.getElementById('deleteForm' + goodId);
             originalButton = button;
-            userNameToDeleteSpan.textContent = userName;
+            itemNameToDeleteSpan.textContent = goodName;
             deleteModal.show();
         }
 
@@ -520,10 +694,11 @@
             } else {
                 bulkDeleteButton.style.display = 'none';
             }
-            // Cek jika semua checkbox yang BISA dipilih, sudah terpilih
-            selectAllCheckbox.checked = itemCheckboxes.length > 0 && selectedCount === itemCheckboxes.length;
+            // Sinkronkan checkbox "pilih semua"
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
         }
 
+        // Event listener untuk checkbox "pilih semua"
         if(selectAllCheckbox) {
             selectAllCheckbox.addEventListener('change', function() {
                 itemCheckboxes.forEach(checkbox => {
@@ -533,10 +708,12 @@
             });
         }
 
+        // Event listener untuk setiap checkbox barang
         itemCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', updateBulkDeleteButtonState);
         });
 
+        // Event listener untuk tombol hapus terpilih
         if(bulkDeleteButton) {
             bulkDeleteButton.addEventListener('click', function() {
                 const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
@@ -547,13 +724,16 @@
             });
         }
         
+        // Event listener untuk tombol konfirmasi di modal bulk delete
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
                 bulkDeleteForm.submit();
             });
         }
         
+        // Inisialisasi state tombol saat halaman dimuat
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/goods/index.blade.php ENDPATH**/ ?>

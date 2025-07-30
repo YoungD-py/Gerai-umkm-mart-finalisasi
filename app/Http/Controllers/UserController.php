@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request; // Pastikan ini ada
-use Illuminate\Support\Facades\DB; // Import DB Facade
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; // [BARU] Import Auth
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 
@@ -97,19 +98,16 @@ class UserController extends Controller
             'role' => 'required|in:ADMIN,KASIR',
         ];
 
-        // Validasi username hanya jika berbeda dari yang lama
         if($request->username != $user->username) {
             $rules['username'] = 'required|unique:users|min:3|max:255';
         }
 
-        // Validasi password hanya jika diisi
         if ($request->filled('password')) {
             $rules['password'] = 'min:6';
         }
 
         $validatedData = $request->validate($rules);
 
-        // Jika password tidak diisi, jangan update password
         if (!$request->filled('password')) {
             unset($validatedData['password']);
         }
@@ -127,19 +125,55 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // [PERBAIKAN]
-        // Menggunakan transaction agar proses aman. Jika salah satu gagal, semua akan dibatalkan.
+        // [PENTING] Mencegah user menghapus akunnya sendiri
+        if ($user->id === Auth::id()) {
+            return redirect('/dashboard/users')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
         DB::transaction(function () use ($user) {
-            // 1. Hapus semua data 'return barang' yang terkait dengan user ini.
             $user->returns()->delete();
-
-            // 2. Hapus semua data 'transaksi' yang terkait dengan user ini.
             $user->transactions()->delete();
-
-            // 3. Setelah semua data terkait aman untuk dihapus, baru hapus user-nya.
             $user->delete();
         });
 
         return redirect('/dashboard/users')->with('success', 'Pengguna beserta data terkait telah dihapus.');
+    }
+
+    /**
+     * [BARU] Menghapus beberapa pengguna sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'selected_ids' => 'required|array',
+            'selected_ids.*' => 'exists:users,id',
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        // [PENTING] Pastikan user yang sedang login tidak ada di dalam daftar yang akan dihapus
+        if (in_array(Auth::id(), $selectedIds)) {
+            return redirect('/dashboard/users')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri dari daftar hapus massal.');
+        }
+
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/users')->with('error', 'Tidak ada pengguna yang dipilih untuk dihapus.');
+        }
+
+        DB::transaction(function () use ($selectedIds) {
+            $users = User::whereIn('id', $selectedIds)->get();
+            foreach ($users as $user) {
+                // Hapus data terkait
+                $user->returns()->delete();
+                $user->transactions()->delete();
+                // Hapus pengguna
+                $user->delete();
+            }
+        });
+
+        return redirect('/dashboard/users')->with('success', count($selectedIds) . ' pengguna berhasil dihapus beserta data terkait.');
     }
 }

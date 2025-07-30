@@ -7,7 +7,11 @@
             /* INI SATU-SATUNYA YANG DIUBAH.
             Tinggi 'auto' diganti menjadi sangat panjang (contoh: 1000mm).
             */
+<<<<<<< HEAD
             size: 80mm 1000mm;
+=======
+            size: 80mm 1000mm; 
+>>>>>>> dec9305a18207b5fbee8e5fcafca76725df4386c
             margin: 3mm;
         }
         body {
@@ -144,7 +148,11 @@
                 @endforeach
             </td>
         </tr>
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> dec9305a18207b5fbee8e5fcafca76725df4386c
         <tr>
              <td colspan="4" style="padding-top: 10px;">
                 <div class="dashed-divider"></div>

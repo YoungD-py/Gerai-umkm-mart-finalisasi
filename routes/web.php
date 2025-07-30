@@ -41,7 +41,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Users
     Route::delete('/dashboard/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
     Route::resource('/dashboard/users', UserController::class);
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> dec9305a18207b5fbee8e5fcafca76725df4386c
     // Transactions
     Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
@@ -68,7 +72,11 @@ Route::middleware('auth')->group(function () {
 
     // Customers
     Route::resource('/dashboard/customers', CustomerController::class);
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> dec9305a18207b5fbee8e5fcafca76725df4386c
     // Returns
     Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
     Route::resource('/dashboard/returns', ReturnController::class);
