@@ -158,7 +158,7 @@
                     <path d="M9 15l0 .01" />
                     <path d="M9 18l0 .01" />
                 </svg>
-                {{-- [RESPONSIVE] Sembunyikan teks brand di layar sangat kecil untuk hemat ruang --}}
+                {{-- [RESPONSIVE] Sembunyikan teks brand di layar sangat kecil untuk hemat ruang --}}.
                 <span class="ms-2 d-none d-sm-inline-block"> GERAI UMKM MART </span>
             </a>
         </h1>
