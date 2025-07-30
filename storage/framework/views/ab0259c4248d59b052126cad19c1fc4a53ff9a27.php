@@ -77,30 +77,30 @@
 
         <tr>
             <td colspan="4" style="padding-top: 10px; padding-bottom: 5px;">
-                @foreach($transaction as $trans)
+                <?php $__currentLoopData = $transaction; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $trans): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <table>
                     <tr>
                         <td width="30%">No. Nota</td>
                         <td width="5%">:</td>
-                        <td width="65%">{{ $trans->no_nota }}</td>
+                        <td width="65%"><?php echo e($trans->no_nota); ?></td>
                     </tr>
                     <tr>
                         <td>Tanggal</td>
                         <td>:</td>
-                        <td>{{ $trans->created_at->format('d/m/Y H:i') }}</td>
+                        <td><?php echo e($trans->created_at->format('d/m/Y H:i')); ?></td>
                     </tr>
                     <tr>
                         <td>Kasir</td>
                         <td>:</td>
-                        <td>{{ $trans->user->nama ?? 'N/A' }}</td>
+                        <td><?php echo e($trans->user->nama ?? 'N/A'); ?></td>
                     </tr>
                     <tr>
                         <td>Metode Bayar</td>
                         <td>:</td>
-                        <td>{{ $trans->metode_pembayaran }}</td>
+                        <td><?php echo e($trans->metode_pembayaran); ?></td>
                     </tr>
                 </table>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </td>
         </tr>
 
@@ -111,14 +111,14 @@
             <th width="25%" class="text-right">Subtotal</th>
         </tr>
 
-        @foreach($orders as $order)
+        <?php $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <tr class="item-row">
-            <td>{{ $order->good->nama ?? 'N/A' }}</td>
-            <td class="text-center">{{ $order->qty }}</td>
-            <td class="text-right">{{ number_format($order->price, 0, ',', '.') }}</td>
-            <td class="text-right">{{ number_format($order->subtotal, 0, ',', '.') }}</td>
+            <td><?php echo e($order->good->nama ?? 'N/A'); ?></td>
+            <td class="text-center"><?php echo e($order->qty); ?></td>
+            <td class="text-right"><?php echo e(number_format($order->price, 0, ',', '.')); ?></td>
+            <td class="text-right"><?php echo e(number_format($order->subtotal, 0, ',', '.')); ?></td>
         </tr>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
         <tr>
             <td colspan="4" class="divider" style="padding-top: 5px;"></td>
@@ -126,22 +126,22 @@
 
         <tr>
             <td colspan="4" style="padding-top: 5px;">
-                @foreach($transaction as $trans)
+                <?php $__currentLoopData = $transaction; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $trans): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <table style="width: 100%;">
                     <tr class="total-row">
                         <td class="font-bold">TOTAL</td>
-                        <td class="text-right font-bold">Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</td>
+                        <td class="text-right font-bold">Rp <?php echo e(number_format($trans->total_harga, 0, ',', '.')); ?></td>
                     </tr>
                     <tr class="total-row">
                         <td>Bayar</td>
-                        <td class="text-right">Rp {{ number_format($trans->bayar, 0, ',', '.') }}</td>
+                        <td class="text-right">Rp <?php echo e(number_format($trans->bayar, 0, ',', '.')); ?></td>
                     </tr>
                     <tr class="total-row">
                         <td>Kembalian</td>
-                        <td class="text-right">Rp {{ number_format($trans->kembalian, 0, ',', '.') }}</td>
+                        <td class="text-right">Rp <?php echo e(number_format($trans->kembalian, 0, ',', '.')); ?></td>
                     </tr>
                 </table>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </td>
         </tr>
         
@@ -149,11 +149,11 @@
              <td colspan="4" style="padding-top: 10px;">
                 <div class="dashed-divider"></div>
                 <div class="text-center" style="padding-top: 5px;">*** TERIMA KASIH ***</div>
-                <div class="text-center" style="font-size: 9px;">Barang yang sudah dibeli tidak dapat dikembalikan.</div>
-                <div class="text-center" style="font-size: 9px; padding-top: 5px;">{{ date('d/m/Y H:i:s') }}</div>
+                <div class="text-center" style="font-size: 9px;">Barang yang sudah dibeli tidak dapat dikembalikan</div>
+                <div class="text-center" style="font-size: 9px; padding-top: 5px;"><?php echo e(date('d/m/Y H:i:s')); ?></div>
              </td>
         </tr>
 
     </table>
 </body>
-</html>
+</html><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/nota_pdf.blade.php ENDPATH**/ ?>
