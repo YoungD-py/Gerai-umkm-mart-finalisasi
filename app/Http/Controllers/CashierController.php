@@ -177,14 +177,14 @@ class CashierController extends Controller
             $unitPrice = $barang->harga; // Default to retail price
 
             // Check tebus murah first (higher priority)
-            if ($barang->is_tebus_murah_active && 
-                $currentTotal >= $barang->min_total_tebus_murah && 
+            if ($barang->is_tebus_murah_active &&
+                $currentTotal >= $barang->min_total_tebus_murah &&
                 $barang->harga_tebus_murah > 0) {
                 $unitPrice = $barang->harga_tebus_murah;
             }
             // Then check wholesale
-            elseif ($barang->is_grosir_active && 
-                    $qty >= $barang->min_qty_grosir && 
+            elseif ($barang->is_grosir_active &&
+                    $qty >= $barang->min_qty_grosir &&
                     $barang->harga_grosir > 0) {
                 $unitPrice = $barang->harga_grosir;
             }
@@ -272,14 +272,14 @@ class CashierController extends Controller
             $unitPrice = $barang->harga; // Default to retail price
 
             // Check tebus murah first (higher priority)
-            if ($barang->is_tebus_murah_active && 
-                $currentTotal >= $barang->min_total_tebus_murah && 
+            if ($barang->is_tebus_murah_active &&
+                $currentTotal >= $barang->min_total_tebus_murah &&
                 $barang->harga_tebus_murah > 0) {
                 $unitPrice = $barang->harga_tebus_murah;
             }
             // Then check wholesale
-            elseif ($barang->is_grosir_active && 
-                    $qty >= $barang->min_qty_grosir && 
+            elseif ($barang->is_grosir_active &&
+                    $qty >= $barang->min_qty_grosir &&
                     $barang->harga_grosir > 0) {
                 $unitPrice = $barang->harga_grosir;
             }
@@ -376,7 +376,7 @@ class CashierController extends Controller
         // Kurangi stok jika status lunas
         if (strtolower(trim($request->status)) === 'lunas') {
             $orders = Order::where('no_nota', $transaction->no_nota)->get();
-            
+
             Log::info('Processing stock reduction', [
                 'no_nota' => $transaction->no_nota,
                 'orders_count' => $orders->count()
@@ -387,12 +387,12 @@ class CashierController extends Controller
                 if ($good) {
                     $oldStock = $good->stok;
                     $newStock = $oldStock - $order->qty;
-                    
+
                     // Update stok menggunakan raw query untuk memastikan
                     \DB::table('goods')
                         ->where('id', $good->id)
                         ->update(['stok' => $newStock]);
-                    
+
                     Log::info('Stock updated', [
                         'good_id' => $good->id,
                         'good_name' => $good->nama,

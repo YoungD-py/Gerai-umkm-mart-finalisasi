@@ -11,7 +11,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReportController;
-// use App\Http\Controllers\HutangController; // Dihapus karena sudah tidak digunakan
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\RestockController;
 use App\Http\Controllers\BiayaOperasionalController;
@@ -20,11 +19,6 @@ use App\Http\Controllers\BiayaOperasionalController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::get('/', [LoginController::class, 'index']);
@@ -44,27 +38,39 @@ Route::get('/dashboard/cashier/quick-transaction', [CashierController::class, 'q
 
 // ADMIN ONLY ROUTES
 Route::middleware(['auth', 'admin'])->group(function () {
+    // Users
+    Route::delete('/dashboard/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
     Route::resource('/dashboard/users', UserController::class);
+
+    // Transactions
+    Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
-    // Route::resource('/dashboard/biayaoperasional', BiayaOperasionalController::class); // <-- SUDAH DIPINDAHKAN
 });
 
 // ROUTES YANG BISA DIAKSES ADMIN DAN KASIR
 Route::middleware('auth')->group(function () {
-    // RUTE BIAYA OPERASIONAL DIPINDAHKAN KE SINI AGAR BISA DIAKSES KASIR
+    // Biaya Operasional
+    Route::delete('/dashboard/biayaoperasional/bulk-delete', [BiayaOperasionalController::class, 'bulkDelete'])->name('biayaoperasional.bulkDelete');
     Route::resource('/dashboard/biayaoperasional', BiayaOperasionalController::class);
 
+    // Categories
+    Route::delete('/dashboard/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
     Route::resource('/dashboard/categories', CategoryController::class);
 
+    // Goods
     Route::get('/dashboard/goods/cetakbarcode', [GoodController::class, 'showPrintMultipleBarcodesForm'])->name('goods.cetakbarcode.form');
     Route::post('/dashboard/goods/cetakbarcode', [GoodController::class, 'generateMultipleBarcodesPdf'])->name('goods.cetakbarcode.pdf');
-
+    Route::delete('/dashboard/goods/bulk-delete', [GoodController::class, 'bulkDelete'])->name('goods.bulkDelete');
     Route::resource('/dashboard/goods', GoodController::class);
     Route::post('/dashboard/goods/{good}/generate-barcode', [GoodController::class, 'generateBarcode']);
     Route::get('/dashboard/goods/{good}/download-barcode', [GoodController::class, 'downloadBarcode']);
     Route::get('/dashboard/goods/{good}/print-barcode', [GoodController::class, 'printBarcode']);
 
+    // Customers
     Route::resource('/dashboard/customers', CustomerController::class);
+
+    // Returns
+    Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
     Route::resource('/dashboard/returns', ReturnController::class);
 
     // RESTOCK ROUTES
@@ -77,8 +83,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
     Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
     Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
-
-    // [PERBAIKAN] TAMBAHKAN ROUTE DELETE UNTUK MENGHAPUS ITEM ORDER
     Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
 
     // KASIR ROUTES
@@ -100,11 +104,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/rekapitulasi', [ReportController::class, 'index']);
     Route::post('/dashboard/rekapitulasi/cetak-transaksi', [ReportController::class, 'cetakTransaksi']);
     Route::post('/dashboard/rekapitulasi/cetak-barang', [ReportController::class, 'cetakBarang']);
-    // New route for combined Restock and Return report
     Route::post('/dashboard/rekapitulasi/cetak-restock-return', [ReportController::class, 'cetakRestockReturn']);
-    // New route for Biaya Operasional report
     Route::post('/dashboard/rekapitulasi/cetak-biaya-operasional', [ReportController::class, 'cetakBiayaOperasional'])->name('reports.cetakBiayaOperasional');
-    // New route for Financial Report
     Route::post('/dashboard/rekapitulasi/cetak-laporan-keuangan', [ReportController::class, 'cetakLaporanKeuangan'])->name('reports.cetakLaporanKeuangan');
 
 

@@ -21,7 +21,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .umkm-card-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -92,7 +92,7 @@
         box-shadow: none;
         transform: none;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
@@ -110,7 +110,7 @@
         font-size: 1.1rem;
         opacity: 0.9;
     }
-    
+
     .tax-info {
         font-size: 0.8rem;
         color: #6c757d;
@@ -157,7 +157,7 @@
                         @csrf
                         <input type="hidden" name="id" value="{{ $transaction->id }}">
                         <input type="hidden" name="no_nota" value="{{ $no_nota }}">
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="tgl_transaksi" class="form-label">Tanggal Transaksi</label>
@@ -256,24 +256,24 @@
         const paymentMethod = document.getElementById("payment_method").value;
         const originalTotal = parseFloat(document.getElementById("original_total").value) || 0;
         const taxInfo = document.getElementById("tax_info");
-        
+
         let finalTotal = originalTotal;
-        
+
         if (paymentMethod === "P-Eats") {
             finalTotal = originalTotal * 1.12;
             taxInfo.style.display = "block";
         } else {
             taxInfo.style.display = "none";
         }
-        
+
         finalTotal = Math.round(finalTotal);
 
         document.getElementById("total_harga").value = finalTotal;
         document.getElementById("total_harga_display").value = 'Rp ' + formatNumber(finalTotal);
-        
+
         const bayarDisplayInput = document.getElementById('bayar_display');
         const bayarHiddenInput = document.getElementById('bayar');
-        
+
         bayarDisplayInput.value = formatNumber(finalTotal);
         bayarHiddenInput.value = finalTotal;
 
@@ -287,17 +287,17 @@
         const handleBayarInput = () => {
             let rawValue = unformatNumber(bayarDisplayInput.value);
             bayarHiddenInput.value = rawValue;
-            
+
             let formattedValue = formatNumber(rawValue);
             if (bayarDisplayInput.value !== formattedValue) {
                 bayarDisplayInput.value = formattedValue;
             }
-            
+
             calculateChange();
         };
 
         bayarDisplayInput.addEventListener('input', handleBayarInput);
-        
+
         // Initial calculation
         calculateTotal();
     });

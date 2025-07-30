@@ -2,7 +2,7 @@
 
 <?php $__env->startSection('container'); ?>
 <style>
-    /* --- CSS dari contoh Anda untuk konsistensi --- */
+    /* --- CSS Styles copied from Goods Dashboard for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -98,10 +98,6 @@
         background: white;
     }
 
-    .table-responsive {
-        overflow-x: auto;
-    }
-
     .table-umkm {
         background: white;
         border-radius: 15px;
@@ -193,7 +189,7 @@
         border: 1px solid rgba(0,0,0,0.1);
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         padding: 0.5rem 0;
-        z-index: 100;
+        z-index: 100; 
     }
 
     .action-dropdown .dropdown-item {
@@ -259,21 +255,13 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1><i class="bi bi-wallet2"></i> MANAJEMEN BIAYA OPERASIONAL</h1>
-        <p>Kelola semua pengeluaran operasional GERAI UMKM MART</p>
+        <h1>🔄 MANAJEMEN DATA RETURN</h1>
+        <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
     <?php if(session()->has('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none; background-color: #d1e7dd; color: #0f5132;">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
             <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-    
-    <?php if(session()->has('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
 
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -283,98 +271,101 @@
         <div class="umkm-card-header">
             <div class="d-flex justify-content-between align-items-center w-100">
                 <h3 class="umkm-card-title">
-                    <i class="bi bi-card-list"></i>
-                    Data Biaya Operasional
+                    <i class="bi bi-arrow-return-left"></i>
+                    Data Return Barang
                 </h3>
-                <a href="<?php echo e(route('biayaoperasional.create')); ?>" class="btn-umkm btn-umkm-sm">
+                <a href="/dashboard/returns/create" class="btn-umkm btn-umkm-sm">
                     <i class="bi bi-plus-circle"></i>
-                    Tambah Biaya
+                    Tambah Return
                 </a>
             </div>
         </div>
 
         <div class="umkm-card-body">
+            <!-- Search Section -->
             <div class="search-section">
-                <form action="<?php echo e(route('biayaoperasional.index')); ?>" method="GET">
+                <form action="/dashboard/returns" method="GET">
                     <div class="row align-items-end">
-                        <div class="col-md-8 mb-3 mb-md-0">
+                        <div class="col-md-8 mb-3">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Biaya Operasional
+                                <i class="bi bi-search me-2"></i>Cari Barang atau Mitra
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Cari berdasarkan uraian..."
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
                                        name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($biayaOperasional->total()); ?> data</small>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-white">
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
+            <!-- Table -->
             <div class="table-responsive">
                 <table class="table table-umkm">
                     <thead>
                         <tr>
                             <th style="width: 5%;">#</th>
-                            <th style="width: 30%;">Uraian/Keterangan</th>
-                            <th style="width: 15%;">Nominal</th>
-                            <th style="width: 15%;">Tanggal</th>
-                            <th style="width: 10%;">Qty</th>
-                            <th style="width: 15%; text-align: center;">Bukti</th>
-                            <th style="width: 10%; text-align: center;">Aksi</th>
+                            <th style="width: 12%;">Tgl Return</th>
+                            <th style="width: 15%;">Mitra Binaan</th>
+                            <th style="width: 20%;">Nama Barang</th>
+                            <th style="width: 8%;">Qty</th>
+                            <th style="width: 20%;">Alasan</th>
+                            <th style="width: 15%;">Administrator</th>
+                            <th style="width: 5%; text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $__empty_1 = true; $__currentLoopData = $biayaOperasional; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $biaya): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            <td><strong><?php echo e($biayaOperasional->firstItem() + $key); ?></strong></td>
-                            <td><?php echo e($biaya->uraian); ?></td>
+                            <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                             <td>
-                                <strong class="text-success">
-                                    Rp <?php echo e(number_format($biaya->nominal, 0, ',', '.')); ?>
-
-                                </strong>
-                            </td>
-                            <td>
-                                <i class="bi bi-calendar3 text-success me-1"></i>
-                                <?php echo e(\Carbon\Carbon::parse($biaya->tanggal)->format('d M Y')); ?>
+                                <i class="bi bi-calendar-x text-danger me-1"></i>
+                                <?php echo e(\Carbon\Carbon::parse($return->tgl_return)->format('d/m/Y')); ?>
 
                             </td>
                             <td>
-                                <span class="badge bg-info text-dark"><?php echo e($biaya->qty); ?></span>
+                                <i class="bi bi-building text-info me-1"></i>
+                                <?php echo e($return->good->category->nama); ?>
+
                             </td>
-                            <td class="text-center">
-                                <?php if($biaya->bukti_resi): ?>
-                                    <a href="<?php echo e(asset('storage/' . $biaya->bukti_resi)); ?>" target="_blank" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-eye"></i> Lihat
-                                    </a>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Tidak Ada</span>
-                                <?php endif; ?>
+                            <td>
+                                <i class="bi bi-box text-primary me-2"></i>
+                                <?php echo e($return->good->nama); ?>
+
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
+                            </td>
+                            <td><?php echo e($return->alasan); ?></td>
+                            <td>
+                                <i class="bi bi-person-check text-success me-1"></i>
+                                <?php echo e($return->user->nama); ?>
+
                             </td>
                             <td class="text-center">
                                 <div class="dropdown action-dropdown">
-                                    <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($return->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical fs-5"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($return->id); ?>">
                                         <li>
-                                            <a class="dropdown-item" href="<?php echo e(route('biayaoperasional.edit', $biaya->id)); ?>">
+                                            <a class="dropdown-item" href="/dashboard/returns/<?php echo e($return->id); ?>/edit">
                                                 <i class="bi bi-pencil-square text-warning"></i> Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="<?php echo e(route('biayaoperasional.destroy', $biaya->id)); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($biaya->id); ?>">
+                                            <form action="/dashboard/returns/<?php echo e($return->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($return->id); ?>">
                                                 <?php echo method_field('delete'); ?>
                                                 <?php echo csrf_field(); ?>
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($biaya->id); ?>', '<?php echo e($biaya->uraian); ?>')">
+                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($return->id); ?>', '<?php echo e($return->good->nama); ?>')">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </form>
@@ -385,14 +376,14 @@
                         </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                    <h5>Data tidak ditemukan</h5>
-                                    <p>Tidak ada data biaya yang cocok dengan pencarian Anda.</p>
-                                    <a href="<?php echo e(route('biayaoperasional.index')); ?>" class="btn btn-umkm btn-umkm-sm">
-                                        <i class="bi bi-arrow-left"></i>
-                                        Kembali ke semua data
+                                    <h5>Belum ada data return</h5>
+                                    <p>Silakan tambah data return baru untuk memulai</p>
+                                    <a href="/dashboard/returns/create" class="btn-umkm">
+                                        <i class="bi bi-plus-circle"></i>
+                                        Tambah Data Return
                                     </a>
                                 </div>
                             </td>
@@ -402,10 +393,11 @@
                 </table>
             </div>
 
-            <?php if($biayaOperasional->hasPages()): ?>
+            <!-- Pagination -->
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    <?php echo e($biayaOperasional->appends(request()->query())->links()); ?>
+                    <?php echo e($returns->links()); ?>
 
                 </div>
             </div>
@@ -414,6 +406,7 @@
     </div>
 </div>
 
+<!-- [BARU] Modal Konfirmasi Hapus -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -422,7 +415,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus data <br><strong id="itemNameToDelete" class="text-danger"></strong>?
+        Apakah Anda yakin ingin menghapus data return untuk barang <br><strong id="itemNameToDelete" class="text-danger"></strong>?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -433,6 +426,7 @@
 </div>
 
 <script>
+    // [PERBAIKAN TOTAL] Script untuk menangani modal konfirmasi hapus
     document.addEventListener('DOMContentLoaded', function() {
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
@@ -441,25 +435,37 @@
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, biayaId, itemName) {
-            formToSubmit = document.getElementById('deleteForm' + biayaId);
+        window.showDeleteModal = function(button, returnId, itemName) {
+            // Simpan referensi ke form dan tombol asli
+            formToSubmit = document.getElementById('deleteForm' + returnId);
             originalButton = button;
+
+            // Tampilkan nama barang di modal
             itemNameToDeleteSpan.textContent = itemName;
+
+            // Tampilkan modal
             deleteModal.show();
         }
 
+        // Tambahkan event listener ke tombol konfirmasi di modal
         confirmDeleteButton.addEventListener('click', function() {
             if (formToSubmit && originalButton) {
+                // Ubah tombol asli menjadi loading
                 originalButton.disabled = true;
                 originalButton.innerHTML = `
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Loading...
                 `;
+
+                // Sembunyikan modal
                 deleteModal.hide();
+
+                // Submit form
                 formToSubmit.submit();
             }
         });
     });
 </script>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/biayaoperasional/index.blade.php ENDPATH**/ ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>
