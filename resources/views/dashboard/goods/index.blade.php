@@ -419,7 +419,7 @@
     </div>
 </div>
 
-{{-- Modal dan script lainnya tidak perlu diubah --}}
+{{-- Modal dan script lainnya tidak perlu diubah --}}.
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 15px; border: none;">
