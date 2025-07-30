@@ -330,6 +330,11 @@
         background-color: #fdf2f2;
         color: #c82333 !important;
     }
+
+     /* CSS BARU untuk tombol hapus terpilih */
+    .bulk-action-container {
+        transition: all 0.3s ease-in-out;
+    } 
 </style>
 
 <div class="container-fluid py-4">
@@ -344,6 +349,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
+    
+    {{-- [BARU] Menambahkan notifikasi untuk error dari bulk delete --}}
+    @if (session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
     <div class="umkm-card">
         <div class="umkm-card-header">
@@ -352,7 +365,11 @@
                     <i class="bi bi-box-seam"></i>
                     Data Barang
                 </h3>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
+                    {{-- [BARU] Tombol untuk menghapus barang yang dipilih --}}
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
                     <a href="/dashboard/goods/cetakbarcode" class="btn-umkm btn-umkm-sm">
                         <i class="bi bi-qr-code"></i>
                         Cetak Barcode Barang
@@ -366,7 +383,6 @@
         </div>
 
         <div class="umkm-card-body">
-            <!-- Search Section -->
             <div class="search-section">
                 <form action="/dashboard/goods" method="GET">
                     <div class="row align-items-end">
@@ -391,155 +407,168 @@
                 </form>
             </div>
 
-            <!-- Table -->
-            <div class="table-responsive">
-                <table class="table table-umkm">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 10%;">Tgl Masuk</th>
-                            <th style="width: 24%;">Nama Barang</th>
-                            <th style="width: 13%;">Jenis</th>
-                            <th style="width: 14%;">Expired</th>
-                            <th style="width: 13%;">Mitra Binaan</th>
-                            <th style="width: 7%;">Stok</th>
-                            <th style="width: 9%;">Harga</th>
-                            <th style="width: 5%; text-align: center;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($goods as $key => $good)
-                        <tr>
-                            <td><strong>{{ $goods->firstItem() + $key }}</strong></td>
-                            <td>
-                                <i class="bi bi-calendar3 text-success me-1"></i>
-                                {{ \Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y') }}
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-box text-primary me-2"></i>
-                                    <div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <strong>{{ $good->nama }}</strong>
-                                            @if($good->is_grosir_active)
-                                                <span class="wholesale-indicator" title="Barang Grosir - Min {{ $good->min_qty_grosir }} unit: Rp {{ number_format($good->harga_grosir, 0, ',', '.') }}">
-                                                    🏷️ GROSIR
-                                                </span>
+            {{-- [BARU] Form untuk membungkus tabel dan mengirimkan data bulk delete --}}
+            <form id="bulk-delete-form" action="{{ route('goods.bulkDelete') }}" method="POST">
+                @csrf
+                @method('DELETE')
+                
+                <div class="table-responsive">
+                    <table class="table table-umkm">
+                        <thead>
+                            <tr>
+                                {{-- [BARU] Checkbox untuk memilih semua --}}
+                                <th style="width: 3%; text-align: center;">
+                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                                </th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 10%;">Tgl Masuk</th>
+                                <th style="width: 24%;">Nama Barang</th>
+                                <th style="width: 13%;">Jenis</th>
+                                <th style="width: 14%;">Expired</th>
+                                <th style="width: 13%;">Mitra Binaan</th>
+                                <th style="width: 7%;">Stok</th>
+                                <th style="width: 9%;">Harga</th>
+                                <th style="width: 5%; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($goods as $key => $good)
+                            <tr>
+                                {{-- [BARU] Checkbox per baris --}}
+                                <td class="text-center">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $good->id }}">
+                                </td>
+                                <td><strong>{{ $goods->firstItem() + $key }}</strong></td>
+                                <td>
+                                    <i class="bi bi-calendar3 text-success me-1"></i>
+                                    {{ \Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y') }}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-box text-primary me-2"></i>
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <strong>{{ $good->nama }}</strong>
+                                                @if($good->is_grosir_active)
+                                                    <span class="wholesale-indicator" title="Barang Grosir - Min {{ $good->min_qty_grosir }} unit: Rp {{ number_format($good->harga_grosir, 0, ',', '.') }}">
+                                                        🏷️ GROSIR
+                                                    </span>
+                                                @endif
+                                                @if($good->is_tebus_murah_active)
+                                                    <span class="tebus-murah-indicator" title="Tebus Murah - Min. Transaksi Rp {{ number_format($good->min_total_tebus_murah, 0, ',', '.') }}: Harga Spesial Rp {{ number_format($good->harga_tebus_murah, 0, ',', '.') }}">
+                                                        % TEBUS MURAH
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            @if($good->barcode)
+                                                <small class="text-muted">{{ $good->barcode }}</small>
                                             @endif
-                                            @if($good->is_tebus_murah_active)
-                                                <span class="tebus-murah-indicator" title="Tebus Murah - Min. Transaksi Rp {{ number_format($good->min_total_tebus_murah, 0, ',', '.') }}: Harga Spesial Rp {{ number_format($good->harga_tebus_murah, 0, ',', '.') }}">
-                                                    % TEBUS MURAH
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="type-badge type-{{ str_replace('_', '-', $good->type) }}">
+                                        @if($good->type == 'makanan')
+                                            Makanan & Minuman
+                                        @elseif($good->type == 'non_makanan')
+                                            Non Makanan & Minuman
+                                        @elseif($good->type == 'handycraft')
+                                            Handycraft
+                                        @elseif($good->type == 'fashion')
+                                            Fashion
+                                        @else
+                                            Lainnya
+                                        @endif
+                                    </span>
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    @if($good->expired_date)
+                                        <div>
+                                            <small class="text-muted">
+                                                {{ $good->expired_date->format('d/m/Y') }}
+                                            </small>
+                                            @php
+                                                $status = $good->getExpirationStatus();
+                                            @endphp
+                                            @if($status == 'expired')
+                                                <span class="expired-badge expired-danger">
+                                                    ⚠️ EXPIRED
+                                                </span>
+                                            @elseif($status == 'expiring_soon')
+                                                <span class="expired-badge expired-warning">
+                                                    ⏰ {{ $good->getDaysUntilExpiration() }} hari
+                                                </span>
+                                            @else
+                                                <span class="expired-badge expired-success">
+                                                    ✅ {{ $good->getDaysUntilExpiration() }} hari
                                                 </span>
                                             @endif
                                         </div>
-                                        @if($good->barcode)
-                                            <small class="text-muted">{{ $good->barcode }}</small>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="type-badge type-{{ str_replace('_', '-', $good->type) }}">
-                                    @if($good->type == 'makanan')
-                                        Makanan & Minuman
-                                    @elseif($good->type == 'non_makanan')
-                                        Non Makanan & Minuman
-                                    @elseif($good->type == 'handycraft')
-                                        Handycraft
-                                    @elseif($good->type == 'fashion')
-                                        Fashion
                                     @else
-                                        Lainnya
+                                        <span class="text-muted">
+                                            <i class="bi bi-dash-circle"></i> Tidak ada
+                                        </span>
                                     @endif
-                                </span>
-                            </td>
-                            <td style="white-space: nowrap;">
-                                @if($good->expired_date)
-                                    <div>
-                                        <small class="text-muted">
-                                            {{ $good->expired_date->format('d/m/Y') }}
-                                        </small>
-                                        @php
-                                            $status = $good->getExpirationStatus();
-                                        @endphp
-                                        @if($status == 'expired')
-                                            <span class="expired-badge expired-danger">
-                                                ⚠️ EXPIRED
-                                            </span>
-                                        @elseif($status == 'expiring_soon')
-                                            <span class="expired-badge expired-warning">
-                                                ⏰ {{ $good->getDaysUntilExpiration() }} hari
-                                            </span>
-                                        @else
-                                            <span class="expired-badge expired-success">
-                                                ✅ {{ $good->getDaysUntilExpiration() }} hari
-                                            </span>
-                                        @endif
-                                    </div>
-                                @else
-                                    <span class="text-muted">
-                                        <i class="bi bi-dash-circle"></i> Tidak ada
+                                </td>
+                                <td>
+                                    <i class="bi bi-building text-info me-1"></i>
+                                    {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
+                                </td>
+                                <td>
+                                    <span class="badge {{ $good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger') }}">
+                                        {{ $good->stok }} unit
                                     </span>
-                                @endif
-                            </td>
-                            <td>
-                                <i class="bi bi-building text-info me-1"></i>
-                                {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
-                            </td>
-                            <td>
-                                <span class="badge {{ $good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger') }}">
-                                    {{ $good->stok }} unit
-                                </span>
-                            </td>
-                            <td>
-                                <strong class="text-success">
-                                    Rp {{ number_format($good->harga, 0, ',', '.') }}
-                                </strong>
-                            </td>
-                            <td class="text-center">
-                                <div class="dropup action-dropdown">
-                                    <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical fs-5"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" href="/dashboard/goods/{{ $good->id }}/edit">
-                                                <i class="bi bi-pencil-square text-warning"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <form action="/dashboard/goods/{{ $good->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $good->id }}">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $good->id }}', '{{ $good->nama }}')">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="9" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                    <h5>Belum ada data barang</h5>
-                                    <p>Silakan tambah barang baru untuk memulai</p>
-                                    <a href="/dashboard/goods/create" class="btn-umkm">
-                                        <i class="bi bi-plus-circle"></i>
-                                        Tambah Barang Pertama
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </td>
+                                <td>
+                                    <strong class="text-success">
+                                        Rp {{ number_format($good->harga, 0, ',', '.') }}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <div class="dropup action-dropdown">
+                                        <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="/dashboard/goods/{{ $good->id }}/edit">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="/dashboard/goods/{{ $good->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $good->id }}">
+                                                    @method('delete')
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $good->id }}', '{{ $good->nama }}')">
+                                                        <i class="bi bi-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                {{-- [MODIFIKASI] colspan diubah menjadi 10 --}}
+                                <td colspan="10" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data barang</h5>
+                                        <p>Silakan tambah barang baru untuk memulai</p>
+                                        <a href="/dashboard/goods/create" class="btn-umkm">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Tambah Barang Pertama
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </form>
 
-            <!-- Pagination -->
             @if($goods->hasPages())
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
@@ -551,7 +580,6 @@
     </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -565,6 +593,24 @@
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
         <button type="button" class="btn btn-danger" id="confirmDeleteButton" style="border-radius: 10px;">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> barang yang dipilih?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
       </div>
     </div>
   </div>
@@ -598,8 +644,8 @@
 </style>
 
 <script>
-    // [PERBAIKAN TOTAL] Script untuk menangani modal konfirmasi hapus
     document.addEventListener('DOMContentLoaded', function() {
+        // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -608,34 +654,80 @@
         let originalButton = null;
 
         window.showDeleteModal = function(button, goodId, goodName) {
-            // Simpan referensi ke form dan tombol asli
             formToSubmit = document.getElementById('deleteForm' + goodId);
             originalButton = button;
-
-            // Tampilkan nama barang di modal
             itemNameToDeleteSpan.textContent = goodName;
-
-            // Tampilkan modal
             deleteModal.show();
         }
 
-        // Tambahkan event listener ke tombol konfirmasi di modal
         confirmDeleteButton.addEventListener('click', function() {
             if (formToSubmit && originalButton) {
-                // Ubah tombol asli menjadi loading
                 originalButton.disabled = true;
                 originalButton.innerHTML = `
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Loading...
                 `;
-
-                // Sembunyikan modal
                 deleteModal.hide();
-
-                // Submit form
                 formToSubmit.submit();
             }
         });
+
+        // --- [BARU] SCRIPT UNTUK BULK DELETE ---
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const bulkDeleteButton = document.getElementById('bulk-delete-button');
+        const bulkDeleteForm = document.getElementById('bulk-delete-form');
+        const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteConfirmationModal'));
+        const bulkDeleteCountSpan = document.getElementById('bulkDeleteCount');
+        const confirmBulkDeleteButton = document.getElementById('confirmBulkDeleteButton');
+
+        function updateBulkDeleteButtonState() {
+            const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (selectedCount > 0) {
+                bulkDeleteButton.style.display = 'inline-flex';
+                bulkDeleteButton.querySelector('.bi').nextSibling.textContent = ` Hapus ${selectedCount} Terpilih`;
+            } else {
+                bulkDeleteButton.style.display = 'none';
+            }
+            // Sinkronkan checkbox "pilih semua"
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
+        }
+
+        // Event listener untuk checkbox "pilih semua"
+        if(selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButtonState();
+            });
+        }
+
+        // Event listener untuk setiap checkbox barang
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkDeleteButtonState);
+        });
+
+        // Event listener untuk tombol hapus terpilih
+        if(bulkDeleteButton) {
+            bulkDeleteButton.addEventListener('click', function() {
+                const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                if (selectedCount > 0) {
+                    bulkDeleteCountSpan.textContent = selectedCount;
+                    bulkDeleteModal.show();
+                }
+            });
+        }
+        
+        // Event listener untuk tombol konfirmasi di modal bulk delete
+        if(confirmBulkDeleteButton) {
+            confirmBulkDeleteButton.addEventListener('click', function() {
+                bulkDeleteForm.submit();
+            });
+        }
+        
+        // Inisialisasi state tombol saat halaman dimuat
+        updateBulkDeleteButtonState();
     });
 </script>
 @endsection

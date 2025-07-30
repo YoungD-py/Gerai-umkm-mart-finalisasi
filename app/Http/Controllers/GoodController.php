@@ -290,6 +290,36 @@ class GoodController extends Controller
     }
 
     /**
+     * [BARU] Menghapus beberapa barang sekaligus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete(Request $request)
+    {
+        // Validasi bahwa 'selected_ids' ada dan merupakan array
+        $request->validate([
+            'selected_ids' => 'required|array',
+            'selected_ids.*' => 'exists:goods,id', // Pastikan setiap ID ada di tabel 'goods'
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        
+        if (empty($selectedIds)) {
+            return redirect('/dashboard/goods')->with('error', 'Tidak ada barang yang dipilih untuk dihapus.');
+        }
+
+        // Hapus barang berdasarkan ID yang dipilih
+        $deletedCount = Good::whereIn('id', $selectedIds)->delete();
+
+        if ($deletedCount > 0) {
+            return redirect('/dashboard/goods')->with('success', $deletedCount . ' barang berhasil dihapus!');
+        }
+
+        return redirect('/dashboard/goods')->with('error', 'Gagal menghapus barang yang dipilih.');
+    }
+
+    /**
      * Generate new barcode for existing product
      */
     public function generateBarcode(Good $good)

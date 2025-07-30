@@ -265,6 +265,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
+    
+    {{-- [BARU] Menambahkan notifikasi untuk error --}}
+    @if (session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
 
     <div class="umkm-card">
         <div class="umkm-card-header">
@@ -273,10 +282,16 @@
                     <i class="bi bi-building"></i>
                     Data Mitra Binaan
                 </h3>
-                <a href="/dashboard/categories/create" class="btn-umkm btn-umkm-sm">
-                    <i class="bi bi-plus-circle"></i>
-                    Tambah Mitra Binaan
-                </a>
+                {{-- [BARU] Container untuk tombol aksi --}}
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
+                    <a href="/dashboard/categories/create" class="btn-umkm btn-umkm-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Tambah Mitra Binaan
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -306,68 +321,82 @@
                 </form>
             </div>
 
-            <!-- Table -->
-            <div class="table-responsive">
-                <table class="table table-umkm">
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">#</th>
-                            <th style="width: 70%;">Nama Mitra Binaan</th>
-                            <th style="width: 20%; text-align: center;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($categories as $key => $category)
-                        <tr>
-                            <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-building text-success me-2"></i>
-                                    <strong>{{ $category->nama }}</strong>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <div class="dropdown action-dropdown">
-                                    <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical fs-5"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
-                                        <li>
-                                            <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
-                                                <i class="bi bi-pencil-square text-warning"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $category->id }}">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $category->id }}', '{{ $category->nama }}')">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                    <h5>Belum ada data mitra binaan</h5>
-                                    <p>Silakan tambah mitra binaan baru untuk memulai</p>
-                                    <a href="/dashboard/categories/create" class="btn-umkm">
-                                        <i class="bi bi-plus-circle"></i>
-                                        Tambah Mitra Binaan Pertama
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <!-- [BARU] Form untuk bulk delete -->
+            <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-umkm">
+                        <thead>
+                            <tr>
+                                {{-- [BARU] Checkbox "Pilih Semua" --}}
+                                <th style="width: 5%; text-align: center;">
+                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                                </th>
+                                <th style="width: 10%;">#</th>
+                                <th style="width: 65%;">Nama Mitra Binaan</th>
+                                <th style="width: 20%; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($categories as $key => $category)
+                            <tr>
+                                {{-- [BARU] Checkbox per baris --}}
+                                <td class="text-center">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $category->id }}">
+                                </td>
+                                <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-building text-success me-2"></i>
+                                        <strong>{{ $category->nama }}</strong>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="dropdown action-dropdown">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
+                                            <li>
+                                                <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $category->id }}">
+                                                    @method('delete')
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $category->id }}', '{{ $category->nama }}')">
+                                                        <i class="bi bi-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                {{-- [MODIFIKASI] Colspan diubah menjadi 4 --}}
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data mitra binaan</h5>
+                                        <p>Silakan tambah mitra binaan baru untuk memulai</p>
+                                        <a href="/dashboard/categories/create" class="btn-umkm">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Tambah Mitra Binaan Pertama
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </form>
 
             <!-- Pagination -->
             @if($categories->hasPages())
@@ -381,7 +410,7 @@
     </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus -->
+<!-- Modal Konfirmasi Hapus SATUAN -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -400,9 +429,28 @@
   </div>
 </div>
 
+<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+      </div>
+      <div class="modal-body fs-5 text-center py-4">
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> mitra yang dipilih?
+      </div>
+      <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-    // [PERBAIKAN TOTAL] Script untuk menangani modal konfirmasi hapus
     document.addEventListener('DOMContentLoaded', function() {
+        // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -411,34 +459,74 @@
         let originalButton = null;
 
         window.showDeleteModal = function(button, categoryId, categoryName) {
-            // Simpan referensi ke form dan tombol asli
             formToSubmit = document.getElementById('deleteForm' + categoryId);
             originalButton = button;
-
-            // Tampilkan nama mitra di modal
             categoryNameToDeleteSpan.textContent = categoryName;
-
-            // Tampilkan modal
             deleteModal.show();
         }
 
-        // Tambahkan event listener ke tombol konfirmasi di modal
         confirmDeleteButton.addEventListener('click', function() {
             if (formToSubmit && originalButton) {
-                // Ubah tombol asli menjadi loading
                 originalButton.disabled = true;
                 originalButton.innerHTML = `
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Loading...
                 `;
-
-                // Sembunyikan modal
                 deleteModal.hide();
-
-                // Submit form
                 formToSubmit.submit();
             }
         });
+
+        // --- [BARU] SCRIPT UNTUK BULK DELETE ---
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const bulkDeleteButton = document.getElementById('bulk-delete-button');
+        const bulkDeleteForm = document.getElementById('bulk-delete-form');
+        const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteConfirmationModal'));
+        const bulkDeleteCountSpan = document.getElementById('bulkDeleteCount');
+        const confirmBulkDeleteButton = document.getElementById('confirmBulkDeleteButton');
+
+        function updateBulkDeleteButtonState() {
+            const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (selectedCount > 0) {
+                bulkDeleteButton.style.display = 'inline-flex';
+                bulkDeleteButton.querySelector('.bi').nextSibling.textContent = ` Hapus ${selectedCount} Terpilih`;
+            } else {
+                bulkDeleteButton.style.display = 'none';
+            }
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
+        }
+
+        if(selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButtonState();
+            });
+        }
+
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkDeleteButtonState);
+        });
+
+        if(bulkDeleteButton) {
+            bulkDeleteButton.addEventListener('click', function() {
+                const selectedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                if (selectedCount > 0) {
+                    bulkDeleteCountSpan.textContent = selectedCount;
+                    bulkDeleteModal.show();
+                }
+            });
+        }
+        
+        if(confirmBulkDeleteButton) {
+            confirmBulkDeleteButton.addEventListener('click', function() {
+                bulkDeleteForm.submit();
+            });
+        }
+        
+        updateBulkDeleteButtonState();
     });
 </script>
 @endsection
