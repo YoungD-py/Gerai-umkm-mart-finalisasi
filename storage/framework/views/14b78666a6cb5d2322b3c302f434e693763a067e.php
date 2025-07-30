@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles adapted for Cashier Dashboard --- */
     .cashier-card {
@@ -162,23 +160,24 @@
         <p>Lakukan transaksi penjualan dan lihat riwayat transaksi hari ini</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="cashier-card">
         <div class="cashier-card-header">
-            {{-- [RESPONSIVE] Use flexbox for better alignment on all screen sizes --}}
-            {{-- On mobile: items stack. On medium screens and up: items are side-by-side. --}}
+            
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                 <h3 class="cashier-card-title mb-2 mb-md-0">
                     <i class="bi bi-receipt"></i>
                     Transaksi Hari Ini
                 </h3>
-                {{-- [RESPONSIVE] Make button full width on mobile for easier tapping --}}
+                
                 <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto">
                     <i class="bi bi-plus-circle"></i>
                     Tambah Transaksi
@@ -195,7 +194,7 @@
                             <th>#</th>
                             <th>No. Nota</th>
                             <th>Waktu Transaksi</th>
-                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
+                            
                             <th class="d-none d-lg-table-cell">Petugas</th>
                             <th class="d-none d-md-table-cell">Metode Bayar</th>
                             <th>Status</th>
@@ -204,43 +203,45 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($transactions as $key => $transaction)
+                        <?php $__empty_1 = true; $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            <td><strong>{{ $loop->iteration }}</strong></td>
+                            <td><strong><?php echo e($loop->iteration); ?></strong></td>
                             <td>
                                 <i class="bi bi-hash text-primary"></i>
-                                {{ $transaction->no_nota }}
+                                <?php echo e($transaction->no_nota); ?>
+
                             </td>
                             <td style="white-space:nowrap;">
                                 <i class="bi bi-clock text-muted me-1"></i>
-                                {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s') }}
+                                <?php echo e(\Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s')); ?>
+
                             </td>
-                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
-                            <td class="d-none d-lg-table-cell">{{ $transaction->user->nama }}</td>
-                            <td class="d-none d-md-table-cell">{{ $transaction->metode_pembayaran }}</td>
+                            
+                            <td class="d-none d-lg-table-cell"><?php echo e($transaction->user->nama); ?></td>
+                            <td class="d-none d-md-table-cell"><?php echo e($transaction->metode_pembayaran); ?></td>
                             <td>
-                                @if(strtolower(trim($transaction->status)) == 'lunas')
-                                    <span class="badge bg-success">{{ $transaction->status }}</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
-                                @endif
+                                <?php if(strtolower(trim($transaction->status)) == 'lunas'): ?>
+                                    <span class="badge bg-success"><?php echo e($transaction->status); ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-warning text-dark"><?php echo e($transaction->status); ?></span>
+                                <?php endif; ?>
                             </td>
-                            <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
+                            <td><strong>Rp <?php echo e(number_format($transaction->total_harga, 0, ',', '.')); ?></strong></td>
                             <td class="text-center">
                                 <form method="post" action="/dashboard/cashiers/nota" class="d-inline" onsubmit="handleFormSubmit(this)">
-                                    @csrf
-                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
                                     <button class="btn btn-primary btn-sm" type="submit" title="Unduh Nota">
-                                        {{-- [RESPONSIVE] Hide text on small screens, show only icon --}}
+                                        
                                         <i class="bi bi-download"></i>
                                         <span class="d-none d-md-inline">Unduh Nota</span>
                                     </button>
                                 </form>
                             </td>
                         </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
-                            {{-- [RESPONSIVE] Adjust colspan to match visible columns --}}.
+                            
                             <td colspan="8" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-cart-x display-4 d-block mb-3"></i>
@@ -253,7 +254,7 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -280,4 +281,6 @@
         }
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/cashiers/index.blade.php ENDPATH**/ ?>

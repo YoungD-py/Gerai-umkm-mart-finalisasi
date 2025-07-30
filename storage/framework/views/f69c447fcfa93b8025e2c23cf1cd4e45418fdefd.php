@@ -158,7 +158,7 @@
                     <path d="M9 15l0 .01" />
                     <path d="M9 18l0 .01" />
                 </svg>
-                
+                .
                 <span class="ms-2 d-none d-sm-inline-block"> GERAI UMKM MART </span>
             </a>
         </h1>
