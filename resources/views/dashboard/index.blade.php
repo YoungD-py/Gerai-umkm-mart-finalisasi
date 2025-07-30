@@ -33,13 +33,16 @@
     
     /* Header */
     .page-header {
+        /* [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel */
         display: flex;
+        flex-wrap: wrap; /* Izinkan item untuk wrap ke baris baru di layar kecil */
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
+        gap: 1rem; /* Menambahkan jarak antar item */
     }
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem; /* [RESPONSIVE] Ukuran font disesuaikan */
         font-weight: 600;
     }
 
@@ -51,6 +54,14 @@
         background-color: #206bc4;
         color: white;
         font-weight: 600;
+    }
+    /* [RESPONSIVE] Membuat grup tombol bisa di-scroll horizontal di layar kecil */
+    .date-filter-wrapper {
+        overflow-x: auto;
+        padding-bottom: 10px; /* Jarak agar shadow scrollbar tidak terpotong */
+    }
+    .date-filter {
+        flex-wrap: nowrap; /* Mencegah tombol wrap ke baris baru */
     }
 
     /* Stat Cards */
@@ -104,6 +115,19 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* [RESPONSIVE] Media query untuk layar besar */
+    @media (min-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+        .date-filter-wrapper {
+            overflow-x: visible;
+        }
+        .date-filter {
+            flex-wrap: wrap;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -113,27 +137,32 @@
             <h2 class="page-title">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
             <p class="text-muted mb-0" id="live-clock"></p>
         </div>
-        <div class="ms-auto d-flex gap-2">
-            <a href="/dashboard/goods/create" class="btn btn-light"><i class="bi bi-plus-circle me-2"></i>Tambah Barang</a>
-            <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
+        {{-- [RESPONSIVE] Tombol dibuat full-width di mobile dan auto di desktop --}}
+        <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
+            <a href="/dashboard/goods/create" class="btn btn-light flex-grow-1"><i class="bi bi-plus-circle me-2"></i>Tambah Barang</a>
+            <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary flex-grow-1"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
         </div>
     </div>
     
     <!-- BARIS 2: FILTER TANGGAL -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="btn-group date-filter">
-            <a href="?range=all_time" class="btn btn-outline-secondary @if($range == 'all_time') active @endif">Semua Waktu</a>
-            <a href="?range=today" class="btn btn-outline-secondary @if($range == 'today') active @endif">Hari Ini</a>
-            <a href="?range=7_days" class="btn btn-outline-secondary @if($range == '7_days') active @endif">7 Hari</a>
-            <a href="?range=30_days" class="btn btn-outline-secondary @if($range == '30_days') active @endif">30 Hari</a>
-            <a href="?range=this_month" class="btn btn-outline-secondary @if($range == 'this_month') active @endif">Bulan Ini</a>
+    {{-- [RESPONSIVE] Layout diubah untuk mobile --}}
+    <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center mb-4">
+        <div class="date-filter-wrapper mb-3 mb-md-0">
+            <div class="btn-group date-filter">
+                <a href="?range=all_time" class="btn btn-outline-secondary @if($range == 'all_time') active @endif">Semua Waktu</a>
+                <a href="?range=today" class="btn btn-outline-secondary @if($range == 'today') active @endif">Hari Ini</a>
+                <a href="?range=7_days" class="btn btn-outline-secondary @if($range == '7_days') active @endif">7 Hari</a>
+                <a href="?range=30_days" class="btn btn-outline-secondary @if($range == '30_days') active @endif">30 Hari</a>
+                <a href="?range=this_month" class="btn btn-outline-secondary @if($range == 'this_month') active @endif">Bulan Ini</a>
+            </div>
         </div>
-        <div class="text-muted fw-bold">Laporan untuk: {{ $rangeTitle }}</div>
+        <div class="text-muted fw-bold text-start text-md-end">Laporan untuk: {{ $rangeTitle }}</div>
     </div>
 
     <!-- BARIS 3: KARTU STATISTIK UTAMA -->
+    {{-- [RESPONSIVE] Menambahkan col-12 untuk stacking di layar extra small --}}
     <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="card stat-card">
                 <div class="card-body">
                     <div class="stat-label">
@@ -147,7 +176,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="card stat-card">
                 <div class="card-body">
                     <div class="stat-label">
@@ -161,7 +190,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="card stat-card">
                 <div class="card-body">
                     <div class="stat-label">
@@ -171,7 +200,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="card stat-card">
                 <div class="card-body">
                     <div class="stat-label">
@@ -201,7 +230,6 @@
 
     <!-- BARIS 5: GRAFIK TERLARIS -->
     <div class="row g-4 mt-1">
-        <!-- [DIUBAH] Produk Terlaris menjadi Grafik -->
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header"><h3 class="card-title">Produk Terlaris</h3></div>
@@ -210,7 +238,6 @@
                 </div>
             </div>
         </div>
-        <!-- [DIUBAH] Mitra Terlaris menjadi Grafik -->
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header"><h3 class="card-title">Mitra Terlaris</h3></div>
@@ -231,9 +258,10 @@
                         <h3 class="card-alert-title"><i class="bi bi-box-seam-fill text-danger"></i>Stok Segera Habis</h3>
                         <a href="{{ url('/dashboard/goods?status=low_stock') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                     </div>
+                    {{-- [RESPONSIVE] Membuat chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
-                        <div class="col-md-6"><div id="low-stock-chart" style="min-height: 250px;"></div></div>
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="low-stock-chart" style="min-height: 250px;"></div></div>
+                        <div class="col-12 col-md-6">
                             @if($lowStockCount > 0)
                                 <ul class="list-group list-group-flush">
                                     @foreach ($lowStockItems as $item)
@@ -260,9 +288,10 @@
                         <h3 class="card-alert-title"><i class="bi bi-calendar-x-fill text-warning"></i>Segera Expired</h3>
                         <a href="{{ url('/dashboard/goods?status=expiring_soon') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                     </div>
+                    {{-- [RESPONSIVE] Membuat chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
-                        <div class="col-md-6"><div id="expiring-soon-chart" style="min-height: 250px;"></div></div>
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="expiring-soon-chart" style="min-height: 250px;"></div></div>
+                        <div class="col-12 col-md-6">
                             @if($expiringSoonCount > 0)
                                 <ul class="list-group list-group-flush">
                                     @foreach ($expiringSoonItems as $item)
@@ -309,7 +338,7 @@
         };
         new ApexCharts(document.querySelector("#main-chart"), optionsMainChart).render();
 
-        // --- [BARU] GRAFIK PRODUK TERLARIS ---
+        // --- GRAFIK PRODUK TERLARIS ---
         const optionsTopProducts = {
             series: [{ name: 'Unit Terjual', data: {!! $topProductsSeries !!} }],
             chart: { type: 'bar', height: 250, toolbar: { show: false } },
@@ -319,14 +348,13 @@
             legend: { show: false },
             tooltip: { y: { formatter: (val) => val + " unit terjual" } }
         };
-        // Hanya render jika ada data
         if ({!! $topProductsSeries !!}.length > 0) {
             new ApexCharts(document.querySelector("#top-products-chart"), optionsTopProducts).render();
         } else {
             document.querySelector("#top-products-chart").innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart-line fs-1"></i><p class="mt-2">Belum ada data penjualan.</p></div>';
         }
 
-        // --- [BARU] GRAFIK MITRA TERLARIS ---
+        // --- GRAFIK MITRA TERLARIS ---
         const optionsTopMitra = {
             series: [{ name: 'Unit Terjual', data: {!! $topMitraSeries !!} }],
             chart: { type: 'bar', height: 250, toolbar: { show: false } },
@@ -336,7 +364,6 @@
             legend: { show: false },
             tooltip: { y: { formatter: (val) => val + " unit terjual" } }
         };
-        // Hanya render jika ada data
         if ({!! $topMitraSeries !!}.length > 0) {
             new ApexCharts(document.querySelector("#top-mitra-chart"), optionsTopMitra).render();
         } else {
@@ -355,7 +382,7 @@
         };
         new ApexCharts(document.querySelector("#low-stock-chart"), optionsLowStock).render();
 
-        // --- GRAFIK SEGERA EXPIRED ---
+        // --- GRAFIK SEGERA EXPIRED --
         const optionsExpiringSoon = {
             series: {!! $expiringSoonChart_series !!},
             chart: { type: 'donut', height: 280 },
@@ -382,4 +409,3 @@
     });
 </script>
 @endsection
-

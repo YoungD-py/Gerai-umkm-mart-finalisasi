@@ -18,7 +18,6 @@
     }
 
     .cashier-card-header {
-        /* Different color for Cashier page */
         background: linear-gradient(135deg, #007bff, #0056b3); 
         color: white;
         padding: 20px;
@@ -58,7 +57,6 @@
     }
 
     .btn-cashier {
-        /* Different color for Cashier page */
         background: linear-gradient(135deg, #007bff, #0056b3);
         border: none;
         border-radius: 15px;
@@ -107,7 +105,6 @@
     }
 
     .table-cashier thead th {
-        /* Different color for Cashier page */
         background: linear-gradient(135deg, #007bff, #0056b3);
         color: white;
         font-weight: 600;
@@ -140,7 +137,8 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        /* [RESPONSIVE] Adjust font size for smaller screens */
+        font-size: 2rem;
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -150,46 +148,11 @@
         opacity: 0.9;
     }
 
-    .search-section {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .input-group .form-control {
-        border-radius: 15px 0 0 15px;
-    }
-
-    .input-group .btn {
-        border-radius: 0 15px 15px 0;
-    }
-
-    .pagination-wrapper .pagination {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .pagination-wrapper .page-link {
-        border: none;
-        padding: 12px 16px;
-        color: #007bff;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .pagination-wrapper .page-link:hover {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .pagination-wrapper .page-item.active .page-link {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border-color: #007bff;
+    /* [RESPONSIVE] Media query for larger screens */
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
     }
 </style>
 
@@ -208,12 +171,15 @@
 
     <div class="cashier-card">
         <div class="cashier-card-header">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <h3 class="cashier-card-title">
+            {{-- [RESPONSIVE] Use flexbox for better alignment on all screen sizes --}}
+            {{-- On mobile: items stack. On medium screens and up: items are side-by-side. --}}
+            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+                <h3 class="cashier-card-title mb-2 mb-md-0">
                     <i class="bi bi-receipt"></i>
                     Transaksi Hari Ini
                 </h3>
-                <a href="/dashboard/cashier/quick-transaction" class="btn-cashier btn-cashier-sm">
+                {{-- [RESPONSIVE] Make button full width on mobile for easier tapping --}}
+                <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto">
                     <i class="bi bi-plus-circle"></i>
                     Tambah Transaksi
                 </a>
@@ -229,8 +195,9 @@
                             <th>#</th>
                             <th>No. Nota</th>
                             <th>Waktu Transaksi</th>
-                            <th>Petugas</th>
-                            <th>Metode Bayar</th>
+                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
+                            <th class="d-none d-lg-table-cell">Petugas</th>
+                            <th class="d-none d-md-table-cell">Metode Bayar</th>
                             <th>Status</th>
                             <th>Total</th>
                             <th class="text-center">Aksi</th>
@@ -248,8 +215,9 @@
                                 <i class="bi bi-clock text-muted me-1"></i>
                                 {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s') }}
                             </td>
-                            <td>{{ $transaction->user->nama }}</td>
-                            <td>{{ $transaction->metode_pembayaran }}</td>
+                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
+                            <td class="d-none d-lg-table-cell">{{ $transaction->user->nama }}</td>
+                            <td class="d-none d-md-table-cell">{{ $transaction->metode_pembayaran }}</td>
                             <td>
                                 @if(strtolower(trim($transaction->status)) == 'lunas')
                                     <span class="badge bg-success">{{ $transaction->status }}</span>
@@ -259,18 +227,20 @@
                             </td>
                             <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
                             <td class="text-center">
-                                {{-- [PERUBAHAN] Menambahkan onsubmit pada form --}}
                                 <form method="post" action="/dashboard/cashiers/nota" class="d-inline" onsubmit="handleFormSubmit(this)">
                                     @csrf
                                     <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
                                     <button class="btn btn-primary btn-sm" type="submit" title="Unduh Nota">
-                                        <i class="bi bi-download"></i> Unduh Nota
+                                        {{-- [RESPONSIVE] Hide text on small screens, show only icon --}}
+                                        <i class="bi bi-download"></i>
+                                        <span class="d-none d-md-inline">Unduh Nota</span>
                                     </button>
                                 </form>
                             </td>
                         </tr>
                         @empty
                         <tr>
+                            {{-- [RESPONSIVE] Adjust colspan to match visible columns --}}
                             <td colspan="8" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-cart-x display-4 d-block mb-3"></i>
@@ -291,7 +261,6 @@
     </div>
 </div>
 
-{{-- [BARU] Script untuk menangani status loading tombol --}}
 <script>
     function handleFormSubmit(form) {
         const button = form.querySelector('button[type="submit"]');
@@ -301,10 +270,9 @@
             button.disabled = true;
             button.innerHTML = `
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
+                <span class="d-none d-md-inline">Loading...</span>
             `;
 
-            // Mengembalikan tombol ke keadaan semula setelah 3 detik
             setTimeout(function() {
                 button.disabled = false;
                 button.innerHTML = originalButtonHTML;
