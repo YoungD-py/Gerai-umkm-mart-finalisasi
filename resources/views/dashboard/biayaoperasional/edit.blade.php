@@ -11,7 +11,7 @@
         transition: all 0.3s ease;
         overflow: hidden;
     }
-
+    
     .umkm-card-header {
         background: linear-gradient(135deg, #ffc107, #e0a800);
         color: #000;
@@ -20,7 +20,7 @@
         position: relative;
         overflow: hidden;
     }
-
+    
     .umkm-card-header::before {
         content: '';
         position: absolute;
@@ -32,7 +32,7 @@
         transform: rotate(45deg);
         transition: all 0.3s ease;
     }
-
+    
     .umkm-card-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -41,11 +41,11 @@
         align-items: center;
         gap: 10px;
     }
-
+    
     .umkm-card-body {
-        padding: 30px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
-
+    
     .form-label {
         font-weight: 600;
         color: #333;
@@ -54,7 +54,7 @@
         align-items: center;
         gap: 8px;
     }
-
+    
     .form-control, .form-select {
         border-radius: 15px;
         border: 2px solid #e9ecef;
@@ -63,14 +63,14 @@
         background: rgba(255,255,255,0.9);
         font-size: 1rem;
     }
-
+    
     .form-control:focus, .form-select:focus {
         border-color: #ffc107;
         box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
         background: white;
         transform: translateY(-1px);
     }
-
+    
     .input-group-text {
         background: linear-gradient(135deg, #ffc107, #e0a800);
         color: #000;
@@ -83,71 +83,74 @@
         border-radius: 0 15px 15px 0;
         border-left: none;
     }
+    
+    .btn-warning-umkm, .btn-secondary-umkm {
+        border-radius: 15px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        gap: 8px;
+    }
 
     .btn-warning-umkm {
         background: linear-gradient(135deg, #ffc107, #e0a800);
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
         color: #000;
-        transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
-
+    
     .btn-warning-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
         color: #000;
-        text-decoration: none;
     }
-
+    
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
         color: white;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
-
+    
     .btn-secondary-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
-        text-decoration: none;
     }
-
+    
     .page-title {
         color: #343a40;
         text-align: center;
         margin-bottom: 30px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
+    
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
-
+    
     .page-title p {
         font-size: 1.1rem;
         opacity: 0.9;
     }
-
+    
     .required {
         color: #dc3545;
+    }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 30px;
+        }
     }
 </style>
 
@@ -158,7 +161,8 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
@@ -166,7 +170,7 @@
                         Form Edit Biaya
                     </h3>
                 </div>
-
+                
                 <div class="umkm-card-body">
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -198,7 +202,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="nominal" class="form-label">
                                     <i class="bi bi-cash-coin text-warning"></i>
                                     Nominal <span class="required">*</span>
@@ -214,7 +218,7 @@
                                     </div>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="qty" class="form-label">
                                     <i class="bi bi-box text-warning"></i>
                                     Kuantitas (Qty) <span class="required">*</span>
@@ -243,7 +247,6 @@
                             @enderror
                         </div>
 
-                        {{-- [BARU] Input untuk upload file bukti/resi --}}
                         <div class="mb-4">
                             <label for="bukti_resi" class="form-label">
                                 <i class="bi bi-receipt text-warning"></i>
@@ -259,7 +262,7 @@
 
                             <img class="img-preview img-fluid mb-3 col-sm-5" style="display: none; border-radius: 15px;">
                             <input class="form-control @error('bukti_resi') is-invalid @enderror" type="file" id="bukti_resi" name="bukti_resi" onchange="previewImage()">
-                            <small class="text-muted">Kosongkan jika tidak ingin mengubah bukti.</small>
+                            <small class="text-muted mt-2 d-block">Kosongkan jika tidak ingin mengubah bukti.</small>
                             @error('bukti_resi')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -267,12 +270,12 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-between pt-3 border-top">
-                            <a href="{{ route('biayaoperasional.index') }}" class="btn-secondary-umkm">
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-3 border-top gap-2">
+                            <a href="{{ route('biayaoperasional.index') }}" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn-warning-umkm">
+                            <button type="submit" class="btn btn-warning-umkm">
                                 <i class="bi bi-save"></i>
                                 Update Biaya
                             </button>
@@ -284,7 +287,6 @@
     </div>
 </div>
 
-{{-- [BARU] Script untuk preview gambar --}}
 <script>
     function previewImage() {
         const image = document.querySelector('#bukti_resi');
