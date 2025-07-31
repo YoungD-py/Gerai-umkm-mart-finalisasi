@@ -11,8 +11,8 @@
     }
     
     .umkm-card-header {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        color: white;
+        background: linear-gradient(135deg, #ffc107, #e0a800);
+        color: #000;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
@@ -63,17 +63,16 @@
     }
     
     .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
         background: white;
         transform: translateY(-1px);
     }
     
-    .btn-primary-umkm, .btn-secondary-umkm {
+    .btn-warning-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
-        color: white;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
@@ -82,22 +81,24 @@
         gap: 8px;
     }
 
-    .btn-primary-umkm {
-        background: linear-gradient(135deg, #007bff, #0056b3);
+    .btn-warning-umkm {
+        background: linear-gradient(135deg, #ffc107, #e0a800);
         border: none;
+        color: #000;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
-    .btn-primary-umkm:hover {
+    .btn-warning-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
-        color: white;
+        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        color: #000;
     }
     
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
+        color: white;
     }
     
     .btn-secondary-umkm:hover {
@@ -140,8 +141,8 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>➕ TAMBAH Mitra Binaan BARU</h1>
-        <p>Tambahkan mitra binaan baru untuk GERSI UMKM MART</p>
+        <h1>✏️ EDIT MITRA BINAAN</h1>
+        <p>Perbarui informasi mitra binaan GERAI UMKM MART</p>
     </div>
 
     <div class="row justify-content-center">
@@ -150,8 +151,8 @@
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
-                        <i class="bi bi-plus-circle"></i>
-                        Form Tambah Mitra Binaan
+                        <i class="bi bi-pencil-square"></i>
+                        Form Edit Mitra Binaan
                     </h3>
                 </div>
                 
@@ -167,12 +168,13 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="/dashboard/categories">
+                    <form method="post" action="/dashboard/categories/<?php echo e($category->id); ?>">
+                        <?php echo method_field('put'); ?>
                         <?php echo csrf_field(); ?>
                         
                         <div class="mb-4">
                             <label for="nama" class="form-label">
-                                <i class="bi bi-building text-primary"></i>
+                                <i class="bi bi-building text-warning"></i>
                                 Nama Mitra Binaan <span class="required">*</span>
                             </label>
                             <input type="text" class="form-control <?php $__errorArgs = ['nama'];
@@ -184,7 +186,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" 
                                    name="nama" required placeholder="Masukkan Nama Mitra Binaan..." 
-                                   value="<?php echo e(old('nama')); ?>">
+                                   value="<?php echo e(old('nama', $category->nama)); ?>">
                             <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -206,9 +208,9 @@ unset($__errorArgs, $__bag); ?>
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn btn-primary-umkm">
+                            <button type="submit" class="btn btn-warning-umkm">
                                 <i class="bi bi-save"></i>
-                                Simpan Mitra Binaan
+                                Update Mitra Binaan
                             </button>
                         </div>
                     </form>
@@ -219,4 +221,4 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/create.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/edit.blade.php ENDPATH**/ ?>
