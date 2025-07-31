@@ -32,7 +32,7 @@
     }
 
     .return-card-body {
-        padding: 30px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
 
     .form-section {
@@ -63,10 +63,8 @@
         box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.3);
         background-color: white;
     }
-
-    .btn-primary-return {
-        background: linear-gradient(135deg, #4b6cb7, #182848);
-        border: none;
+    
+    .btn-primary-return, .btn-secondary-return {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
@@ -74,8 +72,14 @@
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
         text-decoration: none;
+    }
+
+    .btn-primary-return {
+        background: linear-gradient(135deg, #4b6cb7, #182848);
+        border: none;
     }
 
     .btn-primary-return:hover {
@@ -86,28 +90,11 @@
     .btn-secondary-return {
         background: #6c757d;
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .btn-secondary-return:hover {
         transform: translateY(-2px);
         background: #5a6268;
-    }
-
-    .alert-return {
-        border-radius: 15px;
-        border: none;
-        padding: 15px 20px;
-        background: rgba(75, 108, 183, 0.1);
-        border-left: 4px solid #4b6cb7;
-        color: #333;
     }
 
     .page-title {
@@ -118,12 +105,21 @@
     }
 
     .page-title h1 {
-        font-size: 2.3rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
     }
 
     .required {
         color: red;
+    }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.3rem;
+        }
+        .return-card-body {
+            padding: 30px;
+        }
     }
 </style>
 
@@ -154,7 +150,8 @@
     @endif
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="return-card">
                 <div class="return-card-header">
                     <i class="bi bi-arrow-return-left"></i> Tambah Data Return Barang
@@ -240,17 +237,17 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between pt-3">
-                            <a href="/dashboard/returns" class="btn-secondary-return">
+                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
+                            <a href="/dashboard/returns" class="btn btn-secondary-return">
                                 <i class="bi bi-arrow-left"></i> Kembali
                             </a>
-                            <button type="submit" class="btn-primary-return">
+                            <button type="submit" class="btn btn-primary-return">
                                 <i class="bi bi-save"></i> Simpan Return
                             </button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
