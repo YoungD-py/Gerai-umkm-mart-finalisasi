@@ -30,6 +30,10 @@
         align-items: center;
         gap: 10px;
     }
+    
+    .card-body {
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+    }
 
     .form-label {
         font-weight: 600;
@@ -69,48 +73,56 @@
         border-left: none;
     }
 
-    .btn-umkm { /* Mengganti btn-info-umkm */
-        background: linear-gradient(135deg, #28a745, #20c997); /* Warna Hijau */
-        border: none;
+    .btn-umkm, .btn-secondary-umkm, .btn-info-restock {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
-        color: white;
         transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
-    .btn-umkm:hover { /* Mengganti btn-info-umkm:hover */
+    .btn-umkm {
+        background: linear-gradient(135deg, #28a745, #20c997); /* Warna Hijau */
+        border: none;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3); /* Warna Hijau */
         color: white;
-        text-decoration: none;
     }
 
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
         color: white;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .btn-secondary-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
-        text-decoration: none;
+    }
+    
+    .btn-info-restock {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        border: none;
+        color: white;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+
+    .btn-info-restock:hover {
+        background: linear-gradient(135deg, #138496, #117a8b);
+        color: white;
+        transform: translateY(-1px);
     }
 
     .page-title {
@@ -121,7 +133,7 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -132,10 +144,10 @@
     }
 
     .info-section {
-        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1)); /* Warna Hijau */
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
         border-radius: 15px;
         padding: 20px;
-        border: 2px solid rgba(40, 167, 69, 0.2); /* Warna Hijau */
+        border: 2px solid rgba(40, 167, 69, 0.2);
         margin-bottom: 20px;
     }
 
@@ -144,7 +156,7 @@
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 10px;
-        border-left: 4px solid #28a745; /* Warna Hijau */
+        border-left: 4px solid #28a745;
     }
 
     .required {
@@ -158,6 +170,15 @@
         margin-top: 15px;
         border-left: 4px solid #28a745;
     }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .card-body {
+            padding: 2.5rem;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -167,7 +188,8 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
@@ -196,18 +218,17 @@
                         </h5>
                         
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="info-item">
                                     <strong>Nama Barang:</strong><br>
                                     <span class="text-primary">{{ $good->nama }}</span>
                                 </div>
                                 <div class="info-item">
                                     <strong>Supplier:</strong><br>
-                                    {{-- [FIX] Menambahkan pengecekan jika kategori tidak ada --}}
                                     <span class="text-muted">{{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}</span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="info-item">
                                     <strong>Stok Saat Ini:</strong><br>
                                     <span class="text-success fw-bold fs-4" id="current-stock">{{ $good->stok }}</span> unit
@@ -240,7 +261,7 @@
                             @error('stok_tambahan')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">
+                            <small class="text-muted mt-2 d-block">
                                 <i class="bi bi-info-circle"></i>
                                 Minimal 1 unit untuk menambah stok
                             </small>
@@ -264,25 +285,25 @@
                                 <i class="bi bi-calculator"></i> Perhitungan Stok
                             </h6>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4 mb-2 mb-md-0">
                                     <p class="mb-1"><strong>Stok Lama:</strong> <span class="text-muted">{{ $good->stok }} unit</span></p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4 mb-2 mb-md-0">
                                     <p class="mb-1"><strong>Stok Tambahan:</strong> <span id="display-tambahan" class="text-info">0 unit</span></p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <p class="mb-0"><strong>Total Stok Baru:</strong> <span id="display-total" class="text-success fw-bold">{{ $good->stok }} unit</span></p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between pt-3 mt-4 border-top">
-                            <a href="/dashboard/restock" class="btn-secondary-umkm">
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-3 mt-4 border-top gap-2">
+                            <a href="/dashboard/restock" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn-umkm">
+                            <button type="submit" class="btn btn-umkm">
                                 <i class="bi bi-plus-circle"></i>
                                 Tambah Stok
                             </button>
