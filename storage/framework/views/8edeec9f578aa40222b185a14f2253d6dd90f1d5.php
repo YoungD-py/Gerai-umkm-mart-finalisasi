@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
@@ -269,23 +267,25 @@
         <p>Kelola data mitra binaan GERAI UMKM MART</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
     
-    @if (session()->has('error'))
+    <?php if(session()->has('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
+            <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [REVISI] Menggunakan layout responsif yang sama dengan halaman Data Barang --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-building"></i>
@@ -314,7 +314,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Masukkan nama mitra binaan..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -322,16 +322,16 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $categories->total() }} mitra binaan</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($categories->total()); ?> mitra binaan</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
+            <form id="bulk-delete-form" action="<?php echo e(route('categories.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-umkm">
@@ -346,34 +346,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($categories as $key => $category)
+                            <?php $__empty_1 = true; $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $category->id }}">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($category->id); ?>">
                                 </td>
-                                <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
+                                <td><strong><?php echo e($categories->firstItem() + $key); ?></strong></td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-building text-success me-2"></i>
-                                        <strong>{{ $category->nama }}</strong>
+                                        <strong><?php echo e($category->nama); ?></strong>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($category->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($category->id); ?>">
                                             <li>
-                                                <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
+                                                <a class="dropdown-item" href="/dashboard/categories/<?php echo e($category->id); ?>/edit">
                                                     <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
                                             <li>
-                                                <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $category->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $category->id }}', '{{ $category->nama }}')">
+                                                <form action="/dashboard/categories/<?php echo e($category->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($category->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($category->id); ?>', '<?php echo e($category->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -382,7 +382,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="4" class="text-center py-5">
                                     <div class="text-muted">
@@ -396,20 +396,21 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </form>
 
             <!-- Pagination -->
-            @if($categories->hasPages())
+            <?php if($categories->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $categories->links() }}
+                    <?php echo e($categories->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -533,4 +534,6 @@
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/index.blade.php ENDPATH**/ ?>
