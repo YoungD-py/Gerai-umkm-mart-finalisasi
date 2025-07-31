@@ -41,7 +41,7 @@
     }
     
     .umkm-card-body {
-        padding: 30px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
     
     .form-label {
@@ -69,48 +69,41 @@
         transform: translateY(-1px);
     }
     
-    .btn-primary-umkm {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border: none;
+    .btn-primary-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
         color: white;
         transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
+    }
+
+    .btn-primary-umkm {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .btn-primary-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
         color: white;
-        text-decoration: none;
     }
     
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
     
     .btn-secondary-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
-        text-decoration: none;
     }
     
     .page-title {
@@ -121,7 +114,7 @@
     }
     
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -134,6 +127,15 @@
     .required {
         color: #dc3545;
     }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 30px;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -143,7 +145,8 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        
+        <div class="col-xl-6 col-lg-8 col-md-10">
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
@@ -153,7 +156,7 @@
                 </div>
                 
                 <div class="umkm-card-body">
-                    <!-- <?php if($errors->any()): ?>
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
                                 <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -162,7 +165,7 @@
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    <?php endif; ?> -->
+                    <?php endif; ?>
 
                     <form method="post" action="/dashboard/categories">
                         <?php echo csrf_field(); ?>
@@ -197,12 +200,13 @@ endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        <div class="d-flex justify-content-between pt-3">
-                            <a href="/dashboard/categories" class="btn-secondary-umkm">
+                        
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
+                            <a href="/dashboard/categories" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn-primary-umkm">
+                            <button type="submit" class="btn btn-primary-umkm">
                                 <i class="bi bi-save"></i>
                                 Simpan Mitra Binaan
                             </button>
