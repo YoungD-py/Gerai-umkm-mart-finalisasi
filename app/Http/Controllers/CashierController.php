@@ -21,7 +21,8 @@ class CashierController extends Controller
     {
         return view('dashboard.cashiers.index', [
             'active' => 'cashier',
-            'transactions' => Transaction::latest()->get(),
+            // [PERUBAHAN] Mengubah get() menjadi paginate() untuk membuat penomoran halaman
+            'transactions' => Transaction::latest()->paginate(10), 
         ]);
     }
 
@@ -201,7 +202,7 @@ class CashierController extends Controller
             ]);
 
             return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
-                           ->with('success', 'Pesanan berhasil ditambahkan!');
+                                ->with('success', 'Pesanan berhasil ditambahkan!');
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -336,12 +337,12 @@ class CashierController extends Controller
         }
 
         $goods = Good::where('stok', '>', 0)
-                     ->where(function($q) use ($query) {
-                         $q->where('nama', 'LIKE', '%' . $query . '%')
-                           ->orWhere('barcode', 'LIKE', '%' . $query . '%');
-                     })
-                     ->limit(10) // Limit results for performance
-                     ->get();
+                           ->where(function($q) use ($query) {
+                               $q->where('nama', 'LIKE', '%' . $query . '%')
+                                 ->orWhere('barcode', 'LIKE', '%' . $query . '%');
+                           })
+                           ->limit(10) // Limit results for performance
+                           ->get();
 
         return response()->json($goods);
     }
@@ -390,8 +391,8 @@ class CashierController extends Controller
                     
                     // Update stok menggunakan raw query untuk memastikan
                     \DB::table('goods')
-                        ->where('id', $good->id)
-                        ->update(['stok' => $newStock]);
+                       ->where('id', $good->id)
+                       ->update(['stok' => $newStock]);
                     
                     Log::info('Stock updated', [
                         'good_id' => $good->id,

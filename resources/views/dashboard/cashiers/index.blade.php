@@ -137,7 +137,6 @@
     }
 
     .page-title h1 {
-        /* [RESPONSIVE] Adjust font size for smaller screens */
         font-size: 2rem;
         font-weight: 800;
         margin-bottom: 10px;
@@ -148,7 +147,31 @@
         opacity: 0.9;
     }
 
-    /* [RESPONSIVE] Media query for larger screens */
+    .pagination-wrapper .pagination {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .pagination-wrapper .page-link {
+        border: none;
+        padding: 12px 16px;
+        color: #007bff;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .pagination-wrapper .page-link:hover {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .pagination-wrapper .page-item.active .page-link {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-color: #007bff;
+    }
+
     @media (min-width: 768px) {
         .page-title h1 {
             font-size: 2.5rem;
@@ -171,14 +194,11 @@
 
     <div class="cashier-card">
         <div class="cashier-card-header">
-            {{-- [RESPONSIVE] Use flexbox for better alignment on all screen sizes --}}
-            {{-- On mobile: items stack. On medium screens and up: items are side-by-side. --}}
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                 <h3 class="cashier-card-title mb-2 mb-md-0">
                     <i class="bi bi-receipt"></i>
                     Transaksi Hari Ini
                 </h3>
-                {{-- [RESPONSIVE] Make button full width on mobile for easier tapping --}}
                 <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto">
                     <i class="bi bi-plus-circle"></i>
                     Tambah Transaksi
@@ -195,7 +215,6 @@
                             <th>#</th>
                             <th>No. Nota</th>
                             <th>Waktu Transaksi</th>
-                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
                             <th class="d-none d-lg-table-cell">Petugas</th>
                             <th class="d-none d-md-table-cell">Metode Bayar</th>
                             <th>Status</th>
@@ -206,7 +225,8 @@
                     <tbody>
                         @forelse ($transactions as $key => $transaction)
                         <tr>
-                            <td><strong>{{ $loop->iteration }}</strong></td>
+                            {{-- [PERUBAHAN] Menggunakan nomor urut dari pagination --}}
+                            <td><strong>{{ ($transactions->currentPage() - 1) * $transactions->perPage() + $loop->iteration }}</strong></td>
                             <td>
                                 <i class="bi bi-hash text-primary"></i>
                                 {{ $transaction->no_nota }}
@@ -215,7 +235,6 @@
                                 <i class="bi bi-clock text-muted me-1"></i>
                                 {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s') }}
                             </td>
-                            {{-- [RESPONSIVE] Hide less critical columns on small screens --}}
                             <td class="d-none d-lg-table-cell">{{ $transaction->user->nama }}</td>
                             <td class="d-none d-md-table-cell">{{ $transaction->metode_pembayaran }}</td>
                             <td>
@@ -231,7 +250,6 @@
                                     @csrf
                                     <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
                                     <button class="btn btn-primary btn-sm" type="submit" title="Unduh Nota">
-                                        {{-- [RESPONSIVE] Hide text on small screens, show only icon --}}
                                         <i class="bi bi-download"></i>
                                         <span class="d-none d-md-inline">Unduh Nota</span>
                                     </button>
@@ -240,7 +258,6 @@
                         </tr>
                         @empty
                         <tr>
-                            {{-- [RESPONSIVE] Adjust colspan to match visible columns --}}.
                             <td colspan="8" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-cart-x display-4 d-block mb-3"></i>
@@ -257,6 +274,15 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- [BARU] Menambahkan link pagination --}}
+            @if($transactions->hasPages())
+            <div class="d-flex justify-content-center mt-4">
+                <div class="pagination-wrapper">
+                    {{ $transactions->links() }}
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
