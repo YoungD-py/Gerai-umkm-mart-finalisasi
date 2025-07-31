@@ -1,6 +1,8 @@
+
+
 <?php $__env->startSection('container'); ?>
 <style>
-    /* --- CSS Styles copied from other dashboards for consistency --- */
+    /* --- CSS Styles copied from Goods Dashboard for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -263,21 +265,13 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>🏢 MANAJEMEN DATA Mitra Binaan</h1>
-        <p>Kelola data mitra binaan GERAI UMKM MART</p>
+        <h1>🔄 MANAJEMEN DATA RETURN</h1>
+        <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
     <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
             <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-    
-    <?php if(session()->has('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
 
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -288,16 +282,16 @@
             
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
-                    <i class="bi bi-building"></i>
-                    Data Mitra Binaan
+                    <i class="bi bi-arrow-return-left"></i>
+                    Data Return Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
                     <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                         <i class="bi bi-trash-fill"></i> Hapus Terpilih
                     </button>
-                    <a href="/dashboard/categories/create" class="btn-umkm btn-umkm-sm">
+                    <a href="/dashboard/returns/create" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
-                        Tambah Mitra Binaan
+                        Tambah Return
                     </a>
                 </div>
             </div>
@@ -306,14 +300,14 @@
         <div class="umkm-card-body">
             <!-- Search Section -->
             <div class="search-section">
-                <form action="/dashboard/categories" method="GET">
+                <form action="/dashboard/returns" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Mitra Binaan
+                                <i class="bi bi-search me-2"></i>Cari Barang atau Mitra
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nama mitra binaan..."
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
                                        name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
@@ -322,14 +316,14 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($categories->total()); ?> mitra binaan</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <form id="bulk-delete-form" action="<?php echo e(route('categories.bulkDelete')); ?>" method="POST">
+            <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
@@ -337,43 +331,66 @@
                     <table class="table table-umkm">
                         <thead>
                             <tr>
-                                <th style="width: 5%; text-align: center;">
+                                <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 65%;">Nama Mitra Binaan</th>
-                                <th style="width: 20%; text-align: center;">Aksi</th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 12%;">Tgl Return</th>
+                                <th style="width: 15%;">Mitra Binaan</th>
+                                <th style="width: 20%;">Nama Barang</th>
+                                <th style="width: 8%;">Qty</th>
+                                <th style="width: 20%;">Alasan</th>
+                                <th style="width: 12%;">Administrator</th>
+                                <th style="width: 5%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $__empty_1 = true; $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($category->id); ?>">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($return->id); ?>">
                                 </td>
-                                <td><strong><?php echo e($categories->firstItem() + $key); ?></strong></td>
+                                <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-building text-success me-2"></i>
-                                        <strong><?php echo e($category->nama); ?></strong>
-                                    </div>
+                                    <i class="bi bi-calendar-x text-danger me-1"></i>
+                                    <?php echo e(\Carbon\Carbon::parse($return->tgl_return)->format('d/m/Y')); ?>
+
+                                </td>
+                                <td>
+                                    <i class="bi bi-building text-info me-1"></i>
+                                    <?php echo e($return->good->category->nama); ?>
+
+                                </td>
+                                <td>
+                                    <i class="bi bi-box text-primary me-2"></i>
+                                    <?php echo e($return->good->nama); ?>
+
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
+                                </td>
+                                <td><?php echo e($return->alasan); ?></td>
+                                <td>
+                                    <i class="bi bi-person-check text-success me-1"></i>
+                                    <?php echo e($return->user->nama); ?>
+
                                 </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($category->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($return->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($category->id); ?>">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($return->id); ?>">
                                             <li>
-                                                <a class="dropdown-item" href="/dashboard/categories/<?php echo e($category->id); ?>/edit">
+                                                <a class="dropdown-item" href="/dashboard/returns/<?php echo e($return->id); ?>/edit">
                                                     <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
                                             <li>
-                                                <form action="/dashboard/categories/<?php echo e($category->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($category->id); ?>">
+                                                <form action="/dashboard/returns/<?php echo e($return->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($return->id); ?>">
                                                     <?php echo method_field('delete'); ?>
                                                     <?php echo csrf_field(); ?>
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($category->id); ?>', '<?php echo e($category->nama); ?>')">
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($return->id); ?>', '<?php echo e($return->good->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -384,14 +401,14 @@
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
-                                <td colspan="4" class="text-center py-5">
+                                <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data mitra binaan</h5>
-                                        <p>Silakan tambah mitra binaan baru untuk memulai</p>
-                                        <a href="/dashboard/categories/create" class="btn-umkm">
+                                        <h5>Belum ada data return</h5>
+                                        <p>Silakan tambah data return baru untuk memulai</p>
+                                        <a href="/dashboard/returns/create" class="btn-umkm">
                                             <i class="bi bi-plus-circle"></i>
-                                            Tambah Mitra Binaan Pertama
+                                            Tambah Data Return
                                         </a>
                                     </div>
                                 </td>
@@ -403,10 +420,10 @@
             </form>
 
             <!-- Pagination -->
-            <?php if($categories->hasPages()): ?>
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    <?php echo e($categories->links()); ?>
+                    <?php echo e($returns->links()); ?>
 
                 </div>
             </div>
@@ -424,7 +441,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus mitra <br><strong id="categoryNameToDelete" class="text-danger"></strong>?
+        Apakah Anda yakin ingin menghapus data return untuk barang <br><strong id="itemNameToDelete" class="text-danger"></strong>?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -443,7 +460,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> mitra yang dipilih?
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> data return yang dipilih?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -453,20 +470,21 @@
   </div>
 </div>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const categoryNameToDeleteSpan = document.getElementById('categoryNameToDelete');
+        const itemNameToDeleteSpan = document.getElementById('itemNameToDelete');
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, categoryId, categoryName) {
-            formToSubmit = document.getElementById('deleteForm' + categoryId);
+        window.showDeleteModal = function(button, returnId, itemName) {
+            formToSubmit = document.getElementById('deleteForm' + returnId);
             originalButton = button;
-            categoryNameToDeleteSpan.textContent = categoryName;
+            itemNameToDeleteSpan.textContent = itemName;
             deleteModal.show();
         }
 
@@ -536,4 +554,4 @@
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>

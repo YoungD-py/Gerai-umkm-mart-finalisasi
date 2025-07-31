@@ -52,7 +52,7 @@
     }
 
     .umkm-card-body {
-        padding: 25px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
         overflow: hidden;
     }
 
@@ -69,6 +69,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
@@ -137,7 +138,7 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -251,6 +252,15 @@
         background: linear-gradient(135deg, #28a745, #20c997);
         border-color: #28a745;
     }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 25px;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -268,17 +278,17 @@
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <h3 class="umkm-card-title">
+            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
+                <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-arrow-return-left"></i>
                     Data Return Barang
                 </h3>
-                {{-- [BARU] Container untuk tombol aksi --}}
-                <div class="d-flex gap-2 align-items-center">
+                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
                     <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                         <i class="bi bi-trash-fill"></i> Hapus Terpilih
                     </button>
-                    <a href="/dashboard/returns/create" class="btn-umkm btn-umkm-sm">
+                    <a href="/dashboard/returns/create" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Return
                     </a>
@@ -290,8 +300,8 @@
             <!-- Search Section -->
             <div class="search-section">
                 <form action="/dashboard/returns" method="GET">
-                    <div class="row align-items-end">
-                        <div class="col-md-8 mb-3">
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
                                 <i class="bi bi-search me-2"></i>Cari Barang atau Mitra
                             </label>
@@ -303,8 +313,8 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="text-white">
+                        <div class="col-12 col-md-4">
+                            <div class="text-white text-md-end">
                                 <small><i class="bi bi-info-circle me-1"></i>Total: {{ $returns->total() }} data return</small>
                             </div>
                         </div>
@@ -312,7 +322,6 @@
                 </form>
             </div>
 
-            <!-- [BARU] Form untuk bulk delete -->
             <form id="bulk-delete-form" action="{{ route('returns.bulkDelete') }}" method="POST">
                 @csrf
                 @method('DELETE')
@@ -321,7 +330,6 @@
                     <table class="table table-umkm">
                         <thead>
                             <tr>
-                                {{-- [BARU] Checkbox "Pilih Semua" --}}
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
@@ -338,7 +346,6 @@
                         <tbody>
                             @forelse ($returns as $key => $return)
                             <tr>
-                                {{-- [BARU] Checkbox per baris --}}
                                 <td class="text-center">
                                     <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $return->id }}">
                                 </td>
@@ -389,7 +396,6 @@
                             </tr>
                             @empty
                             <tr>
-                                {{-- [MODIFIKASI] Colspan diubah menjadi 9 --}}
                                 <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox display-4 d-block mb-3"></i>
