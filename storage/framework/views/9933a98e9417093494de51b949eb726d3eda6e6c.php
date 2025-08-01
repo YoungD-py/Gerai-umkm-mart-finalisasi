@@ -51,15 +51,16 @@
         }
     </style>
 
-    <div class="d-flex justify-content-between flex-wrap align-items-center py-3 px-3 mb-3 border-bottom"
-        style="background: linear-gradient(90deg, #4e54c8, #8f94fb); border-radius: 10px;">
-        <h1 class="h4 text-light mb-2 mb-md-0">
-            <i class="bi bi-cart-plus-fill me-2"></i> Buat Pesanan - Nota:
-            <span class="text-warning fw-semibold"><?php echo e($no_nota); ?></span>
-        </h1>
-    </div>
+    
+    <div class="container-fluid py-3">
+        <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-3 px-3 mb-3 border-bottom"
+            style="background: linear-gradient(90deg, #4e54c8, #8f94fb); border-radius: 10px;">
+            <h1 class="h4 text-light mb-2 mb-md-0 text-center text-md-start">
+                <i class="bi bi-cart-plus-fill me-2"></i> Buat Pesanan - Nota:
+                <span class="text-warning fw-semibold"><?php echo e($no_nota); ?></span>
+            </h1>
+        </div>
 
-    <div class="container-fluid">
         <?php if(session()->has('success')): ?>
             <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
                 <i class="bi bi-check-circle-fill"></i> <?php echo e(session('success')); ?>
@@ -79,13 +80,14 @@
         <div id="dynamic-alerts"></div>
 
         <div class="row g-4">
-            <div class="col-lg-8">
+            
+            <div class="col-12 col-lg-8 mb-4 mb-lg-0">
                 <div class="card shadow-sm border-0 mb-4" style="background: white;">
                     <div class="card-header bg-success text-white py-3">
                         <h4 class="mb-0 fw-bold"><i class="bi bi-upc-scan fs-3"></i> INPUT BARCODE</h4>
                         <small class="opacity-75">Scan atau ketik barcode produk</small>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <div class="row align-items-center">
                             <div class="col-md-8">
                                 <div class="mb-3">
@@ -97,27 +99,27 @@
                                             <i class="bi bi-upc-scan"></i>
                                         </span>
                                         <input type="text" class="form-control form-control-lg border-success"
-                                            id="barcode-input" placeholder="Ketik atau scan barcode di sini..."
+                                            id="barcode-input" placeholder="Ketik atau scan..."
                                             autocomplete="off" autofocus style="font-size: 1.2rem; font-weight: 500;">
                                         <button class="btn btn-success btn-lg px-4" type="button" id="search-barcode">
-                                            <i class="bi bi-search"></i> CARI
+                                            <i class="bi bi-search"></i> <span class="d-none d-sm-inline">CARI</span>
                                         </button>
                                     </div>
                                     <div class="form-text fs-6 mt-2">
                                         <i class="bi bi-info-circle text-primary"></i>
-                                        <strong>Tips:</strong> Tekan Enter setelah mengetik barcode atau klik tombol CARI
+                                        <strong>Tips:</strong> Tekan Enter setelah mengetik barcode
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="alert alert-info border-0 shadow-sm">
                                     <h6 class="fw-bold mb-2">
-                                        <i class="bi bi-lightbulb text-warning"></i> Cara Menggunakan:
+                                        <i class="bi bi-lightbulb text-warning"></i> Cara Cepat:
                                     </h6>
-                                    <ul class="mb-0 small lh-lg">
-                                        <li><strong>Ketik barcode</strong> dengan teliti</li>
-                                        <li><strong>Tekan Enter</strong> untuk cari cepat</li>
-                                        <li><strong>Gunakan kamera</strong> untuk scan</li>
+                                    <ul class="mb-0 small lh-lg ps-3">
+                                        <li>Ketik barcode</li>
+                                        <li>Tekan Enter</li>
+                                        <li>Gunakan kamera</li>
                                     </ul>
                                 </div>
                             </div>
@@ -125,83 +127,31 @@
 
                         <div id="barcode-result" class="alert alert-success border-0 shadow-sm mt-4" style="display: none;">
                             <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <h5 class="fw-bold text-success mb-3">
-                                        <i class="bi bi-check-circle-fill"></i> Produk Ditemukan!
-                                    </h5>
+                                <div class="col-lg-8">
+                                    <h5 class="fw-bold text-success mb-3"><i class="bi bi-check-circle-fill"></i> Produk Ditemukan!</h5>
                                     <div class="product-info bg-light p-3 rounded">
                                         <div class="row">
-                                            <div class="col-6">
-                                                <p class="mb-2"><strong>Kode:</strong> <span id="detected-barcode"
-                                                        class="badge bg-secondary fs-6"></span></p>
-                                                <p class="mb-2"><strong>Nama Produk:</strong> <span id="product-name"
-                                                        class="fw-bold text-dark fs-5"></span></p>
+                                            <div class="col-12 col-sm-6">
+                                                <p class="mb-2"><strong>Kode:</strong> <span id="detected-barcode" class="badge bg-secondary fs-6"></span></p>
+                                                <p class="mb-2"><strong>Nama:</strong> <span id="product-name" class="fw-bold text-dark fs-5"></span></p>
                                             </div>
-                                            <div class="col-6">
-                                                <p class="mb-2"><strong>Harga:</strong> <span id="product-price"
-                                                        class="fw-bold text-success fs-4"></span></p>
-                                                <p class="mb-2"><strong>Stok Tersedia:</strong> <span id="product-stock"
-                                                        class="badge bg-info fs-6"></span></p>
-                                            </div>
-                                        </div>
-                                        <div id="wholesale-info"
-                                            class="mt-3 p-2 bg-warning bg-opacity-10 rounded border-start border-warning border-3"
-                                            style="display: none;">
-                                            <h6 class="text-warning mb-2">
-                                                <i class="bi bi-cart-plus"></i> Harga Grosir Tersedia!
-                                            </h6>
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <small><strong>Min. Pembelian:</strong> <span
-                                                            id="min-wholesale-qty"></span></small><br>
-                                                    <small><strong>Harga Grosir:</strong> <span id="wholesale-price"
-                                                            class="text-success fw-bold"></span></small>
-                                                </div>
-                                                <div class="col-6">
-                                                    <small><strong>Hemat per unit:</strong> <span id="savings-per-unit"
-                                                            class="text-success fw-bold"></span></small><br>
-                                                    <small><strong>Diskon:</strong> <span id="discount-percent"
-                                                            class="text-success fw-bold"></span></small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="tebus-murah-info"
-                                            class="mt-3 p-2 bg-danger bg-opacity-10 rounded border-start border-danger border-3"
-                                            style="display: none;">
-                                            <h6 class="text-danger mb-2">
-                                                <i class="bi bi-percent"></i> Harga Tebus Murah Tersedia!
-                                            </h6>
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <small><strong>Min. Total Transaksi:</strong> <span id="min-tebus-total"
-                                                            class="text-danger fw-bold"></span></small><br>
-                                                    <small><strong>Harga Tebus Murah:</strong> <span id="tebus-price"
-                                                            class="text-danger fw-bold"></span></small>
-                                                </div>
-                                                <div class="col-6">
-                                                    <small><strong>Hemat per unit:</strong> <span
-                                                            id="tebus-savings-per-unit"
-                                                            class="text-danger fw-bold"></span></small><br>
-                                                    <small><strong>Diskon:</strong> <span id="tebus-discount-percent"
-                                                            class="text-danger fw-bold"></span></small>
-                                                </div>
+                                            <div class="col-12 col-sm-6">
+                                                <p class="mb-2"><strong>Harga:</strong> <span id="product-price" class="fw-bold text-success fs-4"></span></p>
+                                                <p class="mb-2"><strong>Stok:</strong> <span id="product-stock" class="badge bg-info fs-6"></span></p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 mt-3 mt-lg-0">
                                     <div class="d-grid gap-2">
                                         <label for="scan-qty" class="form-label fw-semibold fs-5">Jumlah:</label>
-                                        <input type="number" class="form-control form-control-lg text-center fw-bold"
-                                            id="scan-qty" value="1" min="1" max="999" style="font-size: 1.5rem;"
-                                            onchange="updateBarcodePrice()" oninput="updateBarcodePrice()">
+                                        <input type="number" class="form-control form-control-lg text-center fw-bold" id="scan-qty" value="1" min="1" max="999" style="font-size: 1.5rem;" onchange="updateBarcodePrice()" oninput="updateBarcodePrice()">
                                         <div id="price-info" class="text-center mb-2">
-                                            <div class="fw-bold fs-5">Total: <span id="total-price" class="text-success">Rp
-                                                    0</span></div>
+                                            <div class="fw-bold fs-5">Total: <span id="total-price" class="text-success">Rp 0</span></div>
                                             <div id="price-type" class="small text-muted"></div>
                                         </div>
                                         <button type="button" id="add-scanned-item" class="btn btn-success btn-lg py-3">
-                                            <i class="bi bi-plus-circle"></i> TAMBAH KE PESANAN
+                                            <i class="bi bi-plus-circle"></i> TAMBAH
                                         </button>
                                     </div>
                                 </div>
@@ -209,18 +159,11 @@
                         </div>
 
                         <div class="mt-5 pt-4 border-top">
-                            <h5 class="fw-bold text-primary mb-3">
-                                <i class="bi bi-camera-video"></i> Scan Barcode dengan Kamera
-                            </h5>
+                            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-camera-video"></i> Scan Barcode dengan Kamera</h5>
                             <div id="qr-reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
                             <div class="d-grid gap-2 mt-3">
-                                <button type="button" class="btn btn-info btn-lg" id="start-scan-btn">
-                                    <i class="bi bi-camera"></i> Mulai Scan Kamera
-                                </button>
-                                <button type="button" class="btn btn-danger btn-lg" id="stop-scan-btn"
-                                    style="display: none;">
-                                    <i class="bi bi-stop-circle"></i> Hentikan Scan Kamera
-                                </button>
+                                <button type="button" class="btn btn-info btn-lg" id="start-scan-btn"><i class="bi bi-camera"></i> Mulai Scan</button>
+                                <button type="button" class="btn btn-danger btn-lg" id="stop-scan-btn" style="display: none;"><i class="bi bi-stop-circle"></i> Hentikan Scan</button>
                             </div>
                         </div>
                     </div>
@@ -231,86 +174,57 @@
                         <h4 class="mb-0 fw-bold">
                             <i class="bi bi-pencil-square fs-3"></i> INPUT MANUAL
                         </h4>
-                        <small class="opacity-75">Pilih produk dari daftar jika barcode tidak tersedia</small>
+                        <small class="opacity-75">Pilih produk jika barcode tidak tersedia</small>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <form id="manual-form">
                             <?php echo csrf_field(); ?>
                             <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
                             <input type="hidden" name="good_id" id="manual-good-id">
 
                             <div class="mb-4 position-relative">
-                                <label for="product-search-input" class="form-label fs-5 fw-semibold text-dark">
-                                    <i class="bi bi-box-seam text-primary"></i> Cari Produk
-                                </label>
-                                <input type="text" class="form-control form-control-lg border-primary"
-                                    id="product-search-input" placeholder="Ketik nama atau barcode produk..."
-                                    autocomplete="off" style="font-size: 1.1rem;">
+                                <label for="product-search-input" class="form-label fs-5 fw-semibold text-dark"><i class="bi bi-box-seam text-primary"></i> Cari Produk</label>
+                                <input type="text" class="form-control form-control-lg border-primary" id="product-search-input" placeholder="Ketik nama atau barcode produk..." autocomplete="off" style="font-size: 1.1rem;">
                                 <div id="search-results" class="search-results" style="display: none;"></div>
                             </div>
 
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="qty" class="form-label fs-5 fw-semibold text-dark">
-                                        <i class="bi bi-123 text-primary"></i> Jumlah
-                                    </label>
-                                    <input type="number"
-                                        class="form-control form-control-lg border-primary text-center fw-bold" id="qty"
-                                        name="qty" min="1" value="1" onchange="calculateSubtotal()" oninput="calculateSubtotal()" required
-                                        style="font-size: 1.3rem;">
+                                <div class="col-12 col-md-6">
+                                    <label for="qty" class="form-label fs-5 fw-semibold text-dark"><i class="bi bi-123 text-primary"></i> Jumlah</label>
+                                    <input type="number" class="form-control form-control-lg border-primary text-center fw-bold" id="qty" name="qty" min="1" value="1" onchange="calculateSubtotal()" oninput="calculateSubtotal()" required style="font-size: 1.3rem;">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="subtotal" class="form-label fs-5 fw-semibold text-dark">
-                                        <i class="bi bi-calculator text-primary"></i> Subtotal
-                                    </label>
+                                <div class="col-12 col-md-6">
+                                    <label for="subtotal" class="form-label fs-5 fw-semibold text-dark"><i class="bi bi-calculator text-primary"></i> Subtotal</label>
                                     <div class="input-group input-group-lg">
-                                        <span
-                                            class="input-group-text bg-primary text-white border-primary fw-bold">Rp</span>
-                                        <input type="number" class="form-control border-primary text-end fw-bold"
-                                            id="subtotal" name="subtotal" readonly
-                                            style="font-size: 1.3rem; background-color: #f8f9fa;">
+                                        <span class="input-group-text bg-primary text-white border-primary fw-bold">Rp</span>
+                                        <input type="number" class="form-control border-primary text-end fw-bold" id="subtotal" name="subtotal" readonly style="font-size: 1.3rem; background-color: #f8f9fa;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="manual-wholesale-info" class="mt-3 p-3 bg-warning bg-opacity-10 rounded border-start border-warning border-3" style="display: none;">
+                                <h6 class="text-warning mb-2"><i class="bi bi-cart-plus"></i> Harga Grosir Aktif!</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small><strong>Harga per unit:</strong> <span id="manual-unit-price" class="text-success fw-bold"></span></small><br>
+                                        <small><strong>Total hemat:</strong> <span id="manual-total-savings" class="text-success fw-bold"></span></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small><strong>Diskon:</strong> <span id="manual-discount-percent" class="text-success fw-bold"></span></small><br>
+                                        <small class="text-muted">Pembelian <span id="manual-wholesale-min-qty"></span>+ unit</small>
                                     </div>
                                 </div>
                             </div>
 
-                            <div id="manual-wholesale-info"
-                                class="mt-3 p-3 bg-warning bg-opacity-10 rounded border-start border-warning border-3"
-                                style="display: none;">
-                                <h6 class="text-warning mb-2">
-                                    <i class="bi bi-cart-plus"></i> Harga Grosir Aktif!
-                                </h6>
+                            <div id="manual-tebus-murah-info" class="mt-3 p-3 bg-danger bg-opacity-10 rounded border-start border-danger border-3" style="display: none;">
+                                <h6 class="text-danger mb-2"><i class="bi bi-percent"></i> Harga Tebus Murah Aktif!</h6>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <small><strong>Harga per unit:</strong> <span id="manual-unit-price"
-                                                class="text-success fw-bold"></span></small><br>
-                                        <small><strong>Total hemat:</strong> <span id="manual-total-savings"
-                                                class="text-success fw-bold"></span></small>
+                                        <small><strong>Harga per unit:</strong> <span id="manual-tebus-unit-price" class="text-danger fw-bold"></span></small><br>
+                                        <small><strong>Total hemat:</strong> <span id="manual-tebus-total-savings" class="text-danger fw-bold"></span></small>
                                     </div>
                                     <div class="col-md-6">
-                                        <small><strong>Diskon:</strong> <span id="manual-discount-percent"
-                                                class="text-success fw-bold"></span></small><br>
-                                        <small class="text-muted">Pembelian <span id="manual-wholesale-min-qty"></span>+
-                                            unit</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="manual-tebus-murah-info"
-                                class="mt-3 p-3 bg-danger bg-opacity-10 rounded border-start border-danger border-3"
-                                style="display: none;">
-                                <h6 class="text-danger mb-2">
-                                    <i class="bi bi-percent"></i> Harga Tebus Murah Aktif!
-                                </h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <small><strong>Harga per unit:</strong> <span id="manual-tebus-unit-price"
-                                                class="text-danger fw-bold"></span></small><br>
-                                        <small><strong>Total hemat:</strong> <span id="manual-tebus-total-savings"
-                                                class="text-danger fw-bold"></span></small>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <small><strong>Diskon:</strong> <span id="manual-tebus-discount-percent"
-                                                class="text-danger fw-bold"></span></small><br>
+                                        <small><strong>Diskon:</strong> <span id="manual-tebus-discount-percent" class="text-danger fw-bold"></span></small><br>
                                         <small class="text-muted">Total transaksi mencapai syarat</small>
                                     </div>
                                 </div>
@@ -326,7 +240,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-12 col-lg-4">
                 <div class="card shadow-sm border-0" id="orders-card" style="background: white;">
                     <div class="card-header bg-warning text-dark py-3">
                         <h4 class="mb-0 fw-bold">
@@ -351,17 +265,12 @@
                                             <tr>
                                                 <td class="py-3 px-3">
                                                     <div class="fw-semibold"><?php echo e($order->good->nama); ?></div>
-                                                    <small class="text-muted">@ Rp
-                                                        <?php echo e(number_format($order->price, 0, ',', '.')); ?></small>
+                                                    <small class="text-muted">@ Rp <?php echo e(number_format($order->price, 0, ',', '.')); ?></small>
                                                     <?php if($order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir): ?>
-                                                        <br><small class="text-success fw-bold">
-                                                            <i class="bi bi-cart-plus"></i> Harga Grosir
-                                                        </small>
+                                                        <br><small class="text-success fw-bold"><i class="bi bi-cart-plus"></i> Harga Grosir</small>
                                                     <?php endif; ?>
                                                     <?php if($order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah): ?>
-                                                        <br><small class="text-danger fw-bold">
-                                                            <i class="bi bi-percent"></i> Harga Tebus Murah
-                                                        </small>
+                                                        <br><small class="text-danger fw-bold"><i class="bi bi-percent"></i> Harga Tebus Murah</small>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="py-3 text-center">
@@ -395,20 +304,15 @@
 
                                 <?php if($tebusMusahProducts->count() > 0): ?>
                                     <div class="alert alert-danger border-0 shadow-sm mb-3">
-                                        <h6 class="fw-bold text-danger mb-2">
-                                            <i class="bi bi-percent"></i> TEBUS MURAH AKTIF!
-                                        </h6>
-                                        <small class="text-muted">
-                                            <?php echo e($tebusMusahProducts->count()); ?> produk memenuhi syarat tebus murah.
-                                        </small>
+                                        <h6 class="fw-bold text-danger mb-2"><i class="bi bi-percent"></i> TEBUS MURAH AKTIF!</h6>
+                                        <small class="text-muted"><?php echo e($tebusMusahProducts->count()); ?> produk memenuhi syarat tebus murah.</small>
                                     </div>
                                 <?php endif; ?>
 
                                 <form method="post" action="/dashboard/cashiers/checkout">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
-                                    <input type="hidden" name="total_harga" value="<?php echo e($orders->sum('subtotal')); ?>"
-                                        id="checkout-total">
+                                    <input type="hidden" name="total_harga" value="<?php echo e($orders->sum('subtotal')); ?>" id="checkout-total">
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-success btn-lg py-3 fw-bold">
                                             <i class="bi bi-credit-card"></i> LANJUT KE PEMBAYARAN
@@ -726,4 +630,5 @@
         document.addEventListener('DOMContentLoaded', () => document.getElementById('barcode-input').focus());
     </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/cashiers/order/create.blade.php ENDPATH**/ ?>

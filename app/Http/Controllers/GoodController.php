@@ -75,33 +75,29 @@ class GoodController extends Controller
             'harga_tebus_murah' => 'nullable|numeric|min:0',
         ]);
 
-        // Validate expired_date based on type
         if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
             return back()->withErrors(['expired_date' => 'Tanggal expired wajib diisi untuk jenis ' . $validatedData['type'] . '.'])->withInput();
         }
 
-        // Remove expired_date if type is 'lainnya', 'handycraft', or 'fashion'
         if (in_array($validatedData['type'], ['lainnya', 'handycraft', 'fashion'])) {
             $validatedData['expired_date'] = null;
         }
 
-        // Calculate selling price automatically
         $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
         $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup);
 
-        // Validate wholesale settings
         if ($request->has('is_grosir_active') && $request->is_grosir_active) {
             if (empty($validatedData['min_qty_grosir']) || empty($validatedData['harga_grosir'])) {
-                return back()->withErrors([
-                    'min_qty_grosir' => 'Minimal pembelian grosir wajib diisi jika grosir diaktifkan.',
-                    'harga_grosir' => 'Harga grosir wajib diisi jika grosir diaktifkan.'
-                ])->withInput();
+                return back()->withErrors(['min_qty_grosir' => 'Minimal Qty & Harga grosir wajib diisi.'])->withInput();
+            }
+            
+            // [PERBAIKAN LOGIKA] Harga grosir tidak boleh lebih rendah dari harga asli (modal)
+            if ($validatedData['harga_grosir'] < $validatedData['harga_asli']) {
+                return back()->withErrors(['harga_grosir' => 'Harga grosir tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
             }
 
             if ($validatedData['harga_grosir'] >= $validatedData['harga']) {
-                return back()->withErrors([
-                    'harga_grosir' => 'Harga grosir harus lebih kecil dari harga eceran.'
-                ])->withInput();
+                return back()->withErrors(['harga_grosir' => 'Harga grosir harus lebih kecil dari harga eceran.'])->withInput();
             }
 
             $validatedData['is_grosir_active'] = true;
@@ -111,19 +107,18 @@ class GoodController extends Controller
             $validatedData['harga_grosir'] = null;
         }
 
-        // Validate tebus murah settings
         if ($request->has('is_tebus_murah_active') && $request->is_tebus_murah_active) {
             if (empty($validatedData['min_total_tebus_murah']) || empty($validatedData['harga_tebus_murah'])) {
-                return back()->withErrors([
-                    'min_total_tebus_murah' => 'Minimal pembelian tebus murah wajib diisi jika tebus murah diaktifkan.',
-                    'harga_tebus_murah' => 'Harga tebus murah wajib diisi jika tebus murah diaktifkan.'
-                ])->withInput();
+                return back()->withErrors(['min_total_tebus_murah' => 'Minimal Total & Harga tebus murah wajib diisi.'])->withInput();
+            }
+            
+            // [PERBAIKAN LOGIKA] Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
+            if ($validatedData['harga_tebus_murah'] < $validatedData['harga_asli']) {
+                return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
             }
 
             if ($validatedData['harga_tebus_murah'] >= $validatedData['harga']) {
-                return back()->withErrors([
-                    'harga_tebus_murah' => 'Harga tebus murah harus lebih kecil dari harga normal.'
-                ])->withInput();
+                return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah harus lebih kecil dari harga normal.'])->withInput();
             }
 
             $validatedData['is_tebus_murah_active'] = true;
@@ -133,12 +128,9 @@ class GoodController extends Controller
             $validatedData['harga_tebus_murah'] = null;
         }
 
-        // Generate barcode automatically, passing type and name
         $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
-
         Good::create($validatedData);
-
-        return redirect('/dashboard/goods')->with('success', 'Barang berhasil ditambahkan dengan barcode, pengaturan grosir, dan tebus murah.');
+        return redirect('/dashboard/goods')->with('success', 'Barang berhasil ditambahkan.');
     }
 
     /**
@@ -194,7 +186,6 @@ class GoodController extends Controller
             ],
             'type' => 'required|in:makanan,non_makanan,lainnya,handycraft,fashion',
             'expired_date' => 'nullable|date|after:today',
-            // 'stok' => 'required|integer|min:0', // Stock is now read-only and updated via restock page
             'harga_asli' => 'required|numeric|min:0',
             'is_grosir_active' => 'boolean',
             'min_qty_grosir' => 'nullable|integer|min:2',
@@ -206,33 +197,29 @@ class GoodController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        // Validate expired_date based on type
         if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
             return back()->withErrors(['expired_date' => 'Tanggal expired wajib diisi untuk jenis ' . $validatedData['type'] . '.'])->withInput();
         }
 
-        // Remove expired_date if type is 'lainnya', 'handycraft', or 'fashion'
         if (in_array($validatedData['type'], ['lainnya', 'handycraft', 'fashion'])) {
             $validatedData['expired_date'] = null;
         }
 
-        // Calculate selling price automatically
         $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
         $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup);
 
-        // Validate wholesale settings
         if ($request->has('is_grosir_active') && $request->is_grosir_active) {
             if (empty($validatedData['min_qty_grosir']) || empty($validatedData['harga_grosir'])) {
-                return back()->withErrors([
-                    'min_qty_grosir' => 'Minimal pembelian grosir wajib diisi jika grosir diaktifkan.',
-                    'harga_grosir' => 'Harga grosir wajib diisi jika grosir diaktifkan.'
-                ])->withInput();
+                return back()->withErrors(['min_qty_grosir' => 'Minimal pembelian grosir wajib diisi jika grosir diaktifkan.'])->withInput();
+            }
+
+            // [PERBAIKAN LOGIKA] Harga grosir tidak boleh lebih rendah dari harga asli (modal)
+            if ($validatedData['harga_grosir'] < $validatedData['harga_asli']) {
+                return back()->withErrors(['harga_grosir' => 'Harga grosir tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
             }
 
             if ($validatedData['harga_grosir'] >= $validatedData['harga']) {
-                return back()->withErrors([
-                    'harga_grosir' => 'Harga grosir harus lebih kecil dari harga eceran.'
-                ])->withInput();
+                return back()->withErrors(['harga_grosir' => 'Harga grosir harus lebih kecil dari harga eceran.'])->withInput();
             }
 
             $validatedData['is_grosir_active'] = true;
@@ -242,19 +229,18 @@ class GoodController extends Controller
             $validatedData['harga_grosir'] = null;
         }
 
-        // Validate tebus murah settings
         if ($request->has('is_tebus_murah_active') && $request->is_tebus_murah_active) {
             if (empty($validatedData['min_total_tebus_murah']) || empty($validatedData['harga_tebus_murah'])) {
-                return back()->withErrors([
-                    'min_total_tebus_murah' => 'Minimal pembelian tebus murah wajib diisi jika tebus murah diaktifkan.',
-                    'harga_tebus_murah' => 'Harga tebus murah wajib diisi jika tebus murah diaktifkan.'
-                ])->withInput();
+                return back()->withErrors(['min_total_tebus_murah' => 'Minimal pembelian tebus murah wajib diisi jika tebus murah diaktifkan.'])->withInput();
+            }
+
+            // [PERBAIKAN LOGIKA] Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
+            if ($validatedData['harga_tebus_murah'] < $validatedData['harga_asli']) {
+                return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
             }
 
             if ($validatedData['harga_tebus_murah'] >= $validatedData['harga']) {
-                return back()->withErrors([
-                    'harga_tebus_murah' => 'Harga tebus murah harus lebih kecil dari harga normal.'
-                ])->withInput();
+                return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah harus lebih kecil dari harga normal.'])->withInput();
             }
 
             $validatedData['is_tebus_murah_active'] = true;
@@ -264,7 +250,6 @@ class GoodController extends Controller
             $validatedData['harga_tebus_murah'] = null;
         }
 
-        // Keep existing barcode if exists, otherwise generate new one with type and name
         if (!$good->barcode) {
             $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
         } else {
@@ -272,8 +257,7 @@ class GoodController extends Controller
         }
 
         $good->update($validatedData);
-
-        return redirect('/dashboard/goods')->with('success', 'Barang berhasil diubah dengan pengaturan grosir dan tebus murah.');
+        return redirect('/dashboard/goods')->with('success', 'Barang berhasil diubah.');
     }
 
     /**
@@ -285,7 +269,6 @@ class GoodController extends Controller
     public function destroy(Good $good)
     {
         Good::destroy($good->id);
-
         return redirect('/dashboard/goods')->with('success', 'Barang telah dihapus.');
     }
 
@@ -297,10 +280,9 @@ class GoodController extends Controller
      */
     public function bulkDelete(Request $request)
     {
-        // Validasi bahwa 'selected_ids' ada dan merupakan array
         $request->validate([
             'selected_ids' => 'required|array',
-            'selected_ids.*' => 'exists:goods,id', // Pastikan setiap ID ada di tabel 'goods'
+            'selected_ids.*' => 'exists:goods,id',
         ]);
 
         $selectedIds = $request->input('selected_ids');
@@ -309,7 +291,6 @@ class GoodController extends Controller
             return redirect('/dashboard/goods')->with('error', 'Tidak ada barang yang dipilih untuk dihapus.');
         }
 
-        // Hapus barang berdasarkan ID yang dipilih
         $deletedCount = Good::whereIn('id', $selectedIds)->delete();
 
         if ($deletedCount > 0) {
@@ -324,7 +305,6 @@ class GoodController extends Controller
      */
     public function generateBarcode(Good $good)
     {
-        // Pass current instance's type and name to the static method
         $good->update(['barcode' => Good::generateBarcodeStatic($good->type, $good->nama)]);
         return redirect()->back()->with('success', 'Barcode baru telah dibuat.');
     }
@@ -338,10 +318,7 @@ class GoodController extends Controller
             return redirect()->back()->with('error', 'Barang ini belum memiliki barcode.');
         }
 
-        $pdf = PDF::loadView('barcode_pdf', [
-            'good' => $good
-        ]);
-
+        $pdf = PDF::loadView('barcode_pdf', ['good' => $good]);
         return $pdf->download('barcode-' . $good->barcode . '.pdf');
     }
 
@@ -362,11 +339,9 @@ class GoodController extends Controller
 
     public function exportpdf()
     {
-        // Cukup ambil data barang. Accessor 'harga_p_eats' di model Good akan menghitung nilainya secara otomatis.
         $goods = Good::with('category')->get();
-
         $pdf = PDF::loadview('good_pdf', ['goods' => $goods]);
-        $pdf->setPaper('A4', 'landscape'); // Set paper to landscape for more columns
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->download('laporan-barang.pdf');
     }
 
@@ -379,7 +354,7 @@ class GoodController extends Controller
     {
         return view('dashboard.goods.cetakbarcode', [
             'active' => 'data',
-            'goods' => Good::latest()->get(), // Fetch all goods
+            'goods' => Good::latest()->get(),
         ]);
     }
 
@@ -392,8 +367,8 @@ class GoodController extends Controller
     public function generateMultipleBarcodesPdf(Request $request)
     {
         $request->validate([
-            'selected_goods' => 'required|array|min:1|max:15', // Ensure at least 1 and max 15 selected
-            'selected_goods.*' => 'exists:goods,id', // Ensure all selected IDs exist
+            'selected_goods' => 'required|array|min:1|max:15',
+            'selected_goods.*' => 'exists:goods,id',
         ], [
             'selected_goods.required' => 'Pilih setidaknya satu barang untuk dicetak.',
             'selected_goods.min' => 'Pilih setidaknya satu barang untuk dicetak.',
@@ -413,7 +388,6 @@ class GoodController extends Controller
 
         foreach ($goodsToPrint as $good) {
             if ($good->barcode) {
-                // Generate SVG barcode
                 $barcodeSvg = $generator->getBarcode($good->barcode, $generator::TYPE_CODE_128);
                 $barcodesData[] = [
                     'nama' => $good->nama,
@@ -432,9 +406,7 @@ class GoodController extends Controller
             'barcodesData' => $barcodesData
         ]);
 
-        // Set paper to A4 portrait
         $pdf->setPaper('A4', 'portrait');
-
         return $pdf->download('multiple-barcodes.pdf');
     }
 }
