@@ -1,251 +1,232 @@
 @extends('dashboard.layouts.main')
 
 @section('container')
-    <style>
-        body {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-        }
+<style>
+    /* --- CSS Styles adapted for Create User page --- */
+    .umkm-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
 
-        .main-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin: 20px 0;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .umkm-card-header {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .card-header-custom {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white;
-            padding: 25px 30px;
-            border: none;
-        }
+    .umkm-card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        .card-header-custom h4 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .umkm-card-body {
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+    }
 
-        .form-section {
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+        background: rgba(255,255,255,0.9);
+        font-size: 1rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        background: white;
+        transform: translateY(-1px);
+    }
+
+    .btn-umkm, .btn-secondary-umkm {
+        border-radius: 15px;
+        padding: 12px 25px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        gap: 8px;
+    }
+    
+    .btn-umkm {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-umkm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        color: white;
+    }
+
+    .btn-secondary-umkm {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        border: none;
+    }
+
+    .btn-secondary-umkm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        color: white;
+    }
+
+    .page-title {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .page-title h1 {
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .page-title p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
             padding: 30px;
         }
+    }
+</style>
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+<div class="container-fluid py-4">
+    <div class="page-title">
+        <h1>➕ TAMBAH PENGGUNA BARU</h1>
+        <p>Tambahkan administrator atau kasir baru untuk sistem</p>
+    </div>
 
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    <div class="row justify-content-center">
+        {{-- [RESPONSIVE] Mengubah col-lg-6 menjadi lebih fleksibel --}}
+        <div class="col-xl-6 col-lg-8 col-md-10">
+            @if (session()->has('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
-        .form-control {
-            border: 2px solid #e3f2fd;
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background-color: #f8f9fa;
-        }
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
-        .form-control:focus {
-            border-color: #4facfe;
-            box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
-            outline: none;
-            background-color: white;
-        }
+            <div class="umkm-card">
+                <div class="umkm-card-header">
+                    <h3 class="umkm-card-title">
+                        <i class="bi bi-person-plus-fill"></i>
+                        Form Tambah Pengguna
+                    </h3>
+                </div>
+                
+                <div class="umkm-card-body">
+                    <form method="post" action="/dashboard/users">
+                        @csrf
+                        
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
+                            <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama"
+                                required autofocus value="{{ old('nama') }}">
+                            @error('nama')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username <span class="required">*</span></label>
+                            <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username"
+                                required value="{{ old('username') }}">
+                            @error('username')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role <span class="required">*</span></label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
+                                <option value="">Pilih Role</option>
+                                <option value="ADMIN" {{ old('role') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
+                                <option value="KASIR" {{ old('role') == 'KASIR' ? 'selected' : '' }}>Kasir</option>
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                                name="password" required>
+                            @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-        }
-
-        .input-group-text {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white;
-            border: none;
-            border-radius: 12px 0 0 12px;
-        }
-
-        .form-floating {
-            position: relative;
-        }
-
-        .form-floating > .form-control {
-            padding: 1rem 0.75rem;
-        }
-
-        .form-floating > label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            padding: 1rem 0.75rem;
-            pointer-events: none;
-            border: 1px solid transparent;
-            transform-origin: 0 0;
-            transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
-            color: #6c757d;
-        }
-
-        @media (max-width: 768px) {
-            .main-card {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .card-header-custom {
-                padding: 20px;
-            }
-            
-            .form-section {
-                padding: 20px;
-            }
-        }
-    </style>
-
-    <!-- <div class="container-fluid">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Tambah Admin & Kasir Baru</h1>
-        </div> -->
-
-        @if (session()->has('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        <div class="main-card">
-            <div class="card-header-custom">
-                <h4>
-                    <i class="bi bi-person-plus-fill"></i>
-                    Tambah Data Admin & Kasir Baru
-                </h4>
-            </div>
-
-            <div class="form-section">
-                <form method="post" action="/dashboard/users" class="mb-5">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama"
-                            required autofocus value="{{ old('nama') }}">
-                        @error('nama')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username"
-                            required value="{{ old('username') }}">
-                        @error('username')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
-                            <option value="">Pilih Role</option>
-                            <option value="ADMIN" {{ old('role') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
-                            <option value="KASIR" {{ old('role') == 'KASIR' ? 'selected' : '' }}>Kasir</option>
-                        </select>
-                        @error('role')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                            name="password" required>
-                        @error('password')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Tambahkan</button>
-                </form>
+                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
+                            <a href="/dashboard/users" class="btn btn-secondary-umkm">
+                                <i class="bi bi-arrow-left"></i> Kembali
+                            </a>
+                            <button type="submit" class="btn btn-umkm">
+                                <i class="bi bi-plus-circle"></i> Tambahkan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
