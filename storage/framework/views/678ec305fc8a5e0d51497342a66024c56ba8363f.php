@@ -42,7 +42,7 @@
     }
 
     .umkm-card-body {
-        padding: 30px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
 
     .form-label {
@@ -72,20 +72,24 @@
         background: white;
     }
 
-    .btn-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        border: none;
+    .btn-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
-        color: white;
         transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
+    }
+
+    .btn-umkm {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .btn-umkm:hover {
@@ -94,18 +98,18 @@
         color: white;
     }
 
+    .btn-umkm:disabled {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        opacity: 0.65;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+    
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        border-radius: 15px;
-        padding: 12px 25px;
-        font-weight: 600;
         color: white;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .btn-secondary-umkm:hover {
@@ -122,7 +126,7 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -130,6 +134,21 @@
     .page-title p {
         font-size: 1.1rem;
         opacity: 0.9;
+    }
+
+    .tax-info {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 30px;
+        }
     }
 </style>
 
@@ -140,7 +159,8 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        
+        <div class="col-xl-8 col-lg-10 col-md-12">
             <?php if($errors->any()): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px;">
                     <strong>Terjadi Kesalahan!</strong>
@@ -175,11 +195,11 @@
                         ?>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="no_nota" class="form-label">No. Nota</label>
                                 <input type="text" class="form-control" id="no_nota" value="<?php echo e($transaction->no_nota); ?>" readonly>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="tgl_transaksi" class="form-label">Tanggal Transaksi</label>
                                 <input type="text" class="form-control" id="tgl_transaksi" value="<?php echo e($transaction->created_at->format('d M Y, H:i')); ?>" readonly>
                             </div>
@@ -219,12 +239,12 @@
                         <hr class="my-4">
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="total" class="form-label">Total Harga</label>
                                 <input type="text" class="form-control" id="total" value="Rp <?php echo e(number_format($transaction->total_harga, 0, ',', '.')); ?>" readonly>
                                 <input type="hidden" id="total_numeric" value="<?php echo e($transaction->total_harga); ?>">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="status_display" class="form-label">Status Pembayaran</label>
                                 <input type="hidden" name="status" id="status_hidden" value="<?php echo e($transaction->status); ?>">
                                 <select class="form-select" id="status_display" disabled>
@@ -233,13 +253,13 @@
                                     <option value="BELUM BAYAR" <?php echo e((old('status', $transaction->status) == 'BELUM BAYAR') ? 'selected' : ''); ?>>BELUM LUNAS</option>
                                 </select>
                                 <small class="text-muted d-block mt-1">
-                                    <i class="bi bi-info-circle-fill"></i> Status diperbarui otomatis berdasarkan jumlah bayar.
+                                    <i class="bi bi-info-circle-fill"></i> Status diperbarui otomatis.
                                 </small>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="bayar_display" class="form-label">Jumlah Bayar</label>
                                 <input type="text" class="form-control <?php $__errorArgs = ['bayar'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -262,19 +282,21 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="kembalian" class="form-label">Kembalian / Sisa</label>
                                 <input type="text" class="form-control" id="kembalian_display" readonly>
                                 <input type="hidden" id="kembalian" name="kembalian" value="<?php echo e(old('kembalian', $transaction->kembalian)); ?>">
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between pt-4">
-                            <a href="/dashboard/transactions" class="btn-secondary-umkm">
-                                <i class="bi bi-arrow-left"></i> Kembali
+                        <div class="d-grid d-sm-flex justify-content-sm-between pt-4 gap-2">
+                            <a href="/dashboard/transactions" class="btn btn-secondary-umkm">
+                                <i class="bi bi-arrow-left"></i>
+                                Kembali
                             </a>
-                            <button class="btn-umkm" type="submit">
-                                <i class="bi bi-save"></i> Ubah Transaksi
+                            <button class="btn btn-umkm" type="submit">
+                                <i class="bi bi-save"></i>
+                                Ubah Transaksi
                             </button>
                         </div>
                     </form>
@@ -286,28 +308,21 @@ unset($__errorArgs, $__bag); ?>
 
 <script>
     function formatNumber(n) {
-        // Function to format number with dots
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function unformatNumber(s) {
-        // Function to remove dots and any non-numeric characters
         return s.toString().replace(/[^0-9]/g, "");
     }
 
     function calculateChange() {
-        // Use the raw value from the hidden input for calculation
         var bayar = parseFloat(document.getElementById("bayar").value) || 0;
         var total = parseFloat(document.getElementById("total_numeric").value) || 0;
         var kembalian = bayar - total;
 
-        // Update hidden input for form submission
         document.getElementById("kembalian").value = kembalian;
-
-        // Update display input with currency formatting
         document.getElementById("kembalian_display").value = 'Rp ' + formatNumber(kembalian);
         
-        // Update status based on payment
         var statusDisplaySelect = document.getElementById('status_display');
         var statusHiddenInput = document.getElementById('status_hidden');
         
@@ -324,28 +339,20 @@ unset($__errorArgs, $__bag); ?>
         const bayarDisplayInput = document.getElementById('bayar_display');
         const bayarHiddenInput = document.getElementById('bayar');
 
-        // Function to handle formatting on user input
         const handleBayarInput = (event) => {
-            // Get raw value by removing dots from what user sees
             let rawValue = unformatNumber(bayarDisplayInput.value);
-            
-            // Update the hidden input with the raw value
             bayarHiddenInput.value = rawValue;
             
-            // Format the displayed value
-            bayarDisplayInput.value = formatNumber(rawValue);
+            let formattedValue = formatNumber(rawValue);
+            if (bayarDisplayInput.value !== formattedValue) {
+                bayarDisplayInput.value = formattedValue;
+            }
             
-            // Recalculate everything
             calculateChange();
         };
         
-        // Set initial value from hidden input to the display input
         bayarDisplayInput.value = formatNumber(bayarHiddenInput.value);
-        
-        // Add event listener
         bayarDisplayInput.addEventListener('input', handleBayarInput);
-
-        // Initial calculation on page load
         calculateChange();
     });
 </script>
