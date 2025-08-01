@@ -43,7 +43,7 @@
     }
 
     .umkm-card-body {
-        padding: 25px;
+        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
 
     .btn-umkm {
@@ -59,6 +59,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
@@ -133,7 +134,7 @@
     }
 
     .page-title h1 {
-        font-size: 2.5rem;
+        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -153,6 +154,15 @@
     .checkout-section h2 {
         color: #28a745;
     }
+
+    @media (min-width: 768px) {
+        .page-title h1 {
+            font-size: 2.5rem;
+        }
+        .umkm-card-body {
+            padding: 25px;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -170,15 +180,16 @@
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <h3 class="umkm-card-title">
+            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
+                <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-cart3"></i>
                     Keranjang Belanja
                 </h3>
-                <form method="post" action="/dashboard/orders/create">
+                <form method="post" action="/dashboard/orders/create" class="w-100 w-md-auto">
                     @csrf
                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
-                    <button type="submit" class="btn-umkm btn-umkm-sm" style="background: white; color: #28a745;">
+                    <button type="submit" class="btn btn-umkm btn-umkm-sm w-100" style="background: white; color: #28a745;">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Belanja
                     </button>
@@ -242,13 +253,14 @@
                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
                     <input type="hidden" name="nama_pembeli" value="CASH"> <!-- Default payment method -->
                     
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
+                    {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+                    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-3">
+                        <div class="text-center text-sm-start">
                             <span class="text-muted">Total Harga</span>
                             <h2 class="fw-bold mb-0" id="total_harga_display">Rp 0</h2>
                             <input type="hidden" name="total_harga" id="total_harga">
                         </div>
-                        <div>
+                        <div class="d-grid d-sm-block">
                             <button type="submit" class="btn btn-umkm btn-lg">
                                 <i class="bi bi-check-circle"></i>
                                 Checkout
@@ -267,23 +279,17 @@
         var table = document.getElementById("table");
         var subtotalSum = 0;
         
-        // Sum subtotal from table, skipping header row
         for(var i = 1; i < table.rows.length; i++) {
-            // Cell index 4 contains subtotal
             var cellValue = table.rows[i].cells[4].innerText.replace(/[^0-9]/g, '');
             subtotalSum += parseInt(cellValue) || 0;
         }
 
         var finalTotal = subtotalSum;
         
-        // Update hidden input for form submission
         document.getElementById("total_harga").value = finalTotal;
-
-        // Update display element with currency formatting
         document.getElementById("total_harga_display").innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(finalTotal);
     }
 
-    // Calculate total on page load
     document.addEventListener('DOMContentLoaded', function() {
         calculateTotal();
     });
