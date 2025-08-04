@@ -21,6 +21,7 @@ class Good extends Model
         'stok',
         'harga_asli',
         'harga',
+        'markup_percentage', // [BARU]
         'min_qty_grosir',
         'harga_grosir',
         'is_grosir_active',
@@ -74,7 +75,8 @@ class Good extends Model
             return 0;
         }
 
-        $markup = $this->type === 'makanan' ? 0.02 : 0.05; // 2% for food, 5% for others
+        // [PERUBAHAN LOGIKA] Menggunakan markup_percentage jika ada, jika tidak, gunakan default
+        $markup = $this->markup_percentage !== null ? ($this->markup_percentage / 100) : ($this->type === 'makanan' ? 0.02 : 0.05);
         return $this->harga_asli + ($this->harga_asli * $markup);
     }
 

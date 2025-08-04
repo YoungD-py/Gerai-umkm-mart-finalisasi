@@ -102,7 +102,7 @@
         justify-content: center;
         gap: 8px;
     }
-    
+
     .btn-warning-umkm {
         background: linear-gradient(135deg, #ffc107, #e0a800);
         border: none;
@@ -385,16 +385,37 @@
                                     </div>
                                 </div>
                             </div>
+                            {{-- [BARU] Input Markup Percentage --}}
+                            <div class="mb-3">
+                                <label for="markup_percentage" class="form-label">
+                                    <i class="bi bi-percent text-warning"></i>
+                                    Persentase Markup (Opsional)
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control @error('markup_percentage') is-invalid @enderror" id="markup_percentage" name="markup_percentage" value="{{ old('markup_percentage', $good->markup_percentage) }}" min="0" max="100" step="0.01" placeholder="Contoh: 5 (untuk 5%)" oninput="calculateSellingPrice();">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                @error('markup_percentage')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted mt-2 d-block">Biarkan kosong untuk markup otomatis (Makanan: 2%, Non-Makanan: 5%)</small>
+                            </div>
                             <div id="price-info" class="price-info">
                                 <h6 class="text-info mb-2"><i class="bi bi-calculator"></i> Informasi Harga Jual</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p class="mb-1"><strong>Harga Asli:</strong> <span id="display-harga-asli" class="text-muted">Rp {{ number_format($good->harga_asli ?? 0, 0, ',', '.') }}</span></p>
-                                        <p class="mb-1"><strong>Markup:</strong> <span id="markup-percent" class="text-info">{{ $good->type === 'makanan' ? '2%' : '5%' }}</span></p>
+                                        <p class="mb-1"><strong>Markup:</strong> <span id="markup-percent" class="text-info">
+                                            @if($good->markup_percentage !== null)
+                                                {{ number_format($good->markup_percentage, 0) }}% (Manual)
+                                            @else
+                                                {{ $good->type === 'makanan' ? '2%' : '5%' }} (Otomatis)
+                                            @endif
+                                        </span></p>
                                     </div>
                                     <div class="col-md-6">
                                         <p class="mb-1"><strong>Harga Jual:</strong> <span id="display-harga-jual" class="text-success fw-bold">Rp {{ number_format($good->harga ?? 0, 0, ',', '.') }}</span></p>
-                                        <p class="mb-0"><strong>Keuntungan:</strong> <span id="display-profit" class="text-success">Rp {{ number_format(($good->harga ?? 0) - ($good->harga_asli ?? 0), 0, ',', '.') }}</span></p>
+                                        <p class="mb-0"><strong>Selisih:</strong> <span id="display-profit" class="text-success">Rp {{ number_format(($good->harga ?? 0) - ($good->harga_asli ?? 0), 0, ',', '.') }}</span></p> {{-- [UBAH] Keuntungan menjadi Selisih --}}
                                     </div>
                                 </div>
                             </div>
@@ -526,17 +547,32 @@ function toggleExpiredField() {
 function calculateSellingPrice() {
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
+    const markupPercentageInput = document.getElementById('markup_percentage'); // [BARU]
     const priceInfo = document.getElementById('price-info');
+
     if (hargaAsli > 0 && typeSelect.value) {
-        const markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
+        let markup;
+        let markupDisplay;
+
+        // [PERUBAHAN LOGIKA] Menggunakan markup_percentage dari input jika ada
+        if (markupPercentageInput.value !== '' && !isNaN(parseFloat(markupPercentageInput.value))) {
+            markup = parseFloat(markupPercentageInput.value) / 100;
+            markupDisplay = parseFloat(markupPercentageInput.value).toFixed(0) + '% (Manual)';
+        } else {
+            markup = typeSelect.value === 'makanan' ? 0.02 : 0.05;
+            markupDisplay = (markup * 100).toFixed(0) + '% (Otomatis)';
+        }
+
         const hargaJual = hargaAsli + (hargaAsli * markup);
-        const profit = hargaJual - hargaAsli;
-        const markupPercent = (markup * 100).toFixed(0);
+        const selisih = hargaJual - hargaAsli; // [UBAH] profit menjadi selisih
+
         document.getElementById('display-harga-asli').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(hargaAsli);
-        document.getElementById('markup-percent').textContent = markupPercent + '%';
+        document.getElementById('markup-percent').textContent = markupDisplay;
         document.getElementById('display-harga-jual').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(hargaJual);
-        document.getElementById('display-profit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(profit);
+        document.getElementById('display-profit').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(selisih); // [UBAH] profit menjadi selisih
         priceInfo.style.display = 'block';
+    } else {
+        priceInfo.style.display = 'none';
     }
 }
 

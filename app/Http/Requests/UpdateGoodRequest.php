@@ -25,7 +25,7 @@ class UpdateGoodRequest extends FormRequest
     public function rules()
     {
         $goodId = $this->route('good')->id ?? $this->input('id');
-        
+
         return [
             'category_id' => 'required|exists:categories,id',
             'tgl_masuk' => 'required|date',
@@ -46,6 +46,7 @@ class UpdateGoodRequest extends FormRequest
             'expired_date' => 'nullable|date|after:today',
             'stok' => 'required|integer|min:0',
             'harga_asli' => 'required|numeric|min:0',
+            'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU]
         ];
     }
 
@@ -74,6 +75,9 @@ class UpdateGoodRequest extends FormRequest
             'harga_asli.required' => 'Harga asli barang wajib diisi.',
             'harga_asli.numeric' => 'Harga asli barang harus berupa angka.',
             'harga_asli.min' => 'Harga asli barang tidak boleh kurang dari 0.',
+            'markup_percentage.numeric' => 'Persentase markup harus berupa angka.', // [BARU]
+            'markup_percentage.min' => 'Persentase markup tidak boleh kurang dari 0.', // [BARU]
+            'markup_percentage.max' => 'Persentase markup tidak boleh lebih dari 100.', // [BARU]
         ];
     }
 }

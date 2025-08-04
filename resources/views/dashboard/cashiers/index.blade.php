@@ -18,7 +18,7 @@
     }
 
     .cashier-card-header {
-        background: linear-gradient(135deg, #007bff, #0056b3); 
+        background: linear-gradient(135deg, #007bff, #0056b3);
         color: white;
         padding: 20px;
         border-radius: 20px 20px 0 0;
@@ -112,7 +112,7 @@
         letter-spacing: 0.5px;
         border: none;
         padding: 15px 12px;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .table-cashier tbody td {
@@ -128,7 +128,7 @@
     .table-cashier tbody tr:hover {
         background-color: #f8f9fa;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;

@@ -67,6 +67,7 @@ class GoodController extends Controller
             'expired_date' => 'nullable|date|after:today',
             'stok' => 'required|integer|min:0',
             'harga_asli' => 'required|numeric|min:0',
+            'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU] Validasi markup percentage
             'is_grosir_active' => 'boolean',
             'min_qty_grosir' => 'nullable|integer|min:2',
             'harga_grosir' => 'nullable|numeric|min:0',
@@ -83,14 +84,19 @@ class GoodController extends Controller
             $validatedData['expired_date'] = null;
         }
 
-        $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
+        // [PERUBAHAN LOGIKA] Perhitungan harga jual berdasarkan markup_percentage atau default
+        if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
+            $markup = $validatedData['markup_percentage'] / 100;
+        } else {
+            $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
+        }
         $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup);
 
         if ($request->has('is_grosir_active') && $request->is_grosir_active) {
             if (empty($validatedData['min_qty_grosir']) || empty($validatedData['harga_grosir'])) {
                 return back()->withErrors(['min_qty_grosir' => 'Minimal Qty & Harga grosir wajib diisi.'])->withInput();
             }
-            
+
             // [PERBAIKAN LOGIKA] Harga grosir tidak boleh lebih rendah dari harga asli (modal)
             if ($validatedData['harga_grosir'] < $validatedData['harga_asli']) {
                 return back()->withErrors(['harga_grosir' => 'Harga grosir tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
@@ -111,7 +117,7 @@ class GoodController extends Controller
             if (empty($validatedData['min_total_tebus_murah']) || empty($validatedData['harga_tebus_murah'])) {
                 return back()->withErrors(['min_total_tebus_murah' => 'Minimal Total & Harga tebus murah wajib diisi.'])->withInput();
             }
-            
+
             // [PERBAIKAN LOGIKA] Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
             if ($validatedData['harga_tebus_murah'] < $validatedData['harga_asli']) {
                 return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
@@ -187,6 +193,7 @@ class GoodController extends Controller
             'type' => 'required|in:makanan,non_makanan,lainnya,handycraft,fashion',
             'expired_date' => 'nullable|date|after:today',
             'harga_asli' => 'required|numeric|min:0',
+            'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU] Validasi markup percentage
             'is_grosir_active' => 'boolean',
             'min_qty_grosir' => 'nullable|integer|min:2',
             'harga_grosir' => 'nullable|numeric|min:0',
@@ -205,7 +212,12 @@ class GoodController extends Controller
             $validatedData['expired_date'] = null;
         }
 
-        $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
+        // [PERUBAHAN LOGIKA] Perhitungan harga jual berdasarkan markup_percentage atau default
+        if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
+            $markup = $validatedData['markup_percentage'] / 100;
+        } else {
+            $markup = $validatedData['type'] === 'makanan' ? 0.02 : 0.05;
+        }
         $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup);
 
         if ($request->has('is_grosir_active') && $request->is_grosir_active) {
@@ -286,7 +298,7 @@ class GoodController extends Controller
         ]);
 
         $selectedIds = $request->input('selected_ids');
-        
+
         if (empty($selectedIds)) {
             return redirect('/dashboard/goods')->with('error', 'Tidak ada barang yang dipilih untuk dihapus.');
         }
