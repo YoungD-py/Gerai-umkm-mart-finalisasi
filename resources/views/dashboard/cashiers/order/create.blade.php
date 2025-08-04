@@ -49,6 +49,20 @@
             border-radius: 8px;
             overflow: hidden;
         }
+
+        /* Hide camera section by default */
+        #camera-scan-section {
+            display: none;
+        }
+
+        /* Show only on mobile devices */
+        .mobile-only {
+            display: none;
+        }
+
+        .mobile-only.show-mobile {
+            display: block;
+        }
     </style>
 
     {{-- [RESPONSIVE] Menggunakan container-fluid agar padding konsisten --}}
@@ -117,7 +131,7 @@
                                     <ul class="mb-0 small lh-lg ps-3">
                                         <li>Ketik barcode</li>
                                         <li>Tekan Enter</li>
-                                        <li>Gunakan kamera</li>
+                                        <li id="camera-tip" class="mobile-only">Gunakan kamera</li>
                                     </ul>
                                 </div>
                             </div>
@@ -156,7 +170,8 @@
                             </div>
                         </div>
 
-                        <div class="mt-5 pt-4 border-top">
+                        {{-- Camera Scan Section - Only show on mobile devices --}}
+                        <div id="camera-scan-section" class="mt-5 pt-4 border-top mobile-only">
                             <h5 class="fw-bold text-primary mb-3"><i class="bi bi-camera-video"></i> Scan Barcode dengan Kamera</h5>
                             <div id="qr-reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
                             <div class="d-grid gap-2 mt-3">
@@ -343,6 +358,47 @@
         let manualSelectedProduct = null;
         let html5QrcodeScanner;
         let isScanning = false;
+        let isMobileDevice = false;
+
+        // Detect mobile device on page load
+        function detectMobileDevice() {
+            // Check for touch capability
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+            
+            // Check for camera capability
+            const hasCamera = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+            
+            // Check user agent for mobile indicators
+            const userAgent = navigator.userAgent.toLowerCase();
+            const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'tablet', 'blackberry', 'windows phone'];
+            const isMobileUserAgent = mobileKeywords.some(keyword => userAgent.includes(keyword));
+            
+            // Device is considered mobile if it has touch AND camera capabilities, OR mobile user agent
+            isMobileDevice = (hasTouch && hasCamera) || isMobileUserAgent;
+            
+            console.log('Mobile detection:', {
+                hasTouch,
+                hasCamera,
+                isMobileUserAgent,
+                isMobileDevice
+            });
+            
+            // Show/hide camera section based on mobile detection
+            if (isMobileDevice) {
+                const mobileElements = document.querySelectorAll('.mobile-only');
+                mobileElements.forEach(element => {
+                    element.classList.add('show-mobile');
+                });
+                
+                // Show camera scan section
+                const cameraScanSection = document.getElementById('camera-scan-section');
+                if (cameraScanSection) {
+                    cameraScanSection.style.display = 'block';
+                }
+            } else {
+                console.log('Desktop detected - camera features hidden');
+            }
+        }
 
         function onScanSuccess(decodedText, decodedResult) {
             document.getElementById('barcode-input').value = decodedText;
@@ -353,6 +409,11 @@
         function onScanError(errorMessage) {}
 
         function startScanner() {
+            if (!isMobileDevice) {
+                showAlert('warning', '⚠️ Fitur kamera hanya tersedia di perangkat mobile.');
+                return;
+            }
+            
             const isSecureContext = window.location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
             if (!isSecureContext) {
                 showAlert('danger', '❌ Akses kamera butuh HTTPS atau localhost.');
@@ -639,10 +700,19 @@
         });
 
         document.addEventListener('click', e => { if (!productSearchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) { searchResultsDiv.style.display = 'none'; } });
-        document.getElementById('start-scan-btn').addEventListener('click', startScanner);
-        document.getElementById('stop-scan-btn').addEventListener('click', stopScanner);
-        window.addEventListener('beforeunload', () => stopScanner());
-        document.addEventListener('DOMContentLoaded', () => document.getElementById('barcode-input').focus());
+        
+        // Only add camera event listeners if mobile device
+        document.addEventListener('DOMContentLoaded', () => {
+            detectMobileDevice();
+            
+            if (isMobileDevice) {
+                document.getElementById('start-scan-btn').addEventListener('click', startScanner);
+                document.getElementById('stop-scan-btn').addEventListener('click', stopScanner);
+                window.addEventListener('beforeunload', () => stopScanner());
+            }
+            
+            document.getElementById('barcode-input').focus();
+        });
 
         function deleteOrderItem(orderId, productName) {
             if (confirm(`Yakin ingin menghapus "${productName}" dari pesanan?`)) {
