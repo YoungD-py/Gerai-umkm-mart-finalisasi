@@ -33,11 +33,11 @@ class GoodController extends Controller
         // [PERUBAHAN] Sorting by expired_date
         $sortExpired = request('sort_expired');
         if ($sortExpired === 'asc') {
-            // Urutkan dari yang paling cepat expired (ASC), null (tidak ada expired date) di akhir
-            $query->orderBy('expired_date', 'asc')->orderByRaw('expired_date IS NULL');
+            // Urutkan dari yang paling cepat expired (ASC), hanya tampilkan yang punya expired date
+            $query->whereNotNull('expired_date')->orderBy('expired_date', 'asc');
         } elseif ($sortExpired === 'desc') {
-            // Urutkan dari yang paling lama expired (DESC), null (tidak ada expired date) di awal
-            $query->orderBy('expired_date', 'desc')->orderByRaw('expired_date IS NOT NULL DESC');
+            // Urutkan dari yang paling lama expired (DESC), hanya tampilkan yang punya expired date
+            $query->whereNotNull('expired_date')->orderBy('expired_date', 'desc');
         } else {
             // Default sorting jika tidak ada pengurutan expired_date
             $query->latest(); // Urutkan berdasarkan created_at DESC
