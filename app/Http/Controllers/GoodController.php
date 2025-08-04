@@ -20,7 +20,7 @@ class GoodController extends Controller
      */
     public function index()
     {
-        $query = Good::latest();
+        $query = Good::query(); // Mulai dengan query() untuk kontrol pengurutan yang lebih baik
 
         // Filter by search term (nama or barcode)
         if (request('search')) {
@@ -30,22 +30,18 @@ class GoodController extends Controller
             });
         }
 
-        // [BARU] Filter by expired_date
-        if (request('expired_date')) {
-            $date = Carbon::parse(request('expired_date'))->startOfDay();
-            $query->whereDate('expired_date', '=', $date);
+        // [PERUBAHAN] Sorting by expired_date
+        $sortExpired = request('sort_expired');
+        if ($sortExpired === 'asc') {
+            // Urutkan dari yang paling cepat expired (ASC), null (tidak ada expired date) di akhir
+            $query->orderBy('expired_date', 'asc')->orderByRaw('expired_date IS NULL');
+        } elseif ($sortExpired === 'desc') {
+            // Urutkan dari yang paling lama expired (DESC), null (tidak ada expired date) di awal
+            $query->orderBy('expired_date', 'desc')->orderByRaw('expired_date IS NOT NULL DESC');
+        } else {
+            // Default sorting jika tidak ada pengurutan expired_date
+            $query->latest(); // Urutkan berdasarkan created_at DESC
         }
-        // [BARU] Filter by expired_date_from (range)
-        if (request('expired_date_from')) {
-            $dateFrom = Carbon::parse(request('expired_date_from'))->startOfDay();
-            $query->whereDate('expired_date', '>=', $dateFrom);
-        }
-        // [BARU] Filter by expired_date_to (range)
-        if (request('expired_date_to')) {
-            $dateTo = Carbon::parse(request('expired_date_to'))->endOfDay();
-            $query->whereDate('expired_date', '<=', $dateTo);
-        }
-
 
         return view('dashboard.goods.index', [
             'active' => 'goods',
