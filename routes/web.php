@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/cashiers/checkout', [CashierController::class, 'checkout']);
     Route::post('/dashboard/cashiers/finishing', [CashierController::class, 'finishing']);
     Route::post('/dashboard/cashiers/nota', [CashierController::class, 'nota']);
+    Route::get('/dashboard/cashiers/print-nota', [CashierController::class, 'printNota'])->name('cashier.printNota');
 
     // New route for product search
     Route::get('/dashboard/cashier/search-goods', [CashierController::class, 'searchGoods'])->name('cashier.searchGoods');
@@ -108,7 +109,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/rekapitulasi/cetak-restock-return', [ReportController::class, 'cetakRestockReturn']);
     Route::post('/dashboard/rekapitulasi/cetak-biaya-operasional', [ReportController::class, 'cetakBiayaOperasional'])->name('reports.cetakBiayaOperasional');
     Route::post('/dashboard/rekapitulasi/cetak-laporan-keuangan', [ReportController::class, 'cetakLaporanKeuangan'])->name('reports.cetakLaporanKeuangan');
-
 
     // PRINT ROUTES
     Route::get('/dashboard/goods/print-all', [GoodController::class, 'printAll']);

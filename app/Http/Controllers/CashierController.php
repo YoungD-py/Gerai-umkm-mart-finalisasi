@@ -7,8 +7,7 @@ use App\Models\User;
 use App\Models\Good;
 use App\Models\Transaction;
 use App\Models\Order;
-// use PDF;
-use Barryvdh\DomPDF\Facade\Pdf;
+use PDF;
 use Illuminate\Support\Facades\Log;
 
 class CashierController extends Controller
@@ -23,7 +22,7 @@ class CashierController extends Controller
         return view('dashboard.cashiers.index', [
             'active' => 'cashier',
             // [PERUBAHAN] Mengubah get() menjadi paginate() untuk membuat penomoran halaman
-            'transactions' => Transaction::latest()->paginate(10),
+            'transactions' => Transaction::latest()->paginate(10), 
         ]);
     }
 
@@ -179,19 +178,15 @@ class CashierController extends Controller
             $unitPrice = $barang->harga; // Default to retail price
 
             // Check tebus murah first (higher priority)
-            if (
-                $barang->is_tebus_murah_active &&
-                $currentTotal >= $barang->min_total_tebus_murah &&
-                $barang->harga_tebus_murah > 0
-            ) {
+            if ($barang->is_tebus_murah_active && 
+                $currentTotal >= $barang->min_total_tebus_murah && 
+                $barang->harga_tebus_murah > 0) {
                 $unitPrice = $barang->harga_tebus_murah;
             }
             // Then check wholesale
-            elseif (
-                $barang->is_grosir_active &&
-                $qty >= $barang->min_qty_grosir &&
-                $barang->harga_grosir > 0
-            ) {
+            elseif ($barang->is_grosir_active && 
+                    $qty >= $barang->min_qty_grosir && 
+                    $barang->harga_grosir > 0) {
                 $unitPrice = $barang->harga_grosir;
             }
 
@@ -207,7 +202,7 @@ class CashierController extends Controller
             ]);
 
             return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
-                ->with('success', 'Pesanan berhasil ditambahkan!');
+                                ->with('success', 'Pesanan berhasil ditambahkan!');
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -278,19 +273,15 @@ class CashierController extends Controller
             $unitPrice = $barang->harga; // Default to retail price
 
             // Check tebus murah first (higher priority)
-            if (
-                $barang->is_tebus_murah_active &&
-                $currentTotal >= $barang->min_total_tebus_murah &&
-                $barang->harga_tebus_murah > 0
-            ) {
+            if ($barang->is_tebus_murah_active && 
+                $currentTotal >= $barang->min_total_tebus_murah && 
+                $barang->harga_tebus_murah > 0) {
                 $unitPrice = $barang->harga_tebus_murah;
             }
             // Then check wholesale
-            elseif (
-                $barang->is_grosir_active &&
-                $qty >= $barang->min_qty_grosir &&
-                $barang->harga_grosir > 0
-            ) {
+            elseif ($barang->is_grosir_active && 
+                    $qty >= $barang->min_qty_grosir && 
+                    $barang->harga_grosir > 0) {
                 $unitPrice = $barang->harga_grosir;
             }
 
@@ -346,12 +337,12 @@ class CashierController extends Controller
         }
 
         $goods = Good::where('stok', '>', 0)
-            ->where(function ($q) use ($query) {
-                $q->where('nama', 'LIKE', '%' . $query . '%')
-                    ->orWhere('barcode', 'LIKE', '%' . $query . '%');
-            })
-            ->limit(10) // Limit results for performance
-            ->get();
+                           ->where(function($q) use ($query) {
+                               $q->where('nama', 'LIKE', '%' . $query . '%')
+                                 ->orWhere('barcode', 'LIKE', '%' . $query . '%');
+                           })
+                           ->limit(10) // Limit results for performance
+                           ->get();
 
         return response()->json($goods);
     }
@@ -386,7 +377,7 @@ class CashierController extends Controller
         // Kurangi stok jika status lunas
         if (strtolower(trim($request->status)) === 'lunas') {
             $orders = Order::where('no_nota', $transaction->no_nota)->get();
-
+            
             Log::info('Processing stock reduction', [
                 'no_nota' => $transaction->no_nota,
                 'orders_count' => $orders->count()
@@ -397,12 +388,12 @@ class CashierController extends Controller
                 if ($good) {
                     $oldStock = $good->stok;
                     $newStock = $oldStock - $order->qty;
-
+                    
                     // Update stok menggunakan raw query untuk memastikan
                     \DB::table('goods')
-                        ->where('id', $good->id)
-                        ->update(['stok' => $newStock]);
-
+                       ->where('id', $good->id)
+                       ->update(['stok' => $newStock]);
+                    
                     Log::info('Stock updated', [
                         'good_id' => $good->id,
                         'good_name' => $good->nama,
@@ -418,7 +409,7 @@ class CashierController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Generate and download nota PDF
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -430,34 +421,69 @@ class CashierController extends Controller
         ]);
 
         $no_nota = $request->no_nota;
-
+        
         // Get transaction data
         $transaction = Transaction::where('no_nota', $no_nota)->get();
-
+        
         if ($transaction->isEmpty()) {
             return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
         }
-
+        
         // Get orders data
         $orders = Order::where('no_nota', $no_nota)->with('good')->get();
-
+        
         if ($orders->isEmpty()) {
             return redirect()->back()->with('error', 'Detail pesanan tidak ditemukan.');
         }
-
+        
         // Generate PDF
-        $pdf = Pdf::loadview('nota_pdf', [
+        $pdf = PDF::loadview('nota_pdf', [
             'transaction' => $transaction,
             'orders' => $orders
         ]);
-
+        
         // Set paper size for thermal printer (80mm width)
         $pdf->setPaper([0, 0, 226.77, 841.89], 'portrait'); // 80mm x 297mm in points
-
+        
         return $pdf->download('nota-' . $no_nota . '.pdf');
     }
 
-       /**
+    /**
+     * Display nota for printing (HTML version)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function printNota(Request $request)
+    {
+        $request->validate([
+            'no_nota' => 'required|string'
+        ]);
+
+        $no_nota = $request->no_nota;
+        
+        // Get transaction data
+        $transaction = Transaction::where('no_nota', $no_nota)->get();
+        
+        if ($transaction->isEmpty()) {
+            return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+        }
+        
+        // Get orders data
+        $orders = Order::where('no_nota', $no_nota)->with('good')->get();
+        
+        if ($orders->isEmpty()) {
+            return redirect()->back()->with('error', 'Detail pesanan tidak ditemukan.');
+        }
+        
+        // Return HTML view for printing
+        return view('nota_print', [
+            'transaction' => $transaction,
+            'orders' => $orders
+        ]);
+    }
+
+    /**
      * Delete order item from cart
      */
     public function deleteorder(Order $order)
