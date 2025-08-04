@@ -403,7 +403,12 @@
                     document.getElementById('product-price').textContent = formatRupiah(productData.harga);
                     document.getElementById('product-stock').textContent = productData.stok + ' pcs';
                     document.getElementById('scan-qty').value = 1;
-                    updateBarcodePrice();
+                    
+                    // Perbaikan: Pastikan updateBarcodePrice dipanggil setelah semua data diset
+                    setTimeout(() => {
+                        updateBarcodePrice();
+                    }, 100);
+                    
                     showAlert('success', `✅ Produk ditemukan: ${productData.nama}`);
                 } else {
                     document.getElementById('barcode-result').style.display = 'none';
@@ -414,50 +419,58 @@
         }
 
         function updateBarcodePrice() {
-            if (!currentProduct) return;
+            if (!currentProduct) {
+                console.log('No current product');
+                return;
+            }
 
-            const qty = parseInt(document.getElementById('scan-qty').value) || 1;
-            let unitPrice = currentProduct.harga;
+            const qtyElement = document.getElementById('scan-qty');
+            const totalPriceElement = document.getElementById('total-price');
+            const priceTypeElement = document.getElementById('price-type');
+            
+            if (!qtyElement || !totalPriceElement || !priceTypeElement) {
+                console.log('Missing elements');
+                return;
+            }
+
+            const qty = parseInt(qtyElement.value) || 1;
+            let unitPrice = parseFloat(currentProduct.harga) || 0;
             let priceType = 'Harga Normal';
 
-            const wholesaleInfo = document.getElementById('wholesale-info');
-            const tebusMurahInfo = document.getElementById('tebus-murah-info');
-            wholesaleInfo.style.display = 'none';
-            tebusMurahInfo.style.display = 'none';
+            console.log('Current product:', currentProduct);
+            console.log('Base price:', unitPrice);
+            console.log('Quantity:', qty);
 
-            const isTebusMurahEligible = currentProduct.is_tebus_murah_active && currentTransactionTotal >= currentProduct.min_total_tebus_murah && currentProduct.harga_tebus_murah > 0;
-            const isWholesaleEligible = currentProduct.is_grosir_active && qty >= currentProduct.min_qty_grosir && currentProduct.harga_grosir > 0;
+            // Check tebus murah first (higher priority)
+            const isTebusMurahEligible = currentProduct.is_tebus_murah_active && 
+                                       currentTransactionTotal >= currentProduct.min_total_tebus_murah && 
+                                       currentProduct.harga_tebus_murah > 0;
+            
+            // Check wholesale
+            const isWholesaleEligible = currentProduct.is_grosir_active && 
+                                      qty >= currentProduct.min_qty_grosir && 
+                                      currentProduct.harga_grosir > 0;
             
             if (isTebusMurahEligible) {
-                unitPrice = currentProduct.harga_tebus_murah;
+                unitPrice = parseFloat(currentProduct.harga_tebus_murah) || unitPrice;
                 priceType = 'Harga Tebus Murah';
             } else if (isWholesaleEligible) {
-                unitPrice = currentProduct.harga_grosir;
+                unitPrice = parseFloat(currentProduct.harga_grosir) || unitPrice;
                 priceType = 'Harga Grosir';
             }
+
+            const totalPrice = unitPrice * qty;
+            console.log('Final unit price:', unitPrice);
+            console.log('Total price:', totalPrice);
+
+            // Update total price
+            totalPriceElement.textContent = formatRupiah(totalPrice);
             
-            if (isWholesaleEligible) {
-                const savings = currentProduct.harga - currentProduct.harga_grosir;
-                document.getElementById('min-wholesale-qty').textContent = currentProduct.min_qty_grosir;
-                document.getElementById('wholesale-price').textContent = formatRupiah(currentProduct.harga_grosir);
-                document.getElementById('savings-per-unit').textContent = formatRupiah(savings);
-                document.getElementById('discount-percent').textContent = (savings / currentProduct.harga * 100).toFixed(1) + '%';
-                wholesaleInfo.style.display = 'block';
-            }
-
-            if (isTebusMurahEligible) {
-                const savings = currentProduct.harga - currentProduct.harga_tebus_murah;
-                document.getElementById('min-tebus-total').textContent = formatRupiah(currentProduct.min_total_tebus_murah);
-                document.getElementById('tebus-price').textContent = formatRupiah(currentProduct.harga_tebus_murah);
-                document.getElementById('tebus-savings-per-unit').textContent = formatRupiah(savings);
-                document.getElementById('tebus-discount-percent').textContent = (savings / currentProduct.harga * 100).toFixed(1) + '%';
-                tebusMurahInfo.style.display = 'block';
-            }
-
-            document.getElementById('total-price').textContent = formatRupiah(unitPrice * qty);
-            const priceTypeElement = document.getElementById('price-type');
+            // Update price type
             priceTypeElement.textContent = priceType;
-            priceTypeElement.className = isTebusMurahEligible ? 'small text-danger fw-bold' : isWholesaleEligible ? 'small text-warning fw-bold' : 'small text-muted';
+            priceTypeElement.className = isTebusMurahEligible ? 'small text-danger fw-bold' : 
+                                       isWholesaleEligible ? 'small text-warning fw-bold' : 
+                                       'small text-muted';
         }
 
         function calculateSubtotal() {
