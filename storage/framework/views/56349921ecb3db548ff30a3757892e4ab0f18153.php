@@ -143,4 +143,4 @@
 </body>
 
 </html>
-<?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/layouts/main.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/layouts/main.blade.php ENDPATH**/ ?>
