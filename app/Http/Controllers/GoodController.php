@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateGoodRequest;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Picqer\Barcode\BarcodeGeneratorSVG;
+use Carbon\Carbon; // Import Carbon
 
 class GoodController extends Controller
 {
@@ -19,12 +20,36 @@ class GoodController extends Controller
      */
     public function index()
     {
+        $query = Good::latest();
+
+        // Filter by search term (nama or barcode)
+        if (request('search')) {
+            $query->where(function($q) {
+                $q->where('nama', 'like', '%' . request('search') . '%')
+                  ->orWhere('barcode', 'like', '%' . request('search') . '%');
+            });
+        }
+
+        // [BARU] Filter by expired_date
+        if (request('expired_date')) {
+            $date = Carbon::parse(request('expired_date'))->startOfDay();
+            $query->whereDate('expired_date', '=', $date);
+        }
+        // [BARU] Filter by expired_date_from (range)
+        if (request('expired_date_from')) {
+            $dateFrom = Carbon::parse(request('expired_date_from'))->startOfDay();
+            $query->whereDate('expired_date', '>=', $dateFrom);
+        }
+        // [BARU] Filter by expired_date_to (range)
+        if (request('expired_date_to')) {
+            $dateTo = Carbon::parse(request('expired_date_to'))->endOfDay();
+            $query->whereDate('expired_date', '<=', $dateTo);
+        }
+
+
         return view('dashboard.goods.index', [
             'active' => 'goods',
-            'goods' => Good::latest()
-                ->filter(request(['search']))
-                ->paginate(7)
-                ->withQueryString(),
+            'goods' => $query->paginate(7)->withQueryString(),
         ]);
     }
 

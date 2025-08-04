@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from other dashboards for consistency --- */
@@ -116,7 +114,7 @@
         letter-spacing: 0.5px;
         border: none;
         padding: 15px 12px;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .table-umkm tbody td {
@@ -128,7 +126,7 @@
     .table-umkm tbody tr:hover {
         background-color: #f8f9fa;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
@@ -155,13 +153,13 @@
         margin-bottom: 20px;
         border: 1px solid rgba(255,255,255,0.2);
     }
-    
+
     .type-badge {
         font-size: 0.75rem;
         padding: 4px 8px;
         border-radius: 10px;
         font-weight: 600;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .type-makanan { background: linear-gradient(135deg, #28a745, #20c997); color: white; }
@@ -185,7 +183,7 @@
     .wholesale-indicator, .tebus-murah-indicator { /* Styles lainnya tetap sama */ }
 
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    
+
     .action-dropdown .dropdown-toggle::after { display: none; }
     /* Style dropdown lainnya tetap sama */
 
@@ -212,7 +210,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    
+
     <?php if(session()->has('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
             <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
@@ -246,22 +244,39 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                <form action="/dashboard/goods" method="GET">
-                    <div class="row align-items-center">
-                        <div class="col-12 col-md-8 mb-3 mb-md-0">
+                <form action="/dashboard/goods" method="GET" id="search-form">
+                    <div class="row align-items-end">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Barang
+                                <i class="bi bi-search me-2"></i>Cari Nama/Barcode
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nama barang..."
-                                    name="search" value="<?php echo e(request('search')); ?>">
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang atau barcode..."
+                                    name="search" value="<?php echo e(request('search')); ?>" id="search-input">
                                 <button class="btn btn-umkm" type="submit">
-                                    <i class="bi bi-search"></i>
+                                    <i class="bi bi-search"></i> Cari
+                                </button>
+                                
+                                <button class="btn btn-secondary ms-2" type="button" id="reset-filter-button">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
                                 </button>
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="text-white text-md-end">
+                        
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <label class="form-label text-white fw-bold">
+                                <i class="bi bi-calendar-x me-2"></i>Expired Dari
+                            </label>
+                            <input type="date" class="form-control" name="expired_date_from" value="<?php echo e(request('expired_date_from')); ?>" id="expired-date-from-input">
+                        </div>
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <label class="form-label text-white fw-bold">
+                                <i class="bi bi-calendar-check me-2"></i>Expired Sampai
+                            </label>
+                            <input type="date" class="form-control" name="expired_date_to" value="<?php echo e(request('expired_date_to')); ?>" id="expired-date-to-input">
+                        </div>
+                        <div class="col-12 text-md-end mt-3">
+                            <div class="text-white">
                                 <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($goods->total()); ?> barang</small>
                             </div>
                         </div>
@@ -272,7 +287,7 @@
             <form id="bulk-delete-form" action="<?php echo e(route('goods.bulkDelete')); ?>" method="POST">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('DELETE'); ?>
-                
+
                 <div class="table-responsive">
                     <table class="table table-umkm">
                         <thead>
@@ -549,14 +564,25 @@
                 }
             });
         }
-        
+
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
                 bulkDeleteForm.submit();
             });
         }
-        
+
         updateBulkDeleteButtonState();
+
+        // [BARU] Logika Reset Filter
+        const resetFilterButton = document.getElementById('reset-filter-button');
+        if (resetFilterButton) {
+            resetFilterButton.addEventListener('click', function() {
+                document.getElementById('search-input').value = '';
+                document.getElementById('expired-date-from-input').value = '';
+                document.getElementById('expired-date-to-input').value = '';
+                document.getElementById('search-form').submit(); // Submit form to clear filters
+            });
+        }
     });
 </script>
 <?php $__env->stopSection(); ?>
