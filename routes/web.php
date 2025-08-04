@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     
     // Returns
     Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
+    Route::get('/dashboard/returns/search-goods', [ReturnController::class, 'searchGoods'])->name('returns.searchGoods');
     Route::resource('/dashboard/returns', ReturnController::class);
 
     // RESTOCK ROUTES

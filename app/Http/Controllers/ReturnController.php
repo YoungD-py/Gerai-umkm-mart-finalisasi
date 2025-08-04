@@ -29,6 +29,26 @@ class ReturnController extends Controller
         ]);
     }
 
+    public function searchGoods(Request $request)
+    {
+        $query = $request->get('q');
+        
+        if (empty($query)) {
+            return response()->json([]);
+        }
+        
+        $goods = Good::where('stok', '>', 0)
+            ->where(function($q) use ($query) {
+                $q->where('nama', 'LIKE', '%' . $query . '%')
+                  ->orWhere('barcode', 'LIKE', '%' . $query . '%');
+            })
+            ->select('id', 'nama', 'barcode', 'stok')
+            ->limit(10)
+            ->get();
+        
+        return response()->json($goods);
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

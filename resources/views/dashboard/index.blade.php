@@ -30,7 +30,7 @@
         color: #1d273b;
         margin: 0;
     }
-    
+
     /* Header */
     .page-header {
         /* [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel */
@@ -143,7 +143,7 @@
             <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary flex-grow-1"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
         </div>
     </div>
-    
+
     <!-- BARIS 2: FILTER TANGGAL -->
     {{-- [RESPONSIVE] Layout diubah untuk mobile --}}
     <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center mb-4">
@@ -187,6 +187,16 @@
                         </span>
                     </div>
                     <div class="stat-value text-success">Rp {{ number_format($totalProfit, 0, ',', '.') }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="stat-label">
+                        <span>Biaya Operasional</span>
+                    </div>
+                    <div class="stat-value text-danger">Rp {{ number_format($totalExpenses, 0, ',', '.') }}</div>
                 </div>
             </div>
         </div>

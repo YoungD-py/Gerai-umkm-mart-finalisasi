@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // --- 1. PENGATURAN RENTANG TANGGAL ---
-        $range = $request->get('range', 'all_time'); 
+        $range = $request->get('range', 'all_time');
         list($startDate, $endDate, $rangeTitle) = $this->parseDateRange($range);
         list($prevStartDate, $prevEndDate, $prevRangeTitle) = $this->parseDateRange($range, true);
 
@@ -38,7 +38,7 @@ class DashboardController extends Controller
 
         // --- 3. DATA UNTUK GRAFIK UTAMA (PENDAPATAN & LABA) ---
         $chartData = $this->getChartData($startDate, $endDate, $range);
-        
+
         // --- 4. DATA UNTUK KARTU INFORMASI TAMBAHAN ---
         $topSellingProducts = Order::join('transactions', 'orders.no_nota', '=', 'transactions.no_nota')
             ->join('goods', 'orders.good_id', '=', 'goods.id')
@@ -103,13 +103,14 @@ class DashboardController extends Controller
             'totalProfit' => $totalProfit,
             'totalTransactions' => $totalTransactions,
             'netProfit' => $netProfit,
+            'totalExpenses' => $totalExpenses, // Menambahkan totalExpenses ke view
             'revenueComparison' => $revenueComparison,
             'profitComparison' => $profitComparison,
             'transactionComparison' => $transactionComparison,
             'mainChartLabels' => json_encode($chartData['labels']),
             'mainChartRevenue' => json_encode($chartData['revenues']),
             'mainChartProfit' => json_encode($chartData['profits']),
-            
+
             // [DIUBAH] Mengirim data untuk grafik, bukan koleksi
             'topProductsLabels' => json_encode($topProductsLabels),
             'topProductsSeries' => json_encode($topProductsSeries),
