@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/cashier/createorder', [CashierController::class, 'createorder']);
     Route::post('/dashboard/cashier/storeorder', [CashierController::class, 'storeorder']);
     Route::post('/dashboard/cashier/store-barcode', [CashierController::class, 'storeOrderFromBarcode'])->name('cashier.storeBarcode');
+    Route::delete('/dashboard/cashier/deleteorder/{order}', [CashierController::class, 'deleteorder'])->name('cashier.deleteOrder');
     Route::post('/dashboard/cashiers/checkout', [CashierController::class, 'checkout']);
     Route::post('/dashboard/cashiers/finishing', [CashierController::class, 'finishing']);
     Route::post('/dashboard/cashiers/nota', [CashierController::class, 'nota']);

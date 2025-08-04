@@ -457,6 +457,28 @@ class CashierController extends Controller
         return $pdf->download('nota-' . $no_nota . '.pdf');
     }
 
+       /**
+     * Delete order item from cart
+     */
+    public function deleteorder(Order $order)
+    {
+        try {
+            $no_nota = $order->no_nota;
+            $order->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Item berhasil dihapus dari pesanan!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
