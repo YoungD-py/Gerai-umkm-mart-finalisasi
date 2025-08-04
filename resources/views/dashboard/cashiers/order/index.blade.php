@@ -332,7 +332,7 @@
                         <div class="input-group mb-3">
                             <input type="hidden" class="form-control" placeholder="Cari..." name="no_nota"
                                 value="{{ $no_nota }}">
-                            <button type="submit" class="btn btn-sm btn-primary">+Tambah Belanja</button>
+                            <button type="submit" class="btn btn-sm btn-primary">+Tambah Belanja.</button>
                         </div>
                     </form>
                 </div>
