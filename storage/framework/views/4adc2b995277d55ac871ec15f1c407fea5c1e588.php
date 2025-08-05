@@ -1,7 +1,5 @@
-@extends('dashboard.layouts.main')
+<?php $__env->startSection('container'); ?>
 
-@section('container')
-{{-- CDN for Select2 --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     /* --- CSS Styles copied from other dashboards for consistency --- */
@@ -166,18 +164,19 @@
 <div class="container-fluid py-4">
     <div class="page-title">
         <h1>➕ TAMBAH PESANAN</h1>
-        <p>Tambah item baru ke dalam nota nomor <strong>{{ $no_nota }}</strong></p>
+        <p>Tambah item baru ke dalam nota nomor <strong><?php echo e($no_nota); ?></strong></p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -189,22 +188,21 @@
 
                 <div class="umkm-card-body">
                     <form method="post" action="/dashboard/orders/store">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <div class="mb-3">
                             <label for="no_nota" class="form-label">No. Nota</label>
-                            <input type="text" class="form-control" name="no_nota" required value="{{ $no_nota }}" readonly>
+                            <input type="text" class="form-control" name="no_nota" required value="<?php echo e($no_nota); ?>" readonly>
                         </div>
                         
-                        <!-- Penambahan search produk -->
                         <div class="mb-3">
                             <label for="goods" class="form-label">Pilih Barang</label>
                             <select class="form-select" id="goods" name="good_id" onchange="Subtotal()">
                                 <option value="" disabled selected>-- Cari dan Pilih Barang --</option>
-                                @foreach ($goods as $good)
-                                    <option price="{{ $good->harga }}" value="{{ $good->id }}">
-                                        {{ $good->nama }} (Stok: {{ $good->stok }} | Harga: Rp {{ number_format($good->harga, 0, ',', '.') }})
+                                <?php $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option price="<?php echo e($good->harga); ?>" value="<?php echo e($good->id); ?>">
+                                        <?php echo e($good->nama); ?> (Stok: <?php echo e($good->stok); ?> | Harga: Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>)
                                     </option>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
 
@@ -221,9 +219,9 @@
                             </div>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-4 gap-2">
-                            <a href="/dashboard/orders?no_nota={{ $no_nota }}" class="btn btn-secondary-umkm">
+                            <a href="/dashboard/orders?no_nota=<?php echo e($no_nota); ?>" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i> Kembali
                             </a>
                             <button class="btn btn-umkm" type="submit">
@@ -237,7 +235,7 @@
     </div>
 </div>
 
-{{-- jQuery and Select2 JS --}}
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
@@ -266,4 +264,6 @@
         document.getElementById("subtotal_display").value = 'Rp ' + new Intl.NumberFormat('id-ID').format(hasil);
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/orders/create.blade.php ENDPATH**/ ?>
