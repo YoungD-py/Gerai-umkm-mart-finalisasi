@@ -662,11 +662,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // =====================================================================
-                    // PERUBAHAN UTAMA DI SINI
-                    // Alih-alih memperbarui elemen DOM, kita tampilkan notifikasi
-                    // lalu langsung me-refresh halaman.
-                    // =====================================================================
+                    // ==================================================================
+                    // PERUBAHAN UTAMA DI SINI REFRESH HALAMAN KETIKA BUTTON + DAN - DI KLIK
+                    // ==================================================================
                     showAlert('success', data.message);
                     setTimeout(() => {
                         location.reload();
