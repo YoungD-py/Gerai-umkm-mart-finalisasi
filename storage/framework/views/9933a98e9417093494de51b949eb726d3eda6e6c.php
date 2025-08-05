@@ -63,6 +63,43 @@
         .mobile-only.show-mobile {
             display: block;
         }
+
+        /* Qty control buttons */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .qty-btn {
+            width: 25px;
+            height: 25px;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            opacity: 0.8;
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .qty-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
     </style>
 
     
@@ -290,9 +327,17 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="py-3 text-center">
-                                                    <span class="badge bg-secondary fs-6"><?php echo e($order->qty); ?></span>
+                                                    <div class="qty-controls">
+                                                        <button type="button" class="qty-btn btn btn-danger btn-sm" onclick="updateQty(<?php echo e($order->id); ?>, <?php echo e($order->qty - 1); ?>)" <?php echo e($order->qty <= 1 ? 'disabled' : ''); ?>>
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <span class="qty-display badge bg-secondary fs-6" id="qty-<?php echo e($order->id); ?>"><?php echo e($order->qty); ?></span>
+                                                        <button type="button" class="qty-btn btn btn-success btn-sm" onclick="updateQty(<?php echo e($order->id); ?>, <?php echo e($order->qty + 1); ?>)">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
-                                                <td class="py-3 text-end px-3 fw-bold text-success">
+                                                <td class="py-3 text-end px-3 fw-bold text-success" id="subtotal-<?php echo e($order->id); ?>">
                                                     Rp <?php echo e(number_format($order->subtotal, 0, ',', '.')); ?>
 
                                                 </td>
@@ -597,6 +642,54 @@
             alertContainer.appendChild(alertDiv);
             setTimeout(() => { alertDiv.remove(); }, 5000);
         }
+        // Update quantity function for cart items
+        function updateQty(orderId, newQty) {
+            if (newQty < 1) return;
+
+            // Dapatkan referensi ke baris dan tombol di dalamnya
+            const orderRow = document.getElementById(`order-row-${orderId}`);
+            const minusBtn = orderRow.querySelector('.qty-controls .btn-danger');
+            const plusBtn = orderRow.querySelector('.qty-controls .btn-success');
+
+            // Nonaktifkan kedua tombol selama proses update
+            if (minusBtn) minusBtn.disabled = true;
+            if (plusBtn) plusBtn.disabled = true;
+
+            fetch(`/dashboard/cashier/update-qty/${orderId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ qty: newQty })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // =====================================================================
+                    // PERUBAHAN UTAMA DI SINI
+                    // Alih-alih memperbarui elemen DOM, kita tampilkan notifikasi
+                    // lalu langsung me-refresh halaman.
+                    // =====================================================================
+                    showAlert('success', data.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000); // Refresh halaman setelah 1 detik agar notifikasi terbaca
+
+                } else {
+                    // Jika gagal dari sisi server, tampilkan error dan aktifkan kembali tombol
+                    showAlert('danger', data.message);
+                    if (minusBtn) minusBtn.disabled = newQty <= 1;
+                    if (plusBtn) plusBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                // Jika terjadi error jaringan, tampilkan error dan aktifkan kembali tombol
+                showAlert('danger', 'Terjadi kesalahan jaringan');
+                if (minusBtn) minusBtn.disabled = newQty <= 1;
+                if (plusBtn) plusBtn.disabled = false;
+            });
+        } 
 
         // --- Event Listeners ---
         document.getElementById('manual-form').addEventListener('submit', function (e) {

@@ -41,7 +41,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Users
     Route::delete('/dashboard/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
     Route::resource('/dashboard/users', UserController::class);
-    
+
     // Transactions
     Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
 
     // Customers
     Route::resource('/dashboard/customers', CustomerController::class);
-    
+
     // Returns
     Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
     Route::get('/dashboard/returns/search-goods', [ReturnController::class, 'searchGoods'])->name('returns.searchGoods');
@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/cashier/createorder', [CashierController::class, 'createorder']);
     Route::post('/dashboard/cashier/storeorder', [CashierController::class, 'storeorder']);
     Route::post('/dashboard/cashier/store-barcode', [CashierController::class, 'storeOrderFromBarcode'])->name('cashier.storeBarcode');
+    Route::put('/dashboard/cashier/update-qty/{order}', [CashierController::class, 'updateOrderQty'])->name('cashier.updateQty');
     Route::delete('/dashboard/cashier/deleteorder/{order}', [CashierController::class, 'deleteorder'])->name('cashier.deleteOrder');
     Route::post('/dashboard/cashiers/checkout', [CashierController::class, 'checkout']);
     Route::post('/dashboard/cashiers/finishing', [CashierController::class, 'finishing']);

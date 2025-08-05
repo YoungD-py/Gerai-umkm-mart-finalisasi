@@ -164,45 +164,92 @@ class CashierController extends Controller
 
             $barang = Good::findOrFail($request->good_id);
 
-            // Check stock
-            if ($barang->stok < $request->qty) {
-                return redirect()->back()->with('error', 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok);
+            // Check if product already exists in cart
+            $existingOrder = Order::where('no_nota', $request->no_nota)
+                                  ->where('good_id', $request->good_id)
+                                  ->first();
+
+            if ($existingOrder) {
+                // Update existing order quantity
+                $newQty = $existingOrder->qty + $request->qty;
+                
+                // Check stock
+                if ($barang->stok < $newQty) {
+                    return redirect()->back()->with('error', 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok . ', sudah di cart: ' . $existingOrder->qty);
+                }
+
+                // Get current transaction total to determine tebus murah eligibility
+                $currentOrders = Order::where('no_nota', $request->no_nota)->get();
+                $currentTotal = $currentOrders->sum('subtotal');
+
+                // Determine price based on quantity and transaction total
+                $unitPrice = $barang->harga; // Default to retail price
+
+                // Check tebus murah first (higher priority)
+                if ($barang->is_tebus_murah_active && 
+                    $currentTotal >= $barang->min_total_tebus_murah && 
+                    $barang->harga_tebus_murah > 0) {
+                    $unitPrice = $barang->harga_tebus_murah;
+                }
+                // Then check wholesale
+                elseif ($barang->is_grosir_active && 
+                        $newQty >= $barang->min_qty_grosir && 
+                        $barang->harga_grosir > 0) {
+                    $unitPrice = $barang->harga_grosir;
+                }
+
+                $newSubtotal = $unitPrice * $newQty;
+
+                // Update existing order
+                $existingOrder->update([
+                    'qty' => $newQty,
+                    'subtotal' => $newSubtotal,
+                    'price' => $unitPrice,
+                ]);
+
+                return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
+                                    ->with('success', 'Jumlah produk berhasil ditambahkan! Total: ' . $newQty);
+            } else {
+                // Check stock for new order
+                if ($barang->stok < $request->qty) {
+                    return redirect()->back()->with('error', 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok);
+                }
+
+                // Get current transaction total to determine tebus murah eligibility
+                $currentOrders = Order::where('no_nota', $request->no_nota)->get();
+                $currentTotal = $currentOrders->sum('subtotal');
+
+                // Determine price based on quantity and transaction total
+                $qty = $request->qty;
+                $unitPrice = $barang->harga; // Default to retail price
+
+                // Check tebus murah first (higher priority)
+                if ($barang->is_tebus_murah_active && 
+                    $currentTotal >= $barang->min_total_tebus_murah && 
+                    $barang->harga_tebus_murah > 0) {
+                    $unitPrice = $barang->harga_tebus_murah;
+                }
+                // Then check wholesale
+                elseif ($barang->is_grosir_active && 
+                        $qty >= $barang->min_qty_grosir && 
+                        $barang->harga_grosir > 0) {
+                    $unitPrice = $barang->harga_grosir;
+                }
+
+                $subtotal = $unitPrice * $qty;
+
+                // Create new order
+                Order::create([
+                    'no_nota' => $request->no_nota,
+                    'good_id' => $request->good_id,
+                    'qty' => $qty,
+                    'subtotal' => $subtotal,
+                    'price' => $unitPrice,
+                ]);
+
+                return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
+                                    ->with('success', 'Pesanan berhasil ditambahkan!');
             }
-
-            // Get current transaction total to determine tebus murah eligibility
-            $currentOrders = Order::where('no_nota', $request->no_nota)->get();
-            $currentTotal = $currentOrders->sum('subtotal');
-
-            // Determine price based on quantity and transaction total
-            $qty = $request->qty;
-            $unitPrice = $barang->harga; // Default to retail price
-
-            // Check tebus murah first (higher priority)
-            if ($barang->is_tebus_murah_active && 
-                $currentTotal >= $barang->min_total_tebus_murah && 
-                $barang->harga_tebus_murah > 0) {
-                $unitPrice = $barang->harga_tebus_murah;
-            }
-            // Then check wholesale
-            elseif ($barang->is_grosir_active && 
-                    $qty >= $barang->min_qty_grosir && 
-                    $barang->harga_grosir > 0) {
-                $unitPrice = $barang->harga_grosir;
-            }
-
-            $subtotal = $unitPrice * $qty;
-
-            // Create order
-            Order::create([
-                'no_nota' => $request->no_nota,
-                'good_id' => $request->good_id,
-                'qty' => $qty,
-                'subtotal' => $subtotal,
-                'price' => $unitPrice,
-            ]);
-
-            return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
-                                ->with('success', 'Pesanan berhasil ditambahkan!');
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -258,15 +305,152 @@ class CashierController extends Controller
                 ]);
             }
 
-            if ($barang->stok < $qty) {
+            // Check if product already exists in cart
+            $existingOrder = Order::where('no_nota', $no_nota)
+                                  ->where('good_id', $barang->id)
+                                  ->first();
+
+            if ($existingOrder) {
+                // Update existing order quantity
+                $newQty = $existingOrder->qty + $qty;
+                
+                if ($barang->stok < $newQty) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok . ', sudah di cart: ' . $existingOrder->qty
+                    ]);
+                }
+
+                // Get current transaction total to determine tebus murah eligibility
+                $currentOrders = Order::where('no_nota', $no_nota)->get();
+                $currentTotal = $currentOrders->sum('subtotal');
+
+                // Determine price based on quantity and transaction total
+                $unitPrice = $barang->harga; // Default to retail price
+
+                // Check tebus murah first (higher priority)
+                if ($barang->is_tebus_murah_active && 
+                    $currentTotal >= $barang->min_total_tebus_murah && 
+                    $barang->harga_tebus_murah > 0) {
+                    $unitPrice = $barang->harga_tebus_murah;
+                }
+                // Then check wholesale
+                elseif ($barang->is_grosir_active && 
+                        $newQty >= $barang->min_qty_grosir && 
+                        $barang->harga_grosir > 0) {
+                    $unitPrice = $barang->harga_grosir;
+                }
+
+                $newSubtotal = $unitPrice * $newQty;
+
+                // Update existing order
+                $existingOrder->update([
+                    'qty' => $newQty,
+                    'subtotal' => $newSubtotal,
+                    'price' => $unitPrice,
+                ]);
+
+                Log::info('Order updated successfully', ['order_id' => $existingOrder->id, 'barcode' => $barcode, 'new_qty' => $newQty]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Jumlah "' . $barang->nama . '" berhasil ditambahkan! Total: ' . $newQty,
+                    'data' => [
+                        'nama' => $barang->nama,
+                        'harga' => number_format($unitPrice),
+                        'qty' => $newQty,
+                        'subtotal' => number_format($newSubtotal)
+                    ]
+                ]);
+            } else {
+                if ($barang->stok < $qty) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Stok barang tidak mencukupi! Stok tersedia: ' . $barang->stok
+                    ]);
+                }
+
+                // Get current transaction total to determine tebus murah eligibility
+                $currentOrders = Order::where('no_nota', $no_nota)->get();
+                $currentTotal = $currentOrders->sum('subtotal');
+
+                // Determine price based on quantity and transaction total
+                $unitPrice = $barang->harga; // Default to retail price
+
+                // Check tebus murah first (higher priority)
+                if ($barang->is_tebus_murah_active && 
+                    $currentTotal >= $barang->min_total_tebus_murah && 
+                    $barang->harga_tebus_murah > 0) {
+                    $unitPrice = $barang->harga_tebus_murah;
+                }
+                // Then check wholesale
+                elseif ($barang->is_grosir_active && 
+                        $qty >= $barang->min_qty_grosir && 
+                        $barang->harga_grosir > 0) {
+                    $unitPrice = $barang->harga_grosir;
+                }
+
+                $subtotal = $unitPrice * $qty;
+
+                // Create order
+                $order = Order::create([
+                    'no_nota' => $no_nota,
+                    'good_id' => $barang->id,
+                    'qty' => $qty,
+                    'subtotal' => $subtotal,
+                    'price' => $unitPrice,
+                ]);
+
+                Log::info('Order created successfully', ['order_id' => $order->id, 'barcode' => $barcode]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Barang "' . $barang->nama . '" berhasil ditambahkan!',
+                    'data' => [
+                        'nama' => $barang->nama,
+                        'harga' => number_format($unitPrice),
+                        'qty' => $qty,
+                        'subtotal' => number_format($subtotal)
+                    ]
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error in storeOrderFromBarcode: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Update order quantity
+     */
+    public function updateOrderQty(Request $request, Order $order)
+    {
+        try {
+            $request->validate([
+                'qty' => 'required|integer|min:1'
+            ]);
+
+            $newQty = $request->qty;
+            $barang = Good::findOrFail($order->good_id);
+
+            // Check stock
+            if ($barang->stok < $newQty) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Stok barang tidak mencukupi! Stok tersedia: ' . $barang->stok
+                    'message' => 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok
                 ]);
             }
 
             // Get current transaction total to determine tebus murah eligibility
-            $currentOrders = Order::where('no_nota', $no_nota)->get();
+            $currentOrders = Order::where('no_nota', $order->no_nota)->get();
             $currentTotal = $currentOrders->sum('subtotal');
 
             // Determine price based on quantity and transaction total
@@ -280,44 +464,39 @@ class CashierController extends Controller
             }
             // Then check wholesale
             elseif ($barang->is_grosir_active && 
-                    $qty >= $barang->min_qty_grosir && 
+                    $newQty >= $barang->min_qty_grosir && 
                     $barang->harga_grosir > 0) {
                 $unitPrice = $barang->harga_grosir;
             }
 
-            $subtotal = $unitPrice * $qty;
+            $newSubtotal = $unitPrice * $newQty;
 
-            // Create order
-            $order = Order::create([
-                'no_nota' => $no_nota,
-                'good_id' => $barang->id,
-                'qty' => $qty,
-                'subtotal' => $subtotal,
+            // Update order
+            $order->update([
+                'qty' => $newQty,
+                'subtotal' => $newSubtotal,
                 'price' => $unitPrice,
             ]);
 
-            Log::info('Order created successfully', ['order_id' => $order->id, 'barcode' => $barcode]);
+            // Calculate new total
+            $allOrders = Order::where('no_nota', $order->no_nota)->get();
+            $newTotal = $allOrders->sum('subtotal');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Barang "' . $barang->nama . '" berhasil ditambahkan!',
+                'message' => 'Jumlah berhasil diperbarui!',
                 'data' => [
-                    'nama' => $barang->nama,
-                    'harga' => number_format($unitPrice),
-                    'qty' => $qty,
-                    'subtotal' => number_format($subtotal)
+                    'qty' => $newQty,
+                    'subtotal' => number_format($newSubtotal, 0, ',', '.'),
+                    'price' => number_format($unitPrice, 0, ',', '.'),
+                    'total' => number_format($newTotal, 0, ',', '.')
                 ]
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error in storeOrderFromBarcode: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
-            ]);
-
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ]);
         }
     }
