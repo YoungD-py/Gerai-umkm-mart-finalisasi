@@ -248,7 +248,7 @@
             <div class="search-section">
                 <form action="/dashboard/goods" method="GET" id="search-form">
                     <div class="row align-items-end">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                        <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
                                 <i class="bi bi-search me-2"></i>Cari Nama/Barcode
                             </label>
@@ -258,26 +258,9 @@
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i> Cari
                                 </button>
-                                
-                                <button class="btn btn-secondary ms-2" type="button" id="reset-filter-button">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
-                                </button>
                             </div>
                         </div>
-                        
-                        <div class="col-12 col-md-3 mb-3 mb-md-0">
-                            <label class="form-label text-white fw-bold">
-                                <i class="bi bi-calendar-x me-2"></i>Expired Dari
-                            </label>
-                            <input type="date" class="form-control" name="expired_date_from" value="<?php echo e(request('expired_date_from')); ?>" id="expired-date-from-input">
-                        </div>
-                        <div class="col-12 col-md-3 mb-3 mb-md-0">
-                            <label class="form-label text-white fw-bold">
-                                <i class="bi bi-calendar-check me-2"></i>Expired Sampai
-                            </label>
-                            <input type="date" class="form-control" name="expired_date_to" value="<?php echo e(request('expired_date_to')); ?>" id="expired-date-to-input">
-                        </div>
-                        <div class="col-12 text-md-end mt-3">
+                        <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
                             <div class="text-white">
                                 <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($goods->total()); ?> barang</small>
                             </div>
@@ -298,11 +281,18 @@
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
                                 <th style="width: 5%;">#</th>
-                                
                                 <th style="width: 10%;">Tgl Masuk</th>
                                 <th style="width: 24%;">Nama Barang</th>
                                 <th style="width: 13%;">Jenis</th>
-                                <th style="width: 14%;">Expired</th>
+                                <th style="width: 14%;">
+                                    Expired
+                                    
+                                    <button type="button" class="btn btn-sm btn-light ms-2" id="sort-expired-toggle"
+                                            data-sort-order="<?php echo e(request('sort_expired', 'none')); ?>"
+                                            title="Urutkan berdasarkan tanggal expired">
+                                        <i class="bi <?php echo e(request('sort_expired') == 'asc' ? 'bi-sort-up' : (request('sort_expired') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
+                                    </button>
+                                </th>
                                 <th style="width: 13%;">Mitra Binaan</th>
                                 <th style="width: 7%;">Stok</th>
                                 <th style="width: 9%;">Harga</th>
@@ -316,7 +306,6 @@
                                     <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($good->id); ?>">
                                 </td>
                                 <td><strong><?php echo e($goods->firstItem() + $key); ?></strong></td>
-                                
                                 <td>
                                     <i class="bi bi-calendar3 text-success me-1"></i>
                                     <?php echo e(\Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y')); ?>
@@ -339,14 +328,12 @@
                                                     </span>
                                                 <?php endif; ?>
                                             </div>
-                                            
                                             <?php if($good->barcode): ?>
                                                 <small class="text-muted"><?php echo e($good->barcode); ?></small>
                                             <?php endif; ?>
                                         </div>
                                     </div>
                                 </td>
-                                
                                 <td>
                                     <span class="type-badge type-<?php echo e(str_replace('_', '-', $good->type)); ?>">
                                         <?php if($good->type == 'makanan'): ?>
@@ -362,7 +349,6 @@
                                         <?php endif; ?>
                                     </span>
                                 </td>
-                                
                                 <td style="white-space: nowrap;">
                                     <?php if($good->expired_date): ?>
                                         <div>
@@ -377,7 +363,6 @@
                                         <span class="text-muted"><i class="bi bi-dash-circle"></i> Tidak ada</span>
                                     <?php endif; ?>
                                 </td>
-                                
                                 <td>
                                     <i class="bi bi-building text-info me-1"></i>
                                     <?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?>
@@ -388,7 +373,6 @@
                                         <?php echo e($good->stok); ?> unit
                                     </span>
                                 </td>
-                                
                                 <td>
                                     <strong class="text-success">
                                         Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>
@@ -575,14 +559,34 @@
 
         updateBulkDeleteButtonState();
 
-        // [BARU] Logika Reset Filter
-        const resetFilterButton = document.getElementById('reset-filter-button');
-        if (resetFilterButton) {
-            resetFilterButton.addEventListener('click', function() {
-                document.getElementById('search-input').value = '';
-                document.getElementById('expired-date-from-input').value = '';
-                document.getElementById('expired-date-to-input').value = '';
-                document.getElementById('search-form').submit(); // Submit form to clear filters
+        // [BARU] Logika Toggle Sort Expired
+        const sortExpiredToggle = document.getElementById('sort-expired-toggle');
+        if (sortExpiredToggle) {
+            sortExpiredToggle.addEventListener('click', function() {
+                let currentSortOrder = this.dataset.sortOrder;
+                let newSortOrder;
+
+                if (currentSortOrder === 'none') {
+                    newSortOrder = 'asc'; // Klik pertama: Urutkan paling cepat (ASC)
+                } else if (currentSortOrder === 'asc') {
+                    newSortOrder = 'desc'; // Klik kedua: Urutkan paling lama (DESC)
+                } else {
+                    newSortOrder = 'none'; // Klik ketiga: Kembali ke urutan default (berdasarkan tgl masuk)
+                }
+
+                const url = new URL(window.location.href);
+                const searchParam = url.searchParams.get('search'); // Ambil parameter search yang ada
+
+                url.searchParams.delete('sort_expired'); // Hapus parameter sort_expired yang lama
+                if (newSortOrder !== 'none') {
+                    url.searchParams.set('sort_expired', newSortOrder); // Set parameter sort_expired baru
+                }
+                if (searchParam) { // Pertahankan parameter search jika ada
+                    url.searchParams.set('search', searchParam);
+                }
+                url.searchParams.delete('page'); // Reset pagination saat mengurutkan
+
+                window.location.href = url.toString(); // Muat ulang halaman dengan parameter baru
             });
         }
     });
