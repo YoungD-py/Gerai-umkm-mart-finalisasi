@@ -18,7 +18,7 @@
         }
 
         .cashier-card-header {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 20px;
             border-radius: 20px 20px 0 0;
@@ -57,7 +57,8 @@
         }
 
         .btn-cashier {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            /* [PERUBAHAN] Warna diubah jadi HIJAU */
+            background: linear-gradient(135deg, #28a745, #20c997);
             border: none;
             border-radius: 15px;
             padding: 12px 25px;
@@ -69,12 +70,13 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
         .btn-cashier:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
             color: white;
             text-decoration: none;
         }
@@ -85,7 +87,7 @@
         }
 
         .btn-print {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
+            background: #007bff;
             border: none;
             border-radius: 8px;
             padding: 8px 12px;
@@ -101,10 +103,10 @@
 
         .btn-print:hover {
             transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            background: #0069d9;
             color: white;
             text-decoration: none;
-            background: linear-gradient(135deg, #218838, #1c7430);
         }
 
         .form-control,
@@ -118,8 +120,8 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
             background: white;
         }
 
@@ -130,7 +132,7 @@
         }
 
         .table-cashier thead th {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             font-weight: 600;
             text-transform: uppercase;
@@ -192,15 +194,15 @@
         }
 
         .pagination-wrapper .page-link:hover {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
-    color: white;
-    transform: translateY(-1px);
-}
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            transform: translateY(-1px);
+        }
 
-.pagination-wrapper .page-item.active .page-link {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
-    border-color: #28a745;
-}
+        .pagination-wrapper .page-item.active .page-link {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            border-color: #28a745;
+        }
 
 
         @media (min-width: 768px) {
@@ -231,7 +233,8 @@
                         <i class="bi bi-receipt"></i>
                         Transaksi Hari Ini
                     </h3>
-                    <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto">
+                    {{-- [PERUBAHAN] Mengembalikan struktur tombol agar kecil, rapi di desktop, dan full-width di mobile --}}
+                    <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto mt-2 mt-md-0">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Transaksi
                     </a>
@@ -239,7 +242,6 @@
             </div>
 
             <div class="cashier-card-body">
-                <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-cashier">
                         <thead>
@@ -257,11 +259,10 @@
                         <tbody>
                             @forelse ($transactions as $key => $transaction)
                                 <tr>
-                                    {{-- [PERUBAHAN] Menggunakan nomor urut dari pagination --}}
                                     <td><strong>{{ ($transactions->currentPage() - 1) * $transactions->perPage() + $loop->iteration }}</strong>
                                     </td>
                                     <td>
-                                        <i class="bi bi-hash text-primary"></i>
+                                        <i class="bi bi-hash text-success"></i>
                                         {{ $transaction->no_nota }}
                                     </td>
                                     <td style="white-space:nowrap;">
@@ -279,14 +280,6 @@
                                     </td>
                                     <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
                                     <td class="text-center">
-                                        <!-- <form method="post" action="/dashboard/cashiers/nota" class="d-inline" onsubmit="handleFormSubmit(this)">
-                                            @csrf
-                                            <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                            <button class="btn btn-primary btn-sm" type="submit" title="Unduh Nota">
-                                                <i class="bi bi-download"></i>
-                                                <span class="d-none d-md-inline">Unduh Nota</span>
-                                            </button>
-                                        </form> -->
                                         <a href="/dashboard/cashiers/print-nota?no_nota={{ $transaction->no_nota }}"
                                             class="btn btn-print" target="_blank" title="Cetak Nota">
                                             <i class="bi bi-printer"></i>
@@ -301,7 +294,7 @@
                                             <i class="bi bi-cart-x display-4 d-block mb-3"></i>
                                             <h5>Belum ada transaksi hari ini</h5>
                                             <p>Silakan buat transaksi baru untuk memulai</p>
-                                            <a href="/dashboard/cashier/quick-transaction" class="btn-cashier">
+                                            <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier">
                                                 <i class="bi bi-plus-circle"></i>
                                                 Buat Transaksi Pertama
                                             </a>
@@ -313,7 +306,7 @@
                     </table>
                 </div>
 
-                {{-- [BARU] Menambahkan link pagination --}}
+                {{-- Link pagination --}}
                 @if($transactions->hasPages())
                     <div class="d-flex justify-content-center mt-4">
                         <div class="pagination-wrapper">
