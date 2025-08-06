@@ -333,7 +333,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th>No</th>
+                                <th>NO</th>
                                 <th>No. Nota</th>
                                 <th>Waktu</th>
                                 <th>Petugas</th>

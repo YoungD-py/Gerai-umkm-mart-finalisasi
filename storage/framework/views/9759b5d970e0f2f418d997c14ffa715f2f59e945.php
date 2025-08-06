@@ -205,7 +205,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
+                                    <th scope="col">NO</th>
                                     <th scope="col">Nama Barang</th>
                                     <th scope="col" class="d-none d-md-table-cell">Supplier</th>
                                     <th scope="col">Stok</th>

@@ -77,7 +77,7 @@
         .btn-cashier:hover {
             transform: translateY(-2px);
              /* [PERUBAHAN] Bayangan diubah jadi HIJAU */
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
             color: white;
             text-decoration: none;
         }
@@ -253,7 +253,7 @@
                     <table class="table table-cashier">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>NO</th>
                                 <th>No. Nota</th>
                                 <th>Waktu Transaksi</th>
                                 <th class="d-none d-lg-table-cell">Petugas</th>

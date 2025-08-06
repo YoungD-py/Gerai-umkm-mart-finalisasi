@@ -347,7 +347,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 5%;">NO</th>
                                 <th style="width: 35%;">Nama Pengguna</th>
                                 <th style="width: 20%;" class="d-none d-sm-table-cell">Username</th>
                                 <th style="width: 12%;">Role</th>

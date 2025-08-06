@@ -57,7 +57,8 @@
         }
 
         .btn-cashier {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            /* [PERUBAHAN] Warna diubah jadi HIJAU */
+            background: linear-gradient(135deg, #28a745, #20c997);
             border: none;
             border-radius: 15px;
             padding: 12px 25px;
@@ -69,25 +70,31 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
-
-
         .btn-cashier:hover {
             transform: translateY(-2px);
+             /* [PERUBAHAN] Bayangan diubah jadi HIJAU */
             box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
             color: white;
             text-decoration: none;
         }
 
         .btn-cashier-sm {
-            padding: 8px 15px;
+            /* [PERUBAHAN] Ukuran dikecilkan agar benar-benar rapi dan kecil */
+            padding: 5px 12px;
             font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: normal;
+            border-radius: 8px;
+            font-weight: 500;
         }
 
         .btn-print {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
+            /* TETAP BIRU SESUAI PERMINTAAN */
+            background: #007bff;
             border: none;
             border-radius: 8px;
             padding: 8px 12px;
@@ -102,6 +109,7 @@
         }
 
         .btn-print:hover {
+            /* TETAP BIRU SESUAI PERMINTAAN */
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
             background: #0069d9;
@@ -234,7 +242,6 @@
                         <i class="bi bi-receipt"></i>
                         Transaksi Hari Ini
                     </h3>
-                    
                     <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto mt-2 mt-md-0">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Transaksi
@@ -247,7 +254,7 @@
                     <table class="table table-cashier">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>NO</th>
                                 <th>No. Nota</th>
                                 <th>Waktu Transaksi</th>
                                 <th class="d-none d-lg-table-cell">Petugas</th>

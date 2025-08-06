@@ -284,7 +284,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 5%;">NO</th>
                                 <th style="width: 10%;">Tgl Masuk</th>
                                 <th style="width: 24%;">Nama Barang</th>
                                 <th style="width: 13%;">Jenis</th>

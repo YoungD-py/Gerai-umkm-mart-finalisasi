@@ -338,7 +338,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 5%;">NO</th>
                                 <th style="width: 12%;">Tgl Return</th>
                                 <th style="width: 15%;">Mitra Binaan</th>
                                 <th style="width: 20%;">Nama Barang</th>
