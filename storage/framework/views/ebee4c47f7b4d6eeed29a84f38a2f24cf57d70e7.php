@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from Goods Dashboard for consistency --- */
     .umkm-card {
@@ -274,16 +272,17 @@
         <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-arrow-return-left"></i>
@@ -312,7 +311,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -320,16 +319,16 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $returns->total() }} data return</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <form id="bulk-delete-form" action="{{ route('returns.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
+            <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-umkm">
@@ -349,48 +348,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($returns as $key => $return)
+                            <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $return->id }}">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($return->id); ?>">
                                 </td>
-                                <td><strong>{{ $returns->firstItem() + $key }}</strong></td>
+                                <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                                 <td>
                                     <i class="bi bi-calendar-x text-danger me-1"></i>
-                                    {{ \Carbon\Carbon::parse($return->tgl_return)->format('d/m/Y') }}
+                                    <?php echo e(\Carbon\Carbon::parse($return->tgl_return)->format('d/m/Y')); ?>
+
                                 </td>
                                 <td>
                                     <i class="bi bi-building text-info me-1"></i>
-                                    {{ $return->good->category->nama }}
+                                    <?php echo e($return->good->category->nama); ?>
+
                                 </td>
                                 <td>
                                     <i class="bi bi-box text-primary me-2"></i>
-                                    {{ $return->good->nama }}
+                                    <?php echo e($return->good->nama); ?>
+
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ $return->qty_return }} unit</span>
+                                    <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
                                 </td>
-                                <td>{{ $return->alasan }}</td>
+                                <td><?php echo e($return->alasan); ?></td>
                                 <td>
                                     <i class="bi bi-person-check text-success me-1"></i>
-                                    {{ $return->user->nama }}
+                                    <?php echo e($return->user->nama); ?>
+
                                 </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$return->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($return->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$return->id}}">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($return->id); ?>">
                                             <li>
-                                                <a class="dropdown-item" href="/dashboard/returns/{{ $return->id }}/edit">
+                                                <a class="dropdown-item" href="/dashboard/returns/<?php echo e($return->id); ?>/edit">
                                                     <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
                                             <li>
-                                                <form action="/dashboard/returns/{{ $return->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $return->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $return->id }}', '{{ $return->good->nama }}')">
+                                                <form action="/dashboard/returns/<?php echo e($return->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($return->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($return->id); ?>', '<?php echo e($return->good->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -399,7 +402,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
@@ -413,20 +416,21 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </form>
 
             <!-- Pagination -->
-            @if($returns->hasPages())
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $returns->links() }}
+                    <?php echo e($returns->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -551,4 +555,6 @@
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>
