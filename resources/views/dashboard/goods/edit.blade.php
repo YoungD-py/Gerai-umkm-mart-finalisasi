@@ -173,15 +173,20 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
 
-    .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
+        .page-title p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
     .form-section {
         background: rgba(248, 249, 250, 0.5);

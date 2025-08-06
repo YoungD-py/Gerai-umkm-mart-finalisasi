@@ -107,7 +107,7 @@
         box-shadow: none;
         transform: none;
     }
-    
+
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
@@ -128,15 +128,20 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
 
     .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
     .tax-info {
         font-size: 0.8rem;
@@ -187,7 +192,7 @@
                     <form method="post" action="/dashboard/transactions/{{ $transaction->id }}">
                         @method('put')
                         @csrf
-                        
+
                         @php
                             $initialBayar = $transaction->bayar;
                             if (strtolower(trim($transaction->status)) !== 'lunas' && $transaction->bayar == 0) {
@@ -220,7 +225,7 @@
                                 <i class="bi bi-info-circle-fill"></i> Metode pembayaran tidak dapat diubah.
                             </small>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="user_id" class="form-label">Nama Administrator</label>
                             <input type="hidden" name="user_id" value="{{ $transaction->user_id }}">
@@ -309,10 +314,10 @@
 
         document.getElementById("kembalian").value = kembalian;
         document.getElementById("kembalian_display").value = 'Rp ' + formatNumber(kembalian);
-        
+
         var statusDisplaySelect = document.getElementById('status_display');
         var statusHiddenInput = document.getElementById('status_hidden');
-        
+
         if (bayar >= total && total > 0) {
             statusDisplaySelect.value = 'LUNAS';
             statusHiddenInput.value = 'LUNAS';
@@ -329,15 +334,15 @@
         const handleBayarInput = (event) => {
             let rawValue = unformatNumber(bayarDisplayInput.value);
             bayarHiddenInput.value = rawValue;
-            
+
             let formattedValue = formatNumber(rawValue);
             if (bayarDisplayInput.value !== formattedValue) {
                 bayarDisplayInput.value = formattedValue;
             }
-            
+
             calculateChange();
         };
-        
+
         bayarDisplayInput.value = formatNumber(bayarHiddenInput.value);
         bayarDisplayInput.addEventListener('input', handleBayarInput);
         calculateChange();

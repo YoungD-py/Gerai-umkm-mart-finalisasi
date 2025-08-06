@@ -112,7 +112,7 @@
         letter-spacing: 0.5px;
         border: none;
         padding: 15px 12px;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .table-umkm tbody td {
@@ -128,7 +128,7 @@
     .table-umkm tbody tr:hover {
         background-color: #f8f9fa;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
@@ -137,14 +137,19 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
     }
 
     .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .search-section {
@@ -165,11 +170,11 @@
     }
 
     .action-dropdown {
-        position: static; 
+        position: static;
     }
-    
+
     .action-dropdown .dropdown-toggle::after {
-        display: none; 
+        display: none;
     }
 
     .action-dropdown .btn-action {
@@ -189,7 +194,7 @@
         border: 1px solid rgba(0,0,0,0.1);
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         padding: 0.5rem 0;
-        z-index: 100; 
+        z-index: 100;
     }
 
     .action-dropdown .dropdown-item {
@@ -200,7 +205,7 @@
         font-weight: 500;
         transition: background-color 0.2s ease, color 0.2s ease;
     }
-    
+
     .action-dropdown .dropdown-item:hover {
         background-color: #f8f9fa;
     }
@@ -210,7 +215,7 @@
         width: 20px;
         text-align: center;
     }
-    
+
     .action-dropdown .dropdown-item-form {
         padding: 0;
         margin: 0;
@@ -547,13 +552,13 @@
                 }
             });
         }
-        
+
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
                 bulkDeleteForm.submit();
             });
         }
-        
+
         updateBulkDeleteButtonState();
     });
 

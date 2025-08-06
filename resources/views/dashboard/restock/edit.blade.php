@@ -30,7 +30,7 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .card-body {
         padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
@@ -110,7 +110,7 @@
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
     }
-    
+
     .btn-info-restock {
         background: linear-gradient(135deg, #17a2b8, #138496);
         border: none;
@@ -133,15 +133,20 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
 
     .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
     .info-section {
         background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
@@ -216,7 +221,7 @@
                             <i class="bi bi-info-circle"></i>
                             Informasi Barang
                         </h5>
-                        
+
                         <div class="row">
                             <div class="col-12 col-md-6">
                                 <div class="info-item">
@@ -252,7 +257,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="number" class="form-control @error('stok_tambahan') is-invalid @enderror"
-                                       id="stok_tambahan" name="stok_tambahan" 
+                                       id="stok_tambahan" name="stok_tambahan"
                                        value="{{ old('stok_tambahan') }}"
                                        required min="1" placeholder="Masukkan jumlah stok yang akan ditambahkan..."
                                        oninput="calculateNewStock()">
@@ -320,13 +325,13 @@ function calculateNewStock() {
     const currentStock = {{ $good->stok }};
     const additionalStock = parseInt(document.getElementById('stok_tambahan').value) || 0;
     const calculationInfo = document.getElementById('calculation-info');
-    
+
     if (additionalStock > 0) {
         const newTotal = currentStock + additionalStock;
-        
+
         document.getElementById('display-tambahan').textContent = additionalStock + ' unit';
         document.getElementById('display-total').textContent = newTotal + ' unit';
-        
+
         calculationInfo.style.display = 'block';
     } else {
         calculationInfo.style.display = 'none';

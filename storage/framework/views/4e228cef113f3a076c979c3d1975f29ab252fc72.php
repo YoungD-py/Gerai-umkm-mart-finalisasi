@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -166,13 +164,14 @@
         <p>Kelola stok barang di inventori GERAI UMKM MART</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill"></i>
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="row">
         <div class="col-12">
@@ -190,7 +189,7 @@
                         <form action="/dashboard/restock">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Cari nama barang..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                     <span class="d-none d-sm-inline ms-1">Cari</span>
@@ -214,8 +213,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($goods as $good)
-                                    @php
+                                <?php $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
                                         $stockClass = '';
                                         $stockBadge = '';
                                         $stockText = '';
@@ -233,48 +232,52 @@
                                             $stockBadge = 'badge-high';
                                             $stockText = 'Aman';
                                         }
-                                    @endphp
-                                    <tr class="{{ $stockClass }}">
-                                        <td>{{ ($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration }}</td>
+                                    ?>
+                                    <tr class="<?php echo e($stockClass); ?>">
+                                        <td><?php echo e(($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration); ?></td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div>
-                                                    <h6 class="mb-0">{{ $good->nama }}</h6>
-                                                    <small class="text-muted">{{ $good->type }}</small>
+                                                    <h6 class="mb-0"><?php echo e($good->nama); ?></h6>
+                                                    <small class="text-muted"><?php echo e($good->type); ?></small>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="d-none d-md-table-cell">{{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}</td>
+                                        <td class="d-none d-md-table-cell"><?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?></td>
                                         <td>
-                                            <span class="fw-bold fs-5">{{ $good->stok }}</span>
+                                            <span class="fw-bold fs-5"><?php echo e($good->stok); ?></span>
                                             <small class="text-muted">unit</small>
                                         </td>
                                         <td class="d-none d-sm-table-cell">
-                                            <span class="badge badge-stock {{ $stockBadge }}">
-                                                {{ $stockText }}
+                                            <span class="badge badge-stock <?php echo e($stockBadge); ?>">
+                                                <?php echo e($stockText); ?>
+
                                             </span>
                                         </td>
-                                        <td class="d-none d-lg-table-cell">Rp {{ number_format($good->harga, 0, ',', '.') }}</td>
+                                        <td class="d-none d-lg-table-cell">Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?></td>
                                         <td>
-                                            <a href="/dashboard/restock/{{ $good->id }}/edit"
+                                            <a href="/dashboard/restock/<?php echo e($good->id); ?>/edit"
                                                class="btn-umkm">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span class="d-none d-sm-inline ms-1">Restock</span>
                                             </a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $goods->links() }}
+                        <?php echo e($goods->links()); ?>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/restock/index.blade.php ENDPATH**/ ?>

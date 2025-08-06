@@ -1,6 +1,6 @@
 <?php $__env->startSection('container'); ?>
 <style>
-    /* --- CSS Styles copied from Goods/Return Dashboard for consistency --- */
+    /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -67,6 +67,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
@@ -110,7 +111,7 @@
         letter-spacing: 0.5px;
         border: none;
         padding: 15px 12px;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .table-umkm tbody td {
@@ -126,7 +127,7 @@
     .table-umkm tbody tr:hover {
         background-color: #f8f9fa;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
@@ -134,16 +135,23 @@
         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
+   .page-title h1 {
+    font-size: 3rem; /* sebelumnya 2rem */
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
     }
 
     .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
+    font-size: 1.5rem; /* sebelumnya 1.1rem */
+    font-weight: 600;
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
+
+
 
     .search-section {
         background: rgba(255,255,255,0.1);
@@ -163,11 +171,11 @@
     }
 
     .action-dropdown {
-        position: static; 
+        position: static;
     }
-    
+
     .action-dropdown .dropdown-toggle::after {
-        display: none; 
+        display: none;
     }
 
     .action-dropdown .btn-action {
@@ -187,7 +195,7 @@
         border: 1px solid rgba(0,0,0,0.1);
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         padding: 0.5rem 0;
-        z-index: 100; 
+        z-index: 100;
     }
 
     .action-dropdown .dropdown-item {
@@ -198,7 +206,7 @@
         font-weight: 500;
         transition: background-color 0.2s ease, color 0.2s ease;
     }
-    
+
     .action-dropdown .dropdown-item:hover {
         background-color: #f8f9fa;
     }
@@ -208,7 +216,7 @@
         width: 20px;
         text-align: center;
     }
-    
+
     .action-dropdown .dropdown-item-form {
         padding: 0;
         margin: 0;
@@ -262,8 +270,8 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>🧾 MANAJEMEN DATA TRANSAKSI</h1>
-        <p>Kelola riwayat dan detail transaksi penjualan</p>
+        <h1>🏢 MANAJEMEN DATA Mitra Binaan</h1>
+        <p>Kelola data mitra binaan GERAI UMKM MART</p>
     </div>
 
     <?php if(session()->has('success')): ?>
@@ -274,31 +282,45 @@
         </div>
     <?php endif; ?>
 
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
     <div class="umkm-card">
         <div class="umkm-card-header">
             
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
-                    <i class="bi bi-receipt"></i>
-                    Data Transaksi
+                    <i class="bi bi-building"></i>
+                    Data Mitra Binaan
                 </h3>
-                <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm w-100 w-md-auto" style="display: none;">
-                    <i class="bi bi-trash-fill"></i> Hapus Terpilih
-                </button>
+                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
+                    <a href="/dashboard/categories/create" class="btn-umkm btn-umkm-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Tambah Mitra Binaan
+                    </a>
+                </div>
             </div>
         </div>
 
         <div class="umkm-card-body">
             <!-- Search Section -->
             <div class="search-section">
-                <form action="/dashboard/transactions" method="GET">
+                <form action="/dashboard/categories" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Berdasarkan Nomor Nota
+                                <i class="bi bi-search me-2"></i>Cari Mitra Binaan
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nomor nota..."
+                                <input type="text" class="form-control" placeholder="Masukkan nama mitra binaan..."
                                        name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
@@ -307,15 +329,14 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($transactions->total()); ?> transaksi</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($categories->total()); ?> mitra binaan</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <!-- Form untuk bulk delete -->
-            <form id="bulk-delete-form" action="<?php echo e(route('transactions.bulkDelete')); ?>" method="POST">
+            <form id="bulk-delete-form" action="<?php echo e(route('categories.bulkDelete')); ?>" method="POST">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
@@ -323,86 +344,43 @@
                     <table class="table table-umkm">
                         <thead>
                             <tr>
-                                <th style="width: 3%; text-align: center;">
+                                <th style="width: 5%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th>#</th>
-                                <th>No. Nota</th>
-                                <th>Waktu</th>
-                                <th>Petugas</th>
-                                <th>Metode Bayar</th>
-                                <th>Status</th>
-                                <th>Total</th>
-                                <th>Bayar</th>
-                                <th>Kembalian</th>
-                                <th class="text-center">Aksi</th>
+                                <th style="width: 10%;">#</th>
+                                <th style="width: 65%;">Nama Mitra Binaan</th>
+                                <th style="width: 20%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $__empty_1 = true; $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php $__empty_1 = true; $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($transaction->id); ?>">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($category->id); ?>">
                                 </td>
-                                <td><strong><?php echo e($transactions->firstItem() + $key); ?></strong></td>
+                                <td><strong><?php echo e($categories->firstItem() + $key); ?></strong></td>
                                 <td>
-                                    <i class="bi bi-hash text-primary"></i>
-                                    <?php echo e($transaction->no_nota); ?>
-
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-building text-success me-2"></i>
+                                        <strong><?php echo e($category->nama); ?></strong>
+                                    </div>
                                 </td>
-                                <td style="white-space:nowrap;">
-                                    <i class="bi bi-clock text-info me-1"></i>
-                                    <?php echo e(\Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i')); ?>
-
-                                </td>
-                                <td><?php echo e($transaction->user->nama); ?></td>
-                                <td><?php echo e($transaction->metode_pembayaran); ?></td>
-                                <td>
-                                    <?php if(strtolower(trim($transaction->status)) == 'lunas'): ?>
-                                        <span class="badge bg-success"><?php echo e($transaction->status); ?></span>
-                                    <?php else: ?>
-                                        <span class="badge bg-warning text-dark"><?php echo e($transaction->status); ?></span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><strong>Rp <?php echo e(number_format($transaction->total_harga, 0, ',', '.')); ?></strong></td>
-                                <td>Rp <?php echo e(number_format($transaction->bayar, 0, ',', '.')); ?></td>
-                                <td>Rp <?php echo e(number_format($transaction->kembalian, 0, ',', '.')); ?></td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($transaction->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($category->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($transaction->id); ?>">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($category->id); ?>">
                                             <li>
-                                                <form method="post" action="/dashboard/cashiers/nota" class="dropdown-item-form" onsubmit="return handleDownloadSubmit(this)">
-                                                    <?php echo csrf_field(); ?>
-                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
-                                                    <button type="submit" class="dropdown-item">
-                                                        <i class="bi bi-download text-primary"></i> Unduh Nota
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="/dashboard/transactions/<?php echo e($transaction->id); ?>/edit">
-                                                    <i class="bi bi-credit-card text-success"></i> Pembayaran
+                                                <a class="dropdown-item" href="/dashboard/categories/<?php echo e($category->id); ?>/edit">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
                                             <li>
-                                                <form action="/dashboard/orders" method="post" class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
-                                                    <?php echo csrf_field(); ?>
-                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
-                                                    <button type="submit" class="dropdown-item">
-                                                        <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <form action="/dashboard/transactions/<?php echo e($transaction->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($transaction->id); ?>">
+                                                <form action="/dashboard/categories/<?php echo e($category->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($category->id); ?>">
                                                     <?php echo method_field('delete'); ?>
                                                     <?php echo csrf_field(); ?>
-                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($transaction->id); ?>', '<?php echo e($transaction->no_nota); ?>')">
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($category->id); ?>', '<?php echo e($category->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -413,11 +391,15 @@
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
-                                <td colspan="11" class="text-center py-5">
+                                <td colspan="4" class="text-center py-5">
                                     <div class="text-muted">
-                                        <i class="bi bi-cart-x display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data transaksi</h5>
-                                        <p>Belum ada transaksi yang tercatat di sistem</p>
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data mitra binaan</h5>
+                                        <p>Silakan tambah mitra binaan baru untuk memulai</p>
+                                        <a href="/dashboard/categories/create" class="btn-umkm">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Tambah Mitra Binaan Pertama
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -428,10 +410,10 @@
             </form>
 
             <!-- Pagination -->
-            <?php if($transactions->hasPages()): ?>
+            <?php if($categories->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    <?php echo e($transactions->links()); ?>
+                    <?php echo e($categories->links()); ?>
 
                 </div>
             </div>
@@ -449,7 +431,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus transaksi <br><strong id="itemNameToDelete" class="text-danger"></strong>?
+        Apakah Anda yakin ingin menghapus mitra <br><strong id="categoryNameToDelete" class="text-danger"></strong>?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -468,7 +450,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> transaksi yang dipilih?
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> mitra yang dipilih?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -484,14 +466,14 @@
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const itemNameToDeleteSpan = document.getElementById('itemNameToDelete');
+        const categoryNameToDeleteSpan = document.getElementById('categoryNameToDelete');
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, transactionId, transactionNota) {
-            formToSubmit = document.getElementById('deleteForm' + transactionId);
+        window.showDeleteModal = function(button, categoryId, categoryName) {
+            formToSubmit = document.getElementById('deleteForm' + categoryId);
             originalButton = button;
-            itemNameToDeleteSpan.textContent = 'No. Nota ' + transactionNota;
+            categoryNameToDeleteSpan.textContent = categoryName;
             deleteModal.show();
         }
 
@@ -549,70 +531,16 @@
                 }
             });
         }
-        
+
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
                 bulkDeleteForm.submit();
             });
         }
-        
+
         updateBulkDeleteButtonState();
-    });
-
-    // Fungsi untuk tombol yang menyebabkan navigasi (seperti Edit Pesanan)
-    function handleActionSubmit(form) {
-        const button = form.querySelector('button[type="submit"]');
-        if (button) {
-            button.disabled = true;
-            button.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            `;
-        }
-        return true; // Lanjutkan submit
-    }
-
-    // Fungsi untuk tombol download yang tidak me-reload halaman
-    function handleDownloadSubmit(form) {
-        const button = form.querySelector('button[type="submit"]');
-        if (button) {
-            const originalButtonHTML = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            `;
-            setTimeout(function() {
-                button.disabled = false;
-                button.innerHTML = originalButtonHTML;
-            }, 3000); // Kembalikan setelah 3 detik
-        }
-        return true; // Lanjutkan submit
-    }
-
-    // Script untuk mengatasi masalah cache browser (bfcache)
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            const buttons = document.querySelectorAll('.dropdown-item-form button');
-            buttons.forEach(button => {
-                button.disabled = false;
-                const form = button.closest('form');
-                if (form) {
-                    const action = form.getAttribute('action');
-                    if (action.includes('/dashboard/cashiers/nota')) {
-                        button.innerHTML = '<i class="bi bi-download text-primary"></i> Unduh Nota';
-                    } else if (action.includes('/dashboard/orders')) {
-                        button.innerHTML = '<i class="bi bi-pencil-square text-warning"></i> Edit Pesanan';
-                    } else if (action.includes('/dashboard/transactions')) {
-                        if(button.type === 'button'){
-                           button.innerHTML = '<i class="bi bi-trash"></i> Hapus';
-                        }
-                    }
-                }
-            });
-        }
     });
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/transactions/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/categories/index.blade.php ENDPATH**/ ?>

@@ -1,8 +1,6 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
-    /* --- CSS Styles copied from other dashboards for consistency --- */
+    /* --- CSS Styles copied from Goods Dashboard for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -270,39 +268,33 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>👥 MANAJEMEN DATA ADMIN</h1>
-        <p>Kelola data administrator dan kasir untuk sistem</p>
+        <h1>🔄 MANAJEMEN DATA RETURN</h1>
+        <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
-                    <i class="bi bi-people-fill"></i>
-                    Data Admin & Kasir
+                    <i class="bi bi-arrow-return-left"></i>
+                    Data Return Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
                     <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                         <i class="bi bi-trash-fill"></i> Hapus Terpilih
                     </button>
-                    <a href="/dashboard/users/create" class="btn btn-umkm btn-umkm-sm">
+                    <a href="/dashboard/returns/create" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
-                        Tambah Pengguna
+                        Tambah Return
                     </a>
                 </div>
             </div>
@@ -311,15 +303,15 @@
         <div class="umkm-card-body">
             <!-- Search Section -->
             <div class="search-section">
-                <form action="/dashboard/users" method="GET">
+                <form action="/dashboard/returns" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Pengguna
+                                <i class="bi bi-search me-2"></i>Cari Barang atau Mitra
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nama atau username..."
-                                       name="search" value="{{ request('search') }}">
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -327,16 +319,16 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $users->total() }} pengguna</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <form id="bulk-delete-form" action="{{ route('users.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
+            <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-umkm">
@@ -346,101 +338,99 @@
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
                                 <th style="width: 5%;">#</th>
-                                <th style="width: 35%;">Nama Pengguna</th>
-                                <th style="width: 20%;" class="d-none d-sm-table-cell">Username</th>
-                                <th style="width: 12%;">Role</th>
-                                <th style="width: 15%;" class="d-none d-lg-table-cell">Bergabung</th>
-                                <th style="width: 10%; text-align: center;">Aksi</th>
+                                <th style="width: 12%;">Tgl Return</th>
+                                <th style="width: 15%;">Mitra Binaan</th>
+                                <th style="width: 20%;">Nama Barang</th>
+                                <th style="width: 8%;">Qty</th>
+                                <th style="width: 20%;">Alasan</th>
+                                <th style="width: 12%;">Administrator</th>
+                                <th style="width: 5%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($users as $key => $user)
+                            <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    @if(auth()->user()->id !== $user->id)
-                                        <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $user->id }}">
-                                    @endif
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($return->id); ?>">
                                 </td>
-                                <td><strong>{{ $users->firstItem() + $key }}</strong></td>
+                                <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white me-3" style="width: 40px; height: 40px; font-weight: bold;">
-                                            {{ strtoupper(substr($user->nama, 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <strong>{{ $user->nama }}</strong>
-                                            <small class="d-block d-sm-none text-muted">{{ $user->username }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="d-none d-sm-table-cell">
-                                    <code>{{ $user->username }}</code>
+                                    <i class="bi bi-calendar-x text-danger me-1"></i>
+                                    <?php echo e(\Carbon\Carbon::parse($return->tgl_return)->format('d/m/Y')); ?>
+
                                 </td>
                                 <td>
-                                    @if($user->role == 'ADMIN')
-                                        <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>{{ $user->role }}</span>
-                                    @else
-                                        <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i>{{ $user->role }}</span>
-                                    @endif
+                                    <i class="bi bi-building text-info me-1"></i>
+                                    <?php echo e($return->good->category->nama); ?>
+
                                 </td>
-                                <td class="d-none d-lg-table-cell">
-                                    <i class="bi bi-calendar3 text-muted me-1"></i>
-                                    {{ $user->created_at->format('d M Y') }}
+                                <td>
+                                    <i class="bi bi-box text-primary me-2"></i>
+                                    <?php echo e($return->good->nama); ?>
+
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
+                                </td>
+                                <td><?php echo e($return->alasan); ?></td>
+                                <td>
+                                    <i class="bi bi-person-check text-success me-1"></i>
+                                    <?php echo e($return->user->nama); ?>
+
                                 </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$user->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($return->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$user->id}}">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($return->id); ?>">
                                             <li>
-                                                <a class="dropdown-item" href="/dashboard/users/{{ $user->id }}/edit">
+                                                <a class="dropdown-item" href="/dashboard/returns/<?php echo e($return->id); ?>/edit">
                                                     <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
-                                            @if(auth()->user()->id !== $user->id)
                                             <li>
-                                                <form action="/dashboard/users/{{ $user->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $user->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $user->id }}', '{{ $user->nama }}')">
+                                                <form action="/dashboard/returns/<?php echo e($return->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($return->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($return->id); ?>', '<?php echo e($return->good->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
                                             </li>
-                                            @endif
                                         </ul>
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data pengguna</h5>
-                                        <p>Silakan tambah pengguna baru untuk memulai</p>
-                                        <a href="/dashboard/users/create" class="btn btn-umkm">
+                                        <h5>Belum ada data return</h5>
+                                        <p>Silakan tambah data return baru untuk memulai</p>
+                                        <a href="/dashboard/returns/create" class="btn-umkm">
                                             <i class="bi bi-plus-circle"></i>
-                                            Tambah Pengguna
+                                            Tambah Data Return
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </form>
 
             <!-- Pagination -->
-            @if($users->hasPages())
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $users->links() }}
+                    <?php echo e($returns->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -454,7 +444,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus pengguna <br><strong id="userNameToDelete" class="text-danger"></strong>?
+        Apakah Anda yakin ingin menghapus data return untuk barang <br><strong id="itemNameToDelete" class="text-danger"></strong>?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -473,7 +463,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> pengguna yang dipilih?
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> data return yang dipilih?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -483,20 +473,21 @@
   </div>
 </div>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const userNameToDeleteSpan = document.getElementById('userNameToDelete');
+        const itemNameToDeleteSpan = document.getElementById('itemNameToDelete');
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, userId, userName) {
-            formToSubmit = document.getElementById('deleteForm' + userId);
+        window.showDeleteModal = function(button, returnId, itemName) {
+            formToSubmit = document.getElementById('deleteForm' + returnId);
             originalButton = button;
-            userNameToDeleteSpan.textContent = userName;
+            itemNameToDeleteSpan.textContent = itemName;
             deleteModal.show();
         }
 
@@ -529,8 +520,7 @@
             } else {
                 bulkDeleteButton.style.display = 'none';
             }
-            // Cek jika semua checkbox yang BISA dipilih, sudah terpilih
-            selectAllCheckbox.checked = itemCheckboxes.length > 0 && selectedCount === itemCheckboxes.length;
+            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
         }
 
         if(selectAllCheckbox) {
@@ -565,4 +555,6 @@
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>

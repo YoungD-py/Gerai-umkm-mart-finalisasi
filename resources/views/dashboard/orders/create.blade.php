@@ -14,7 +14,7 @@
         transition: all 0.3s ease;
         overflow: hidden;
     }
-    
+
     .umkm-card-header {
         background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
@@ -44,17 +44,17 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .umkm-card-body {
         padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
-    
+
     .form-label {
         font-weight: 600;
         color: #333;
         margin-bottom: 8px;
     }
-    
+
     .form-control, .form-select {
         border-radius: 15px;
         border: 2px solid #e9ecef;
@@ -63,7 +63,7 @@
         background: rgba(255,255,255,0.9);
         font-size: 1rem;
     }
-    
+
     .form-control:read-only {
         background-color: #e9ecef;
         opacity: 1;
@@ -74,7 +74,7 @@
         box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         background: white;
     }
-    
+
     .btn-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
@@ -100,7 +100,7 @@
         box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
         color: white;
     }
-    
+
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
@@ -111,25 +111,30 @@
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
         margin-bottom: 30px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    
+
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-    
-    .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
-    
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .page-title p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
     /* Select2 Customization */
     .select2-container--default .select2-selection--single {
         height: calc(2.25rem + 20px);
@@ -194,7 +199,7 @@
                             <label for="no_nota" class="form-label">No. Nota</label>
                             <input type="text" class="form-control" name="no_nota" required value="{{ $no_nota }}" readonly>
                         </div>
-                        
+
                         <!-- Penambahan search produk -->
                         <div class="mb-3">
                             <label for="goods" class="form-label">Pilih Barang</label>
@@ -251,7 +256,7 @@
     function Subtotal() {
         var databarang = document.querySelector("#goods");
         var selectedOption = databarang.options[databarang.selectedIndex];
-        
+
         if (!selectedOption || !selectedOption.hasAttribute('price')) {
             document.getElementById("subtotal_display").value = "Rp 0";
             document.getElementById("subtotal").value = "";

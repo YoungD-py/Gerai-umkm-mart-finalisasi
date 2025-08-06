@@ -69,7 +69,7 @@
         color: white;
         text-decoration: none;
     }
-    
+
     .btn-umkm-sm {
         padding: 8px 15px;
         font-size: 0.875rem;
@@ -82,7 +82,7 @@
         transition: all 0.3s ease;
         background: rgba(255,255,255,0.9);
     }
-    
+
     .form-control:read-only {
         background-color: #e9ecef;
         opacity: 1;
@@ -109,7 +109,7 @@
         letter-spacing: 0.5px;
         border: none;
         padding: 15px 12px;
-        white-space: nowrap; 
+        white-space: nowrap;
     }
 
     .table-umkm tbody td {
@@ -125,7 +125,7 @@
     .table-umkm tbody tr:hover {
         background-color: #f8f9fa;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
@@ -134,23 +134,28 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
     }
 
     .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    
+
     .checkout-section {
         background: #f8f9fa;
         border-radius: 15px;
         padding: 25px;
         margin-top: 25px;
     }
-    
+
     .checkout-section h2 {
         color: #28a745;
     }
@@ -252,7 +257,7 @@
                     @csrf
                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
                     <input type="hidden" name="nama_pembeli" value="CASH"> <!-- Default payment method -->
-                    
+
                     {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
                     <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-3">
                         <div class="text-center text-sm-start">
@@ -278,14 +283,14 @@
     function calculateTotal() {
         var table = document.getElementById("table");
         var subtotalSum = 0;
-        
+
         for(var i = 1; i < table.rows.length; i++) {
             var cellValue = table.rows[i].cells[4].innerText.replace(/[^0-9]/g, '');
             subtotalSum += parseInt(cellValue) || 0;
         }
 
         var finalTotal = subtotalSum;
-        
+
         document.getElementById("total_harga").value = finalTotal;
         document.getElementById("total_harga_display").innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(finalTotal);
     }

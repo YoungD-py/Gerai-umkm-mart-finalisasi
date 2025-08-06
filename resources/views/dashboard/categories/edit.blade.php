@@ -11,7 +11,7 @@
         transition: all 0.3s ease;
         overflow: hidden;
     }
-    
+
     .umkm-card-header {
         background: linear-gradient(135deg, #ffc107, #e0a800);
         color: #000;
@@ -20,7 +20,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .umkm-card-header::before {
         content: '';
         position: absolute;
@@ -32,7 +32,7 @@
         transform: rotate(45deg);
         transition: all 0.3s ease;
     }
-    
+
     .umkm-card-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -41,11 +41,11 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .umkm-card-body {
         padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
     }
-    
+
     .form-label {
         font-weight: 600;
         color: #333;
@@ -54,7 +54,7 @@
         align-items: center;
         gap: 8px;
     }
-    
+
     .form-control {
         border-radius: 15px;
         border: 2px solid #e9ecef;
@@ -63,14 +63,14 @@
         background: rgba(255,255,255,0.9);
         font-size: 1rem;
     }
-    
+
     .form-control:focus {
         border-color: #ffc107;
         box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
         background: white;
         transform: translateY(-1px);
     }
-    
+
     .btn-warning-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
@@ -90,43 +90,48 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
+
     .btn-warning-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
         color: #000;
     }
-    
+
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
         color: white;
     }
-    
+
     .btn-secondary-umkm:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         color: white;
     }
-    
+
     .page-title {
         color: white;
         text-align: center;
         margin-bottom: 30px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    
+
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-    
-    .page-title p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
-    
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .page-title p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
     .required {
         color: #dc3545;
     }
@@ -157,7 +162,7 @@
                         Form Edit Mitra Binaan
                     </h3>
                 </div>
-                
+
                 <div class="umkm-card-body">
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -173,14 +178,14 @@
                     <form method="post" action="/dashboard/categories/{{ $category->id }}">
                         @method('put')
                         @csrf
-                        
+
                         <div class="mb-4">
                             <label for="nama" class="form-label">
                                 <i class="bi bi-building text-warning"></i>
                                 Nama Mitra Binaan <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" 
-                                   name="nama" required placeholder="Masukkan Nama Mitra Binaan..." 
+                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                                   name="nama" required placeholder="Masukkan Nama Mitra Binaan..."
                                    value="{{ old('nama', $category->nama) }}">
                             @error('nama')
                                 <div class="invalid-feedback">

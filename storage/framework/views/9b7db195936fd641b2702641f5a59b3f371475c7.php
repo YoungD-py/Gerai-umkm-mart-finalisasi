@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('container'); ?>
     <style>
         /* --- CSS Styles adapted for Cashier Dashboard --- */
@@ -162,14 +160,19 @@
         }
 
         .page-title h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
 
         .page-title p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .pagination-wrapper .pagination {
@@ -343,4 +346,5 @@
         }
     </script>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/cashiers/index.blade.php ENDPATH**/ ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/cashiers/index.blade.php ENDPATH**/ ?>

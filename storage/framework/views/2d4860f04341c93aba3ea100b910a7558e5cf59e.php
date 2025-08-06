@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     body {
         background: linear-gradient(135deg, #4b6cb7, #182848);
@@ -199,28 +197,29 @@
         <p>Isi form di bawah untuk mencatat barang yang diretur.</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
-    @if ($errors->any())
+    <?php if($errors->any()): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li><?php echo e($error); ?></li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="return-card">
                 <div class="return-card-header">
@@ -229,18 +228,32 @@
 
                 <div class="return-card-body">
                     <form method="post" action="/dashboard/returns">
-                        @csrf
+                        <?php echo csrf_field(); ?>
 
                         <div class="form-section">
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="bi bi-calendar3 text-primary"></i> Tanggal Return <span class="required">*</span>
                                 </label>
-                                <input type="date" class="form-control @error('tgl_return') is-invalid @enderror"
-                                       name="tgl_return" value="{{ old('tgl_return', date('Y-m-d')) }}" required>
-                                @error('tgl_return')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="date" class="form-control <?php $__errorArgs = ['tgl_return'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                       name="tgl_return" value="<?php echo e(old('tgl_return', date('Y-m-d'))); ?>" required>
+                                <?php $__errorArgs = ['tgl_return'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div class="mb-3">
@@ -249,66 +262,122 @@
                                 </label>
                                 <div class="search-container">
                                     <input type="text"
-                                           class="form-control @error('good_id') is-invalid @enderror"
+                                           class="form-control <?php $__errorArgs = ['good_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                            id="good-search"
                                            placeholder="Ketik nama barang atau barcode..."
                                            autocomplete="off">
-                                    <input type="hidden" name="good_id" id="selected-good-id" value="{{ old('good_id') }}">
+                                    <input type="hidden" name="good_id" id="selected-good-id" value="<?php echo e(old('good_id')); ?>">
                                     <div class="search-results" id="search-results"></div>
                                 </div>
-                                @error('good_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['good_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="bi bi-123 text-primary"></i> Jumlah Return <span class="required">*</span>
                                 </label>
-                                <input type="number" class="form-control @error('qty_return') is-invalid @enderror"
-                                       name="qty_return" placeholder="Masukkan jumlah..." value="{{ old('qty_return') }}" min="1" required>
-                                @error('qty_return')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="number" class="form-control <?php $__errorArgs = ['qty_return'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                       name="qty_return" placeholder="Masukkan jumlah..." value="<?php echo e(old('qty_return')); ?>" min="1" required>
+                                <?php $__errorArgs = ['qty_return'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="bi bi-exclamation-triangle text-primary"></i> Alasan Return <span class="required">*</span>
                                 </label>
-                                <select class="form-select @error('alasan') is-invalid @enderror" name="alasan" required>
+                                <select class="form-select <?php $__errorArgs = ['alasan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="alasan" required>
                                     <option value="">-- Pilih Alasan --</option>
-                                    @foreach(['Rusak', 'Cacat', 'Kadaluarsa', 'Salah Kirim', 'Lainnya'] as $alasan)
-                                        <option value="{{ $alasan }}" {{ old('alasan') == $alasan ? 'selected' : '' }}>{{ $alasan }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = ['Rusak', 'Cacat', 'Kadaluarsa', 'Salah Kirim', 'Lainnya']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $alasan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($alasan); ?>" <?php echo e(old('alasan') == $alasan ? 'selected' : ''); ?>><?php echo e($alasan); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
-                                @error('alasan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['alasan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="bi bi-person-gear text-primary"></i> Administrator <span class="required">*</span>
                                 </label>
-                                <input type="text" class="form-control" value="{{ auth()->user()->nama }}" readonly>
-                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                <input type="text" class="form-control" value="<?php echo e(auth()->user()->nama); ?>" readonly>
+                                <input type="hidden" name="user_id" value="<?php echo e(auth()->user()->id); ?>">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="bi bi-chat-left-text text-primary"></i> Keterangan (Opsional)
                                 </label>
-                                <textarea class="form-control @error('keterangan') is-invalid @enderror"
+                                <textarea class="form-control <?php $__errorArgs = ['keterangan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                           name="keterangan" rows="3"
-                                          placeholder="Tambahkan keterangan...">{{ old('keterangan') }}</textarea>
-                                @error('keterangan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                          placeholder="Tambahkan keterangan..."><?php echo e(old('keterangan')); ?></textarea>
+                                <?php $__errorArgs = ['keterangan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/returns" class="btn btn-secondary-return">
                                 <i class="bi bi-arrow-left"></i> Kembali
@@ -334,13 +403,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial value if editing
     if (selectedGoodId.value) {
         // Find the good name from the old goods data if available
-        @if(old('good_id'))
-            @foreach($goods as $good)
-                @if($good->id == old('good_id'))
-                    searchInput.value = '{{ $good->nama }} ({{ $good->barcode }})';
-                @endif
-            @endforeach
-        @endif
+        <?php if(old('good_id')): ?>
+            <?php $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if($good->id == old('good_id')): ?>
+                    searchInput.value = '<?php echo e($good->nama); ?> (<?php echo e($good->barcode); ?>)';
+                <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
     }
 
     searchInput.addEventListener('input', function() {
@@ -429,4 +498,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/create.blade.php ENDPATH**/ ?>
