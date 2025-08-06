@@ -347,7 +347,7 @@
                                 <th style="width: 5%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 10%;">#</th>
+                                <th style="width: 10%;">No</th>
                                 <th style="width: 65%;">Nama Mitra Binaan</th>
                                 <th style="width: 20%; text-align: center;">Aksi</th>
                             </tr>

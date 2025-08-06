@@ -13,7 +13,7 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #007bff, #0056b3);
+        background: linear-gradient(135deg, #28a745, #28a745);
         color: white;
         padding: 20px;
         border-radius: 20px 20px 0 0;

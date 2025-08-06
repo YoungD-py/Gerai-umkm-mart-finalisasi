@@ -186,21 +186,22 @@
         .pagination-wrapper .page-link {
             border: none;
             padding: 12px 16px;
-            color: #007bff;
+            color: #28a745;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .pagination-wrapper .page-link:hover {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            transform: translateY(-1px);
-        }
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    transform: translateY(-1px);
+}
 
-        .pagination-wrapper .page-item.active .page-link {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border-color: #007bff;
-        }
+.pagination-wrapper .page-item.active .page-link {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    border-color: #28a745;
+}
+
 
         @media (min-width: 768px) {
             .page-title h1 {
