@@ -76,17 +76,24 @@
 
         .btn-cashier:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+             /* [PERUBAHAN] Bayangan diubah jadi HIJAU */
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
             color: white;
             text-decoration: none;
         }
 
         .btn-cashier-sm {
-            padding: 8px 15px;
+            /* [PERUBAHAN] Ukuran dikecilkan agar benar-benar rapi dan kecil */
+            padding: 5px 12px;
             font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: normal;
+            border-radius: 8px;
+            font-weight: 500;
         }
 
         .btn-print {
+            /* TETAP BIRU SESUAI PERMINTAAN */
             background: #007bff;
             border: none;
             border-radius: 8px;
@@ -102,6 +109,7 @@
         }
 
         .btn-print:hover {
+            /* TETAP BIRU SESUAI PERMINTAAN */
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
             background: #0069d9;
@@ -233,7 +241,6 @@
                         <i class="bi bi-receipt"></i>
                         Transaksi Hari Ini
                     </h3>
-                    {{-- [PERUBAHAN] Mengembalikan struktur tombol agar kecil, rapi di desktop, dan full-width di mobile --}}
                     <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto mt-2 mt-md-0">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Transaksi
@@ -246,7 +253,7 @@
                     <table class="table table-cashier">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>#</th>
                                 <th>No. Nota</th>
                                 <th>Waktu Transaksi</th>
                                 <th class="d-none d-lg-table-cell">Petugas</th>

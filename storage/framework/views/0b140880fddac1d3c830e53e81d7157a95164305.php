@@ -57,7 +57,7 @@
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
+        background: linear-gradient(135deg, #17a2b8, #17a2b8);
         border: none;
         border-radius: 15px;
         padding: 12px 25px;
@@ -349,7 +349,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 5%;">NO</th>
+                                <th style="width: 5%;">#</th>
                                 <th style="width: 30%;">Uraian/Keterangan</th>
                                 <th style="width: 15%;">Nominal</th>
                                 <th style="width: 15%;">Tanggal</th>

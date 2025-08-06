@@ -57,8 +57,7 @@
         }
 
         .btn-cashier {
-            /* [PERUBAHAN] Warna diubah jadi HIJAU */
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, #007bff, #0056b3);
             border: none;
             border-radius: 15px;
             padding: 12px 25px;
@@ -70,9 +69,10 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
         }
+
+
 
         .btn-cashier:hover {
             transform: translateY(-2px);
@@ -87,7 +87,7 @@
         }
 
         .btn-print {
-            background: #007bff;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
             border: none;
             border-radius: 8px;
             padding: 8px 12px;

@@ -31,7 +31,7 @@
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
+        background: linear-gradient(135deg, #17a2b8, #17a2b8);
         border: none;
         border-radius: 15px;
         padding: 8px 15px;
@@ -205,7 +205,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">NO</th>
+                                    <th scope="col">#</th>
                                     <th scope="col">Nama Barang</th>
                                     <th scope="col" class="d-none d-md-table-cell">Supplier</th>
                                     <th scope="col">Stok</th>
