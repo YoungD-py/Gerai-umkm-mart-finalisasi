@@ -3,9 +3,12 @@
 @section('container')
     <style>
         body {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
+        background: linear-gradient(180deg, #e0e0e0, #dcdcdc);
+        backdrop-filter: blur(6px);
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
         }
 
         .main-card {
@@ -21,7 +24,7 @@
         }
 
         .card-header-custom {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 25px 30px;
             border: none;
@@ -63,7 +66,7 @@
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #4facfe;
+            border-color: #28a745, #20c997;
             box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
             outline: none;
             background-color: white;
@@ -88,7 +91,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #28a745, #20c997);
             box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
             color: white;
         }
@@ -121,14 +124,14 @@
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 25px;
-            border-left: 4px solid #4facfe;
+            border-left: 4px solid #28a745, #20c997;
         }
 
         .user-avatar {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #28a745, #20c997);
             display: flex;
             align-items: center;
             justify-content: center;

@@ -18,7 +18,7 @@
         }
 
         .cashier-card-header {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 20px;
             border-radius: 20px 20px 0 0;
@@ -57,20 +57,27 @@
         }
 
         .btn-cashier {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border: none;
-            border-radius: 15px;
-            padding: 12px 25px;
-            font-weight: 600;
-            color: white;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+        background: linear-gradient(135deg, #17a2b8, #17a2b8);
+        border: none;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        /* Tambahan penting */
+        width: auto;
+        max-width: max-content;
+        white-space: nowrap;
         }
+
+
 
         .btn-cashier:hover {
             transform: translateY(-2px);
@@ -85,7 +92,7 @@
         }
 
         .btn-print {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
+            background: linear-gradient(135deg, #17a2b8, #17a2b8);
             border: none;
             border-radius: 8px;
             padding: 8px 12px;
@@ -130,7 +137,7 @@
         }
 
         .table-cashier thead th {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             font-weight: 600;
             text-transform: uppercase;

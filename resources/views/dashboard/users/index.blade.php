@@ -57,7 +57,7 @@
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
+        background: linear-gradient(135deg, #17a2b8, #17a2b8); /* Blue gradient */
         border: none;
         border-radius: 15px;
         padding: 12px 25px;
@@ -69,7 +69,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center;
         gap: 8px;
     }
 
@@ -345,7 +345,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 5%;">No</th>
                                 <th style="width: 35%;">Nama Pengguna</th>
                                 <th style="width: 20%;" class="d-none d-sm-table-cell">Username</th>
                                 <th style="width: 12%;">Role</th>
