@@ -1,8 +1,8 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
-    /* --- CSS Styles copied from Goods/Return Dashboard for consistency --- */
+    /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -69,6 +69,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center; /* [RESPONSIVE] Center content inside button */
         gap: 8px;
     }
 
@@ -269,43 +270,58 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>🧾 MANAJEMEN DATA TRANSAKSI</h1>
-        <p>Kelola riwayat dan detail transaksi penjualan</p>
+        <h1>👥 MANAJEMEN DATA ADMIN</h1>
+        <p>Kelola data administrator dan kasir untuk sistem</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
+
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
-                    <i class="bi bi-receipt"></i>
-                    Data Transaksi
+                    <i class="bi bi-people-fill"></i>
+                    Data Admin & Kasir
                 </h3>
-                <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm w-100 w-md-auto" style="display: none;">
-                    <i class="bi bi-trash-fill"></i> Hapus Terpilih
-                </button>
+                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
+                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                    </button>
+                    <a href="/dashboard/users/create" class="btn btn-umkm btn-umkm-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Tambah Pengguna
+                    </a>
+                </div>
             </div>
         </div>
 
         <div class="umkm-card-body">
             <!-- Search Section -->
             <div class="search-section">
-                <form action="/dashboard/transactions" method="GET">
+                <form action="/dashboard/users" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Berdasarkan Nomor Nota
+                                <i class="bi bi-search me-2"></i>Cari Pengguna
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nomor nota..."
-                                       name="search" value="{{ request('search') }}">
+                                <input type="text" class="form-control" placeholder="Masukkan nama atau username..."
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -313,17 +329,16 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $transactions->total() }} transaksi</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($users->total()); ?> pengguna</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <!-- Form untuk bulk delete -->
-            <form id="bulk-delete-form" action="{{ route('transactions.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
+            <form id="bulk-delete-form" action="<?php echo e(route('users.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-umkm">
@@ -332,113 +347,105 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th>NO</th>
-                                <th>No. Nota</th>
-                                <th>Waktu</th>
-                                <th>Petugas</th>
-                                <th>Metode Bayar</th>
-                                <th>Status</th>
-                                <th>Total</th>
-                                <th>Bayar</th>
-                                <th>Kembalian</th>
-                                <th class="text-center">Aksi</th>
+                                <th style="width: 5%;">NO</th>
+                                <th style="width: 35%;">Nama Pengguna</th>
+                                <th style="width: 20%;" class="d-none d-sm-table-cell">Username</th>
+                                <th style="width: 12%;">Role</th>
+                                <th style="width: 15%;" class="d-none d-lg-table-cell">Bergabung</th>
+                                <th style="width: 10%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($transactions as $key => $transaction)
+                            <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $transaction->id }}">
+                                    <?php if(auth()->user()->id !== $user->id): ?>
+                                        <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($user->id); ?>">
+                                    <?php endif; ?>
                                 </td>
-                                <td><strong>{{ $transactions->firstItem() + $key }}</strong></td>
+                                <td><strong><?php echo e($users->firstItem() + $key); ?></strong></td>
                                 <td>
-                                    <i class="bi bi-hash text-primary"></i>
-                                    {{ $transaction->no_nota }}
+                                    <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white me-3" style="width: 40px; height: 40px; font-weight: bold;">
+                                            <?php echo e(strtoupper(substr($user->nama, 0, 1))); ?>
+
+                                        </div>
+                                        <div>
+                                            <strong><?php echo e($user->nama); ?></strong>
+                                            <small class="d-block d-sm-none text-muted"><?php echo e($user->username); ?></small>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td style="white-space:nowrap;">
-                                    <i class="bi bi-clock text-info me-1"></i>
-                                    {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
+                                <td class="d-none d-sm-table-cell">
+                                    <code><?php echo e($user->username); ?></code>
                                 </td>
-                                <td>{{ $transaction->user->nama }}</td>
-                                <td>{{ $transaction->metode_pembayaran }}</td>
                                 <td>
-                                    @if(strtolower(trim($transaction->status)) == 'lunas')
-                                        <span class="badge bg-success">{{ $transaction->status }}</span>
-                                    @else
-                                        <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
-                                    @endif
+                                    <?php if($user->role == 'ADMIN'): ?>
+                                        <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i><?php echo e($user->role); ?></span>
+                                    <?php else: ?>
+                                        <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i><?php echo e($user->role); ?></span>
+                                    <?php endif; ?>
                                 </td>
-                                <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
-                                <td>Rp {{ number_format($transaction->bayar, 0, ',', '.') }}</td>
-                                <td>Rp {{ number_format($transaction->kembalian, 0, ',', '.') }}</td>
+                                <td class="d-none d-lg-table-cell">
+                                    <i class="bi bi-calendar3 text-muted me-1"></i>
+                                    <?php echo e($user->created_at->format('d M Y')); ?>
+
+                                </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$transaction->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($user->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$transaction->id}}">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($user->id); ?>">
                                             <li>
-                                                <form method="post" action="/dashboard/cashiers/nota" class="dropdown-item-form" onsubmit="return handleDownloadSubmit(this)">
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                    <button type="submit" class="dropdown-item">
-                                                        <i class="bi bi-download text-primary"></i> Unduh Nota
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="/dashboard/transactions/{{ $transaction->id }}/edit">
-                                                    <i class="bi bi-credit-card text-success"></i> Pembayaran
+                                                <a class="dropdown-item" href="/dashboard/users/<?php echo e($user->id); ?>/edit">
+                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
                                                 </a>
                                             </li>
+                                            <?php if(auth()->user()->id !== $user->id): ?>
                                             <li>
-                                                <form action="/dashboard/orders" method="post" class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                    <button type="submit" class="dropdown-item">
-                                                        <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <form action="/dashboard/transactions/{{ $transaction->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $transaction->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $transaction->id }}', '{{ $transaction->no_nota }}')">
+                                                <form action="/dashboard/users/<?php echo e($user->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($user->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($user->id); ?>', '<?php echo e($user->nama); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
                                             </li>
+                                            <?php endif; ?>
                                         </ul>
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
-                                <td colspan="11" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
-                                        <i class="bi bi-cart-x display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data transaksi</h5>
-                                        <p>Belum ada transaksi yang tercatat di sistem</p>
+                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                        <h5>Belum ada data pengguna</h5>
+                                        <p>Silakan tambah pengguna baru untuk memulai</p>
+                                        <a href="/dashboard/users/create" class="btn btn-umkm">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Tambah Pengguna
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </form>
 
             <!-- Pagination -->
-            @if($transactions->hasPages())
+            <?php if($users->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $transactions->links() }}
+                    <?php echo e($users->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -452,7 +459,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus transaksi <br><strong id="itemNameToDelete" class="text-danger"></strong>?
+        Apakah Anda yakin ingin menghapus pengguna <br><strong id="userNameToDelete" class="text-danger"></strong>?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -471,7 +478,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
       <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> transaksi yang dipilih?
+        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> pengguna yang dipilih?
       </div>
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
@@ -487,14 +494,14 @@
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const itemNameToDeleteSpan = document.getElementById('itemNameToDelete');
+        const userNameToDeleteSpan = document.getElementById('userNameToDelete');
         let formToSubmit = null;
         let originalButton = null;
 
-        window.showDeleteModal = function(button, transactionId, transactionNota) {
-            formToSubmit = document.getElementById('deleteForm' + transactionId);
+        window.showDeleteModal = function(button, userId, userName) {
+            formToSubmit = document.getElementById('deleteForm' + userId);
             originalButton = button;
-            itemNameToDeleteSpan.textContent = 'No. Nota ' + transactionNota;
+            userNameToDeleteSpan.textContent = userName;
             deleteModal.show();
         }
 
@@ -527,7 +534,8 @@
             } else {
                 bulkDeleteButton.style.display = 'none';
             }
-            selectAllCheckbox.checked = selectedCount > 0 && selectedCount === itemCheckboxes.length;
+            // Cek jika semua checkbox yang BISA dipilih, sudah terpilih
+            selectAllCheckbox.checked = itemCheckboxes.length > 0 && selectedCount === itemCheckboxes.length;
         }
 
         if(selectAllCheckbox) {
@@ -561,59 +569,7 @@
 
         updateBulkDeleteButtonState();
     });
-
-    // Fungsi untuk tombol yang menyebabkan navigasi (seperti Edit Pesanan)
-    function handleActionSubmit(form) {
-        const button = form.querySelector('button[type="submit"]');
-        if (button) {
-            button.disabled = true;
-            button.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            `;
-        }
-        return true; // Lanjutkan submit
-    }
-
-    // Fungsi untuk tombol download yang tidak me-reload halaman
-    function handleDownloadSubmit(form) {
-        const button = form.querySelector('button[type="submit"]');
-        if (button) {
-            const originalButtonHTML = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            `;
-            setTimeout(function() {
-                button.disabled = false;
-                button.innerHTML = originalButtonHTML;
-            }, 3000); // Kembalikan setelah 3 detik
-        }
-        return true; // Lanjutkan submit
-    }
-
-    // Script untuk mengatasi masalah cache browser (bfcache)
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            const buttons = document.querySelectorAll('.dropdown-item-form button');
-            buttons.forEach(button => {
-                button.disabled = false;
-                const form = button.closest('form');
-                if (form) {
-                    const action = form.getAttribute('action');
-                    if (action.includes('/dashboard/cashiers/nota')) {
-                        button.innerHTML = '<i class="bi bi-download text-primary"></i> Unduh Nota';
-                    } else if (action.includes('/dashboard/orders')) {
-                        button.innerHTML = '<i class="bi bi-pencil-square text-warning"></i> Edit Pesanan';
-                    } else if (action.includes('/dashboard/transactions')) {
-                        if(button.type === 'button'){
-                           button.innerHTML = '<i class="bi bi-trash"></i> Hapus';
-                        }
-                    }
-                }
-            });
-        }
-    });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/users/index.blade.php ENDPATH**/ ?>

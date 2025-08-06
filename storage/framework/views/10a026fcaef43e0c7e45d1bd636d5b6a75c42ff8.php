@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from Goods/Return Dashboard for consistency --- */
     .umkm-card {
@@ -273,16 +273,17 @@
         <p>Kelola riwayat dan detail transaksi penjualan</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-receipt"></i>
@@ -305,7 +306,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Masukkan nomor nota..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -313,7 +314,7 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $transactions->total() }} transaksi</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($transactions->total()); ?> transaksi</small>
                             </div>
                         </div>
                     </div>
@@ -321,9 +322,9 @@
             </div>
 
             <!-- Form untuk bulk delete -->
-            <form id="bulk-delete-form" action="{{ route('transactions.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
+            <form id="bulk-delete-form" action="<?php echo e(route('transactions.bulkDelete')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-umkm">
@@ -332,7 +333,7 @@
                                 <th style="width: 3%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th>NO</th>
+                                <th>#</th>
                                 <th>No. Nota</th>
                                 <th>Waktu</th>
                                 <th>Petugas</th>
@@ -345,56 +346,58 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($transactions as $key => $transaction)
+                            <?php $__empty_1 = true; $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $transaction->id }}">
+                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($transaction->id); ?>">
                                 </td>
-                                <td><strong>{{ $transactions->firstItem() + $key }}</strong></td>
+                                <td><strong><?php echo e($transactions->firstItem() + $key); ?></strong></td>
                                 <td>
                                     <i class="bi bi-hash text-primary"></i>
-                                    {{ $transaction->no_nota }}
+                                    <?php echo e($transaction->no_nota); ?>
+
                                 </td>
                                 <td style="white-space:nowrap;">
                                     <i class="bi bi-clock text-info me-1"></i>
-                                    {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
+                                    <?php echo e(\Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i')); ?>
+
                                 </td>
-                                <td>{{ $transaction->user->nama }}</td>
-                                <td>{{ $transaction->metode_pembayaran }}</td>
+                                <td><?php echo e($transaction->user->nama); ?></td>
+                                <td><?php echo e($transaction->metode_pembayaran); ?></td>
                                 <td>
-                                    @if(strtolower(trim($transaction->status)) == 'lunas')
-                                        <span class="badge bg-success">{{ $transaction->status }}</span>
-                                    @else
-                                        <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
-                                    @endif
+                                    <?php if(strtolower(trim($transaction->status)) == 'lunas'): ?>
+                                        <span class="badge bg-success"><?php echo e($transaction->status); ?></span>
+                                    <?php else: ?>
+                                        <span class="badge bg-warning text-dark"><?php echo e($transaction->status); ?></span>
+                                    <?php endif; ?>
                                 </td>
-                                <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
-                                <td>Rp {{ number_format($transaction->bayar, 0, ',', '.') }}</td>
-                                <td>Rp {{ number_format($transaction->kembalian, 0, ',', '.') }}</td>
+                                <td><strong>Rp <?php echo e(number_format($transaction->total_harga, 0, ',', '.')); ?></strong></td>
+                                <td>Rp <?php echo e(number_format($transaction->bayar, 0, ',', '.')); ?></td>
+                                <td>Rp <?php echo e(number_format($transaction->kembalian, 0, ',', '.')); ?></td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$transaction->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($transaction->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical fs-5"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$transaction->id}}">
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($transaction->id); ?>">
                                             <li>
                                                 <form method="post" action="/dashboard/cashiers/nota" class="dropdown-item-form" onsubmit="return handleDownloadSubmit(this)">
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                                    <?php echo csrf_field(); ?>
+                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
                                                     <button type="submit" class="dropdown-item">
                                                         <i class="bi bi-download text-primary"></i> Unduh Nota
                                                     </button>
                                                 </form>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="/dashboard/transactions/{{ $transaction->id }}/edit">
+                                                <a class="dropdown-item" href="/dashboard/transactions/<?php echo e($transaction->id); ?>/edit">
                                                     <i class="bi bi-credit-card text-success"></i> Pembayaran
                                                 </a>
                                             </li>
                                             <li>
                                                 <form action="/dashboard/orders" method="post" class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
+                                                    <?php echo csrf_field(); ?>
+                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
                                                     <button type="submit" class="dropdown-item">
                                                         <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
                                                     </button>
@@ -402,11 +405,11 @@
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <form action="/dashboard/transactions/{{ $transaction->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $transaction->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <input type="hidden" name="no_nota" value="{{ $transaction->no_nota }}">
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $transaction->id }}', '{{ $transaction->no_nota }}')">
+                                                <form action="/dashboard/transactions/<?php echo e($transaction->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($transaction->id); ?>">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <input type="hidden" name="no_nota" value="<?php echo e($transaction->no_nota); ?>">
+                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($transaction->id); ?>', '<?php echo e($transaction->no_nota); ?>')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -415,7 +418,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="11" class="text-center py-5">
                                     <div class="text-muted">
@@ -425,20 +428,21 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </form>
 
             <!-- Pagination -->
-            @if($transactions->hasPages())
+            <?php if($transactions->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $transactions->links() }}
+                    <?php echo e($transactions->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -616,4 +620,6 @@
         }
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/transactions/index.blade.php ENDPATH**/ ?>

@@ -246,7 +246,7 @@
                     <table class="table table-cashier">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>No</th>
                                 <th>No. Nota</th>
                                 <th>Waktu Transaksi</th>
                                 <th class="d-none d-lg-table-cell">Petugas</th>
