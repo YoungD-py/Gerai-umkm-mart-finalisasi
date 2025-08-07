@@ -311,9 +311,14 @@
                     Data Mitra Binaan
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
-                        <i class="bi bi-trash-fill"></i> Hapus Terpilih
-                    </button>
+                    {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
+                    <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
+                            <i class="bi bi-trash-fill"></i> Hapus Terpilih
+                        </button>
+                    </form>
                     <a href="/dashboard/categories/create" class="btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Mitra Binaan
@@ -348,97 +353,94 @@
                 </form>
             </div>
 
-            <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-umkm">
-                        <thead>
-                            <tr>
-                                <th style="width: 5%; text-align: center;">
-                                    <input class="form-check-input" type="checkbox" id="select-all-checkbox">
-                                </th>
-                                <th style="width: 8%;">No</th>
-                                <th style="width: 47%;">Nama Mitra Binaan</th>
-                                <th style="width: 20%;">Nomor PJ</th>
-                                <th style="width: 20%; text-align: center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($categories as $key => $category)
-                            <tr>
-                                <td class="text-center">
-                                    <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $category->id }}">
-                                </td>
-                                <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
-                                <td>
-                                    <div class="d-flex align-items-start flex-column">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="bi bi-building text-success me-2"></i>
-                                            <strong>{{ $category->nama }}</strong>
-                                        </div>
-                                        @if($category->alamat)
-                                        <div class="mitra-info">
-                                            <i class="bi bi-geo-alt text-muted"></i>
-                                            {{ Str::limit($category->alamat, 50) }}
-                                        </div>
-                                        @endif
+            {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
+            <div class="table-responsive">
+                <table class="table table-umkm">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%; text-align: center;">
+                                <input class="form-check-input" type="checkbox" id="select-all-checkbox">
+                            </th>
+                            <th style="width: 8%;">No</th>
+                            <th style="width: 47%;">Nama Mitra Binaan</th>
+                            <th style="width: 20%;">Nomor PJ</th>
+                            <th style="width: 20%; text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($categories as $key => $category)
+                        <tr>
+                            <td class="text-center">
+                                <input class="form-check-input item-checkbox" type="checkbox" value="{{ $category->id }}">
+                            </td>
+                            <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-start flex-column">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <i class="bi bi-building text-success me-2"></i>
+                                        <strong>{{ $category->nama }}</strong>
                                     </div>
-                                </td>
-                                <td>
-                                    @if($category->nomor_penanggung_jawab)
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-telephone text-primary me-2"></i>
-                                            <span class="fw-medium">{{ $category->nomor_penanggung_jawab }}</span>
-                                        </div>
-                                    @else
-                                        <span class="text-muted fst-italic">-</span>
+                                    @if($category->alamat)
+                                    <div class="mitra-info">
+                                        <i class="bi bi-geo-alt text-muted"></i>
+                                        {{ Str::limit($category->alamat, 50) }}
+                                    </div>
                                     @endif
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown action-dropdown">
-                                        <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical fs-5"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
-                                            <li>
-                                                <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
-                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $category->id }}">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $category->id }}', '{{ $category->nama }}')">
-                                                        <i class="bi bi-trash"></i> Hapus
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                                </div>
+                            </td>
+                            <td>
+                                @if($category->nomor_penanggung_jawab)
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-telephone text-primary me-2"></i>
+                                        <span class="fw-medium">{{ $category->nomor_penanggung_jawab }}</span>
                                     </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                                        <h5>Belum ada data mitra binaan</h5>
-                                        <p>Silakan tambah mitra binaan baru untuk memulai</p>
-                                        <a href="/dashboard/categories/create" class="btn-umkm">
-                                            <i class="bi bi-plus-circle"></i>
-                                            Tambah Mitra Binaan Pertama
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </form>
+                                @else
+                                    <span class="text-muted fst-italic">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown action-dropdown">
+                                    <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical fs-5"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
+                                        <li>
+                                            <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
+                                                <i class="bi bi-pencil-square text-warning"></i> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            {{-- Form delete satuan, sekarang tidak bersarang --}}
+                                            <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form">
+                                                @method('delete')
+                                                @csrf
+                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $category->nama }}')">
+                                                    <i class="bi bi-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                    <h5>Belum ada data mitra binaan</h5>
+                                    <p>Silakan tambah mitra binaan baru untuk memulai</p>
+                                    <a href="/dashboard/categories/create" class="btn-umkm">
+                                        <i class="bi bi-plus-circle"></i>
+                                        Tambah Mitra Binaan Pertama
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Pagination -->
             @if($categories->hasPages())
@@ -454,72 +456,68 @@
 
 <!-- Modal Konfirmasi Hapus SATUAN -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 15px; border: none;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
-        <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Penghapusan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
-      </div>
-      <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus mitra <br><strong id="categoryNameToDelete" class="text-danger"></strong>?
-      </div>
-      <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteButton" style="border-radius: 10px;">Ya, Hapus</button>
-      </div>
-    </div>
-  </div>
+ <div class="modal-dialog modal-dialog-centered">
+   <div class="modal-content" style="border-radius: 15px; border: none;">
+     <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+       <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Penghapusan</h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+     </div>
+     <div class="modal-body fs-5 text-center py-4">
+       Apakah Anda yakin ingin menghapus mitra <br><strong id="categoryNameToDelete" class="text-danger"></strong>?
+     </div>
+     <div class="modal-footer" style="border-top: none;">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+       <button type="button" class="btn btn-danger" id="confirmDeleteButton" style="border-radius: 10px;">Ya, Hapus</button>
+     </div>
+   </div>
+ </div>
 </div>
 
 <!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
 <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 15px; border: none;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
-        <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
-      </div>
-      <div class="modal-body fs-5 text-center py-4">
-        Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> mitra yang dipilih?
-      </div>
-      <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
-        <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
-      </div>
-    </div>
-  </div>
+ <div class="modal-dialog modal-dialog-centered">
+   <div class="modal-content" style="border-radius: 15px; border: none;">
+     <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-bottom: none; border-radius: 15px 15px 0 0;">
+       <h5 class="modal-title" id="bulkDeleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus Massal</h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
+     </div>
+     <div class="modal-body fs-5 text-center py-4">
+       Apakah Anda yakin ingin menghapus <strong id="bulkDeleteCount" class="text-danger"></strong> mitra yang dipilih?
+     </div>
+     <div class="modal-footer" style="border-top: none;">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Batal</button>
+       <button type="button" class="btn btn-danger" id="confirmBulkDeleteButton" style="border-radius: 10px;">Ya, Hapus Semua</button>
+     </div>
+   </div>
+ </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
+        // --- SCRIPT UNTUK HAPUS SATUAN ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
         const categoryNameToDeleteSpan = document.getElementById('categoryNameToDelete');
-        let formToSubmit = null;
-        let originalButton = null;
+        let currentDeleteForm = null;
 
-        window.showDeleteModal = function(button, categoryId, categoryName) {
-            formToSubmit = document.getElementById('deleteForm' + categoryId);
-            originalButton = button;
+        window.showDeleteModal = function(formElement, categoryName) {
+            currentDeleteForm = formElement;
             categoryNameToDeleteSpan.textContent = categoryName;
             deleteModal.show();
         }
 
         confirmDeleteButton.addEventListener('click', function() {
-            if (formToSubmit && originalButton) {
-                originalButton.disabled = true;
-                originalButton.innerHTML = `
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Loading...
-                `;
+            console.log('Attempting to submit form:', currentDeleteForm);
+            if (currentDeleteForm) {
                 deleteModal.hide();
-                formToSubmit.submit();
+                currentDeleteForm.submit();
+            } else {
+                console.error('No form found to submit for single delete!');
             }
         });
 
-        // --- [BARU] SCRIPT UNTUK BULK DELETE ---
+        // --- SCRIPT UNTUK BULK DELETE (DIPERBAIKI) ---
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -564,6 +562,20 @@
 
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
+                // Hapus input tersembunyi sebelumnya jika ada
+                bulkDeleteForm.querySelectorAll('input[name="selected_ids[]"]').forEach(input => input.remove());
+
+                // Tambahkan input tersembunyi untuk setiap checkbox yang dipilih
+                itemCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'selected_ids[]';
+                        hiddenInput.value = checkbox.value;
+                        bulkDeleteForm.appendChild(hiddenInput);
+                    }
+                });
+
                 bulkDeleteForm.submit();
             });
         }

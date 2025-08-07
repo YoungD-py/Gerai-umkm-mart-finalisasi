@@ -2,6 +2,7 @@
 
 <?php $__env->startSection('container'); ?>
 <style>
+    /* --- CSS Styles adapted for Create User page --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -13,24 +14,12 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
-        color: #000;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
         overflow: hidden;
-    }
-
-    .umkm-card-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 100%;
-        background: rgba(255,255,255,0.1);
-        transform: rotate(45deg);
-        transition: all 0.3s ease;
     }
 
     .umkm-card-title {
@@ -55,7 +44,7 @@
         gap: 8px;
     }
 
-    .form-control {
+    .form-control, .form-select {
         border-radius: 15px;
         border: 2px solid #e9ecef;
         padding: 12px 20px;
@@ -64,17 +53,18 @@
         font-size: 1rem;
     }
 
-    .form-control:focus {
-        border-color: #ffc107;
-        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    .form-control:focus, .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         background: white;
         transform: translateY(-1px);
     }
 
-    .btn-warning-umkm, .btn-secondary-umkm {
+    .btn-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
+        color: white;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
@@ -83,24 +73,22 @@
         gap: 8px;
     }
 
-    .btn-warning-umkm {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
+    .btn-umkm {
+        background: linear-gradient(135deg, #28a745, #20c997);
         border: none;
-        color: #000;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
-    .btn-warning-umkm:hover {
+    .btn-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-        color: #000;
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        color: white;
     }
 
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        color: white;
     }
 
     .btn-secondary-umkm:hover {
@@ -148,42 +136,48 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>✏️ EDIT MITRA BINAAN</h1>
-        <p>Perbarui informasi mitra binaan GERAI UMKM MART</p>
+        <h1>➕ TAMBAH PENGGUNA BARU</h1>
+        <p>Tambahkan administrator atau kasir baru untuk sistem</p>
     </div>
 
     <div class="row justify-content-center">
         
         <div class="col-xl-6 col-lg-8 col-md-10">
+            <?php if(session()->has('success')): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <?php echo e(session('success')); ?>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if($errors->any()): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <ul class="mb-0">
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
-                        <i class="bi bi-pencil-square"></i>
-                        Form Edit Mitra Binaan
+                        <i class="bi bi-person-plus-fill"></i>
+                        Form Tambah Pengguna
                     </h3>
                 </div>
 
                 <div class="umkm-card-body">
-                    <?php if($errors->any()): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <ul class="mb-0">
-                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <li><?php echo e($error); ?></li>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="post" action="/dashboard/categories/<?php echo e($category->id); ?>">
-                        <?php echo method_field('put'); ?>
+                    <form method="post" action="/dashboard/users">
                         <?php echo csrf_field(); ?>
 
-                        <div class="mb-4">
-                            <label for="nama" class="form-label">
-                                <i class="bi bi-building text-warning"></i>
-                                Nama Mitra Binaan <span class="required">*</span>
-                            </label>
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
                             <input type="text" class="form-control <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -191,9 +185,8 @@ if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                   name="nama" required placeholder="Masukkan Nama Mitra Binaan..."
-                                   value="<?php echo e(old('nama', $category->nama)); ?>">
+unset($__errorArgs, $__bag); ?>" id="nama" name="nama"
+                                required autofocus value="<?php echo e(old('nama')); ?>">
                             <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -208,23 +201,18 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
-
-                        <div class="mb-4">
-                            <label for="nomor_penanggung_jawab" class="form-label">
-                                <i class="bi bi-telephone text-success"></i>
-                                Nomor Penanggung Jawab
-                            </label>
-                            <input type="text" class="form-control <?php $__errorArgs = ['nomor_penanggung_jawab'];
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username <span class="required">*</span></label>
+                            <input type="text" class="form-control <?php $__errorArgs = ['username'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                   name="nomor_penanggung_jawab" placeholder="Masukkan Nomor Telepon/HP..."
-                                   value="<?php echo e(old('nomor_penanggung_jawab', $category->nomor_penanggung_jawab)); ?>">
-                            <?php $__errorArgs = ['nomor_penanggung_jawab'];
+unset($__errorArgs, $__bag); ?>" id="username" name="username"
+                                required value="<?php echo e(old('username')); ?>">
+                            <?php $__errorArgs = ['username'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -238,22 +226,46 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
-
-                        <div class="mb-4">
-                            <label for="alamat" class="form-label">
-                                <i class="bi bi-geo-alt text-warning"></i>
-                                Alamat Mitra
-                            </label>
-                            <textarea class="form-control <?php $__errorArgs = ['alamat'];
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role <span class="required">*</span></label>
+                            <select class="form-select <?php $__errorArgs = ['role'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra..."><?php echo e(old('alamat', $category->alamat)); ?></textarea>
-                            <?php $__errorArgs = ['alamat'];
+unset($__errorArgs, $__bag); ?>" id="role" name="role" required>
+                                <option value="">Pilih Role</option>
+                                <option value="ADMIN" <?php echo e(old('role') == 'ADMIN' ? 'selected' : ''); ?>>Admin</option>
+                                <option value="KASIR" <?php echo e(old('role') == 'KASIR' ? 'selected' : ''); ?>>Kasir</option>
+                            </select>
+                            <?php $__errorArgs = ['role'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback">
+                                    <?php echo e($message); ?>
+
+                                </div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" class="form-control <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="password"
+                                name="password" required>
+                            <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -270,13 +282,11 @@ unset($__errorArgs, $__bag); ?>
 
                         
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
-                            <a href="/dashboard/categories" class="btn btn-secondary-umkm">
-                                <i class="bi bi-arrow-left"></i>
-                                Kembali
+                            <a href="/dashboard/users" class="btn btn-secondary-umkm">
+                                <i class="bi bi-arrow-left"></i> Kembali
                             </a>
-                            <button type="submit" class="btn btn-warning-umkm">
-                                <i class="bi bi-save"></i>
-                                Update Mitra Binaan
+                            <button type="submit" class="btn btn-umkm">
+                                <i class="bi bi-plus-circle"></i> Tambahkan
                             </button>
                         </div>
                     </form>
@@ -287,4 +297,4 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/edit.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/users/create.blade.php ENDPATH**/ ?>
