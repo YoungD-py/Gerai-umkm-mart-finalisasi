@@ -270,8 +270,8 @@
 
 <div class="container-fluid py-4">
    <div class="page-title">
-       <h1>👥 MANAJEMEN DATA ADMIN</h1>
-       <p>Kelola data administrator dan kasir untuk sistem</p>
+       <h1>👥 MANAJEMEN DATA PENGGUNA</h1>
+       <p>Kelola data pengguna aplikasi GERAI UMKM MART</p>
    </div>
 
    @if (session()->has('success'))
@@ -323,7 +323,7 @@
                                <i class="bi bi-search me-2"></i>Cari Pengguna
                            </label>
                            <div class="input-group">
-                               <input type="text" class="form-control" placeholder="Masukkan nama atau username..."
+                               <input type="text" class="form-control" placeholder="Masukkan nama atau username pengguna..."
                                       name="search" value="{{ request('search') }}">
                                <button class="btn btn-umkm" type="submit">
                                    <i class="bi bi-search"></i>
@@ -360,7 +360,7 @@
                            <tr>
                                <td class="text-center">
                                    @if(auth()->user()->id !== $user->id)
-                                       <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $user->id }}">
+                                       <input class="form-check-input item-checkbox" type="checkbox" value="{{ $user->id }}">
                                    @endif
                                </td>
                                <td><strong>{{ $users->firstItem() + $key }}</strong></td>
@@ -467,7 +467,7 @@
  </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<!-- Modal Konfirmasi Hapus BANYAK -->
 <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered">
    <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -488,7 +488,7 @@
 
 <script>
    document.addEventListener('DOMContentLoaded', function() {
-       // --- SCRIPT UNTUK HAPUS SATUAN (DIPERBAIKI) ---
+       // --- SCRIPT UNTUK HAPUS SATUAN ---
        const deleteModalElement = document.getElementById('deleteConfirmationModal');
        const deleteModal = new bootstrap.Modal(deleteModalElement);
        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -511,11 +511,11 @@
            }
        });
 
-       // --- SCRIPT UNTUK BULK DELETE (TIDAK DIUBAH) ---
+       // --- SCRIPT UNTUK BULK DELETE (DIPERBAIKI) ---
        const selectAllCheckbox = document.getElementById('select-all-checkbox');
        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
        const bulkDeleteButton = document.getElementById('bulk-delete-button');
-       const bulkDeleteForm = document.getElementById('bulk-delete-form'); // Ini akan menunjuk ke form baru di header
+       const bulkDeleteForm = document.getElementById('bulk-delete-form');
        const bulkDeleteModal = new bootstrap.Modal(document.getElementById('bulkDeleteConfirmationModal'));
        const bulkDeleteCountSpan = document.getElementById('bulkDeleteCount');
        const confirmBulkDeleteButton = document.getElementById('confirmBulkDeleteButton');
@@ -556,6 +556,20 @@
 
        if(confirmBulkDeleteButton) {
            confirmBulkDeleteButton.addEventListener('click', function() {
+               // Hapus input tersembunyi sebelumnya jika ada
+               bulkDeleteForm.querySelectorAll('input[name="selected_ids[]"]').forEach(input => input.remove());
+
+               // Tambahkan input tersembunyi untuk setiap checkbox yang dipilih
+               itemCheckboxes.forEach(checkbox => {
+                   if (checkbox.checked) {
+                       const hiddenInput = document.createElement('input');
+                       hiddenInput.type = 'hidden';
+                       hiddenInput.name = 'selected_ids[]';
+                       hiddenInput.value = checkbox.value;
+                       bulkDeleteForm.appendChild(hiddenInput);
+                   }
+               });
+
                bulkDeleteForm.submit();
            });
        }
