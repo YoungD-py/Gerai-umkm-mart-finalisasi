@@ -260,6 +260,18 @@
         border-color: #28a745;
     }
 
+    .mitra-info {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .mitra-info i {
+        width: 16px;
+        text-align: center;
+        margin-right: 5px;
+    }
+
     @media (min-width: 768px) {
         .page-title h1 {
             font-size: 2.5rem;
@@ -349,8 +361,9 @@
                                 <th style="width: 5%; text-align: center;">
                                     <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                 </th>
-                                <th style="width: 10%;">No</th>
-                                <th style="width: 65%;">Nama Mitra Binaan</th>
+                                <th style="width: 8%;">No</th>
+                                <th style="width: 47%;">Nama Mitra Binaan</th>
+                                <th style="width: 20%;">Nomor PJ</th>
                                 <th style="width: 20%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
@@ -362,10 +375,29 @@
                                 </td>
                                 <td><strong><?php echo e($categories->firstItem() + $key); ?></strong></td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-building text-success me-2"></i>
-                                        <strong><?php echo e($category->nama); ?></strong>
+                                    <div class="d-flex align-items-start flex-column">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <i class="bi bi-building text-success me-2"></i>
+                                            <strong><?php echo e($category->nama); ?></strong>
+                                        </div>
+                                        <?php if($category->alamat): ?>
+                                        <div class="mitra-info">
+                                            <i class="bi bi-geo-alt text-muted"></i>
+                                            <?php echo e(Str::limit($category->alamat, 50)); ?>
+
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
+                                </td>
+                                <td>
+                                    <?php if($category->nomor_penanggung_jawab): ?>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-telephone text-primary me-2"></i>
+                                            <span class="fw-medium"><?php echo e($category->nomor_penanggung_jawab); ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-muted fst-italic">-</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-center">
                                     <div class="dropdown action-dropdown">
@@ -393,7 +425,7 @@
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
-                                <td colspan="4" class="text-center py-5">
+                                <td colspan="5" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox display-4 d-block mb-3"></i>
                                         <h5>Belum ada data mitra binaan</h5>

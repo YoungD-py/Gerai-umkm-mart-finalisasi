@@ -192,6 +192,35 @@
                             @enderror
                         </div>
 
+                        <div class="mb-4">
+                            <label for="nomor_penanggung_jawab" class="form-label">
+                                <i class="bi bi-telephone text-success"></i>
+                                Nomor Penanggung Jawab
+                            </label>
+                            <input type="text" class="form-control @error('nomor_penanggung_jawab') is-invalid @enderror"
+                                   name="nomor_penanggung_jawab" placeholder="Masukkan Nomor Telepon/HP..."
+                                   value="{{ old('nomor_penanggung_jawab') }}">
+                            @error('nomor_penanggung_jawab')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="alamat" class="form-label">
+                                <i class="bi bi-geo-alt text-warning"></i>
+                                Alamat Mitra
+                            </label>
+                            <textarea class="form-control @error('alamat') is-invalid @enderror"
+                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra...">{{ old('alamat') }}</textarea>
+                            @error('alamat')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
                         {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/categories" class="btn btn-secondary-umkm">
