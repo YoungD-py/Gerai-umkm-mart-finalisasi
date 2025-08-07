@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
   /* --- CSS dari contoh Anda untuk konsistensi --- */
   .umkm-card {
@@ -278,38 +278,40 @@
       <p>Kelola semua pengeluaran operasional GERAI UMKM MART</p>
   </div>
 
-  @if (session()->has('success'))
+  <?php if(session()->has('success')): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none; background-color: #d1e7dd; color: #0f5132;">
-          <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-  @endif
+          <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-  @if (session()->has('error'))
-      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
-  @endif
+  <?php endif; ?>
+
+  <?php if(session()->has('error')): ?>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
+
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+  <?php endif; ?>
 
   <div class="umkm-card">
       <div class="umkm-card-header">
-          {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+          
           <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
               <h3 class="umkm-card-title mb-2 mb-md-0">
                   <i class="bi bi-card-list"></i>
                   Data Biaya Operasional
               </h3>
               <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                  {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
-                  <form id="bulk-delete-form" action="{{ route('biayaoperasional.bulkDelete') }}" method="POST" style="display: inline;">
-                      @csrf
-                      @method('DELETE')
+                  
+                  <form id="bulk-delete-form" action="<?php echo e(route('biayaoperasional.bulkDelete')); ?>" method="POST" style="display: inline;">
+                      <?php echo csrf_field(); ?>
+                      <?php echo method_field('DELETE'); ?>
                       <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                           <i class="bi bi-trash-fill"></i> Hapus Terpilih
                       </button>
                   </form>
-                  <a href="{{ route('biayaoperasional.create') }}" class="btn btn-umkm btn-umkm-sm">
+                  <a href="<?php echo e(route('biayaoperasional.create')); ?>" class="btn btn-umkm btn-umkm-sm">
                       <i class="bi bi-plus-circle"></i>
                       Tambah Biaya
                   </a>
@@ -319,7 +321,7 @@
 
       <div class="umkm-card-body">
           <div class="search-section">
-              <form action="{{ route('biayaoperasional.index') }}" method="GET">
+              <form action="<?php echo e(route('biayaoperasional.index')); ?>" method="GET">
                   <div class="row align-items-center">
                       <div class="col-12 col-md-8 mb-3 mb-md-0">
                           <label class="form-label text-white fw-bold">
@@ -327,7 +329,7 @@
                           </label>
                           <div class="input-group">
                               <input type="text" class="form-control" placeholder="Cari berdasarkan uraian..."
-                                     name="search" value="{{ request('search') }}">
+                                     name="search" value="<?php echo e(request('search')); ?>">
                               <button class="btn btn-umkm" type="submit">
                                   <i class="bi bi-search"></i>
                               </button>
@@ -335,14 +337,14 @@
                       </div>
                       <div class="col-12 col-md-4">
                           <div class="text-white text-md-end">
-                              <small><i class="bi bi-info-circle me-1"></i>Total: {{ $biayaOperasional->total() }} data</small>
+                              <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($biayaOperasional->total()); ?> data</small>
                           </div>
                       </div>
                   </div>
               </form>
           </div>
 
-          {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
+          
           <div class="table-responsive">
               <table class="table table-umkm">
                   <thead>
@@ -360,33 +362,35 @@
                       </tr>
                   </thead>
                   <tbody>
-                      @forelse ($biayaOperasional as $key => $biaya)
+                      <?php $__empty_1 = true; $__currentLoopData = $biayaOperasional; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $biaya): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                       <tr>
                           <td class="text-center">
-                              <input class="form-check-input item-checkbox" type="checkbox" value="{{ $biaya->id }}">
+                              <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($biaya->id); ?>">
                           </td>
-                          <td><strong>{{ $biayaOperasional->firstItem() + $key }}</strong></td>
-                          <td>{{ $biaya->uraian }}</td>
+                          <td><strong><?php echo e($biayaOperasional->firstItem() + $key); ?></strong></td>
+                          <td><?php echo e($biaya->uraian); ?></td>
                           <td>
                               <strong class="text-success">
-                                  Rp {{ number_format($biaya->nominal, 0, ',', '.') }}
+                                  Rp <?php echo e(number_format($biaya->nominal, 0, ',', '.')); ?>
+
                               </strong>
                           </td>
                           <td>
                               <i class="bi bi-calendar3 text-success me-1"></i>
-                              {{ \Carbon\Carbon::parse($biaya->tanggal)->format('d M Y') }}
+                              <?php echo e(\Carbon\Carbon::parse($biaya->tanggal)->format('d M Y')); ?>
+
                           </td>
                           <td>
-                              <span class="badge bg-info text-dark">{{ $biaya->qty }}</span>
+                              <span class="badge bg-info text-dark"><?php echo e($biaya->qty); ?></span>
                           </td>
                           <td class="text-center">
-                              @if($biaya->bukti_resi)
-                                  <a href="{{ asset('storage/' . $biaya->bukti_resi) }}" target="_blank" class="btn btn-sm btn-outline-success">
+                              <?php if($biaya->bukti_resi): ?>
+                                  <a href="<?php echo e(asset('storage/' . $biaya->bukti_resi)); ?>" target="_blank" class="btn btn-sm btn-outline-success">
                                       <i class="bi bi-eye"></i> Lihat
                                   </a>
-                              @else
+                              <?php else: ?>
                                   <span class="badge bg-secondary">Tidak Ada</span>
-                              @endif
+                              <?php endif; ?>
                           </td>
                           <td class="text-center">
                               <div class="dropdown action-dropdown">
@@ -395,16 +399,16 @@
                                   </button>
                                   <ul class="dropdown-menu dropdown-menu-end">
                                       <li>
-                                          <a class="dropdown-item" href="{{ route('biayaoperasional.edit', $biaya->id) }}">
+                                          <a class="dropdown-item" href="<?php echo e(route('biayaoperasional.edit', $biaya->id)); ?>">
                                               <i class="bi bi-pencil-square text-warning"></i> Edit
                                           </a>
                                       </li>
                                       <li>
-                                          {{-- Form delete satuan, sekarang tidak bersarang --}}
-                                          <form action="{{ route('biayaoperasional.destroy', $biaya->id) }}" method="post" class="dropdown-item-form">
-                                              @method('delete')
-                                              @csrf
-                                              <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $biaya->uraian }}')">
+                                          
+                                          <form action="<?php echo e(route('biayaoperasional.destroy', $biaya->id)); ?>" method="post" class="dropdown-item-form">
+                                              <?php echo method_field('delete'); ?>
+                                              <?php echo csrf_field(); ?>
+                                              <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($biaya->uraian); ?>')">
                                                   <i class="bi bi-trash"></i> Hapus
                                               </button>
                                           </form>
@@ -413,32 +417,33 @@
                               </div>
                           </td>
                       </tr>
-                      @empty
+                      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                       <tr>
                           <td colspan="8" class="text-center py-5">
                               <div class="text-muted">
                                   <i class="bi bi-inbox display-4 d-block mb-3"></i>
                                   <h5>Data tidak ditemukan</h5>
                                   <p>Tidak ada data biaya yang cocok dengan pencarian Anda.</p>
-                                  <a href="{{ route('biayaoperasional.index') }}" class="btn btn-umkm btn-umkm-sm">
+                                  <a href="<?php echo e(route('biayaoperasional.index')); ?>" class="btn btn-umkm btn-umkm-sm">
                                       <i class="bi bi-arrow-left"></i>
                                       Kembali ke semua data
                                   </a>
                               </div>
                           </td>
                       </tr>
-                      @endforelse
+                      <?php endif; ?>
                   </tbody>
               </table>
           </div>
 
-          @if($biayaOperasional->hasPages())
+          <?php if($biayaOperasional->hasPages()): ?>
           <div class="d-flex justify-content-center mt-4">
               <div class="pagination-wrapper">
-                  {{ $biayaOperasional->appends(request()->query())->links() }}
+                  <?php echo e($biayaOperasional->appends(request()->query())->links()); ?>
+
               </div>
           </div>
-          @endif
+          <?php endif; ?>
       </div>
   </div>
 </div>
@@ -572,4 +577,6 @@
       updateBulkDeleteButtonState();
   });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/biayaoperasional/index.blade.php ENDPATH**/ ?>
