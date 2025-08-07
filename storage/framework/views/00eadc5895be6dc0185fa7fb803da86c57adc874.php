@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS dari contoh Anda untuk konsistensi --- */
     .umkm-card {
@@ -278,38 +278,40 @@
         <p>Kelola semua data retur barang di GERAI UMKM MART</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none; background-color: #d1e7dd; color: #0f5132;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
+
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-card-list"></i>
                     Data Retur Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
-                    <form id="bulk-delete-form" action="{{ route('returns.bulkDelete') }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
+                    
+                    <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST" style="display: inline;">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                             <i class="bi bi-trash-fill"></i> Hapus Terpilih
                         </button>
                     </form>
-                    <a href="{{ route('returns.create') }}" class="btn btn-umkm btn-umkm-sm">
+                    <a href="<?php echo e(route('returns.create')); ?>" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Retur
                     </a>
@@ -319,7 +321,7 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                <form action="{{ route('returns.index') }}" method="GET">
+                <form action="<?php echo e(route('returns.index')); ?>" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
@@ -327,7 +329,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Cari berdasarkan nama barang..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -335,14 +337,14 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $returns->total() }} data</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
+            
             <div class="table-responsive">
                 <table class="table table-umkm">
                     <thead>
@@ -359,16 +361,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($returns as $key => $return)
+                        <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td class="text-center">
-                                <input class="form-check-input item-checkbox" type="checkbox" value="{{ $return->id }}">
+                                <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($return->id); ?>">
                             </td>
-                            <td><strong>{{ $returns->firstItem() + $key }}</strong></td>
-                            <td>{{ \Carbon\Carbon::parse($return->tanggal_retur)->format('d M Y') }}</td>
-                            <td>{{ $return->good->nama_barang }}</td>
-                            <td><span class="badge bg-info text-dark">{{ $return->jumlah_retur }}</span></td>
-                            <td>{{ $return->keterangan }}</td>
+                            <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
+                            <td><?php echo e(\Carbon\Carbon::parse($return->tanggal_retur)->format('d M Y')); ?></td>
+                            <td><?php echo e($return->good->nama_barang); ?></td>
+                            <td><span class="badge bg-info text-dark"><?php echo e($return->jumlah_retur); ?></span></td>
+                            <td><?php echo e($return->keterangan); ?></td>
                             <td class="text-center">
                                 <div class="dropdown action-dropdown">
                                     <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -376,15 +378,15 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('returns.edit', $return->id) }}">
+                                            <a class="dropdown-item" href="<?php echo e(route('returns.edit', $return->id)); ?>">
                                                 <i class="bi bi-pencil-square text-warning"></i> Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="{{ route('returns.destroy', $return->id) }}" method="post" class="dropdown-item-form">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $return->good->nama_barang }}')">
+                                            <form action="<?php echo e(route('returns.destroy', $return->id)); ?>" method="post" class="dropdown-item-form">
+                                                <?php echo method_field('delete'); ?>
+                                                <?php echo csrf_field(); ?>
+                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($return->good->nama_barang); ?>')">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </form>
@@ -393,32 +395,33 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-inbox display-4 d-block mb-3"></i>
                                     <h5>Data tidak ditemukan</h5>
                                     <p>Tidak ada data retur barang yang cocok dengan pencarian Anda.</p>
-                                    <a href="{{ route('returns.index') }}" class="btn btn-umkm btn-umkm-sm">
+                                    <a href="<?php echo e(route('returns.index')); ?>" class="btn btn-umkm btn-umkm-sm">
                                         <i class="bi bi-arrow-left"></i>
                                         Kembali ke semua data
                                     </a>
                                 </div>
                             </td>
                         </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            @if($returns->hasPages())
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $returns->appends(request()->query())->links() }}
+                    <?php echo e($returns->appends(request()->query())->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -552,4 +555,6 @@
       updateBulkDeleteButtonState();
   });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>
