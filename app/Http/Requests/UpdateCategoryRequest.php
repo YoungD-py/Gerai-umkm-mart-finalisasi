@@ -41,6 +41,8 @@ class UpdateCategoryRequest extends FormRequest
                     }
                 },
             ],
+            'nomor_penanggung_jawab' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:500',
         ];
     }
 
@@ -56,6 +58,10 @@ class UpdateCategoryRequest extends FormRequest
             'nama.string' => 'Nama mitra binaan harus berupa teks.',
             'nama.max' => 'Nama mitra binaan tidak boleh lebih dari 255 karakter.',
             'id.required' => 'ID mitra binaan diperlukan.',
+            'nomor_penanggung_jawab.string' => 'Nomor penanggung jawab harus berupa teks.',
+            'nomor_penanggung_jawab.max' => 'Nomor penanggung jawab tidak boleh lebih dari 20 karakter.',
+            'alamat.string' => 'Alamat harus berupa teks.',
+            'alamat.max' => 'Alamat tidak boleh lebih dari 500 karakter.',
         ];
     }
 }
