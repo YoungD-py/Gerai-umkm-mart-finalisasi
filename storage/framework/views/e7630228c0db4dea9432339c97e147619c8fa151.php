@@ -13,8 +13,8 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
-        color: #000;
+        background: linear-gradient(135deg, #28a745, #28a745);
+        color: white;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
@@ -65,16 +65,17 @@
     }
 
     .form-control:focus {
-        border-color: #ffc107;
-        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         background: white;
         transform: translateY(-1px);
     }
 
-    .btn-warning-umkm, .btn-secondary-umkm {
+    .btn-primary-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
+        color: white;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
@@ -83,24 +84,22 @@
         gap: 8px;
     }
 
-    .btn-warning-umkm {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
+    .btn-primary-umkm {
+        background: linear-gradient(135deg, #007bff, #0056b3);
         border: none;
-        color: #000;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
-    .btn-warning-umkm:hover {
+    .btn-primary-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-        color: #000;
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        color: white;
     }
 
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        color: white;
     }
 
     .btn-secondary-umkm:hover {
@@ -148,8 +147,8 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>✏️ EDIT MITRA BINAAN</h1>
-        <p>Perbarui informasi mitra binaan GERAI UMKM MART</p>
+        <h1>➕ TAMBAH Mitra Binaan BARU</h1>
+        <p>Tambahkan mitra binaan baru untuk GERSI UMKM MART</p>
     </div>
 
     <div class="row justify-content-center">
@@ -158,8 +157,8 @@
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
-                        <i class="bi bi-pencil-square"></i>
-                        Form Edit Mitra Binaan
+                        <i class="bi bi-plus-circle"></i>
+                        Form Tambah Mitra Binaan
                     </h3>
                 </div>
 
@@ -175,13 +174,12 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="/dashboard/categories/<?php echo e($category->id); ?>">
-                        <?php echo method_field('put'); ?>
+                    <form method="post" action="/dashboard/categories">
                         <?php echo csrf_field(); ?>
 
                         <div class="mb-4">
                             <label for="nama" class="form-label">
-                                <i class="bi bi-building text-warning"></i>
+                                <i class="bi bi-building text-primary"></i>
                                 Nama Mitra Binaan <span class="required">*</span>
                             </label>
                             <input type="text" class="form-control <?php $__errorArgs = ['nama'];
@@ -193,7 +191,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                    name="nama" required placeholder="Masukkan Nama Mitra Binaan..."
-                                   value="<?php echo e(old('nama', $category->nama)); ?>">
+                                   value="<?php echo e(old('nama')); ?>">
                             <?php $__errorArgs = ['nama'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -223,7 +221,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                    name="nomor_penanggung_jawab" placeholder="Masukkan Nomor Telepon/HP..."
-                                   value="<?php echo e(old('nomor_penanggung_jawab', $category->nomor_penanggung_jawab)); ?>">
+                                   value="<?php echo e(old('nomor_penanggung_jawab')); ?>">
                             <?php $__errorArgs = ['nomor_penanggung_jawab'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -252,7 +250,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra..."><?php echo e(old('alamat', $category->alamat)); ?></textarea>
+                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra..."><?php echo e(old('alamat')); ?></textarea>
                             <?php $__errorArgs = ['alamat'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -274,9 +272,9 @@ unset($__errorArgs, $__bag); ?>
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn btn-warning-umkm">
+                            <button type="submit" class="btn btn-primary-umkm">
                                 <i class="bi bi-save"></i>
-                                Update Mitra Binaan
+                                Simpan Mitra Binaan
                             </button>
                         </div>
                     </form>
@@ -287,4 +285,4 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/categories/edit.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/categories/create.blade.php ENDPATH**/ ?>
