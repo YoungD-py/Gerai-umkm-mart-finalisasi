@@ -9,8 +9,8 @@ class Category extends Model
 {
     use HasFactory;
     
-    // [DIUBAH] Menggunakan $fillable agar lebih eksplisit dan aman
-    protected $fillable = ['nama'];
+    // [DIUBAH] Menambahkan field baru ke $fillable
+    protected $fillable = ['nama', 'nomor_penanggung_jawab', 'alamat'];
 
     public function scopeFilter($query, array $filters)
     {
