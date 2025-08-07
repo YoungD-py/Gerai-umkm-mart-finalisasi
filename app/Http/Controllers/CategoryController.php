@@ -58,6 +58,8 @@ class CategoryController extends Controller
                     }
                 },
             ],
+            'nomor_penanggung_jawab' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:500',
         ]);
         
         Category::create($validatedData);
@@ -109,6 +111,8 @@ class CategoryController extends Controller
                 // TAPI mengabaikan data dengan ID yang sedang kita edit.
                 Rule::unique('categories', 'nama')->ignore($category->id),
             ],
+            'nomor_penanggung_jawab' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:500',
         ]);
 
         // Menggunakan metode update pada objek $category yang sudah ada
