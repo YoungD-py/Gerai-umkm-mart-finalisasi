@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -153,7 +151,7 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-6 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-6 col-lg-8 col-md-10">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -164,34 +162,49 @@
                 </div>
 
                 <div class="umkm-card-body">
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    <form method="post" action="/dashboard/categories/{{ $category->id }}">
-                        @method('put')
-                        @csrf
+                    <form method="post" action="/dashboard/categories/<?php echo e($category->id); ?>">
+                        <?php echo method_field('put'); ?>
+                        <?php echo csrf_field(); ?>
 
                         <div class="mb-4">
                             <label for="nama" class="form-label">
                                 <i class="bi bi-building text-warning"></i>
                                 Nama Mitra Binaan <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                            <input type="text" class="form-control <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                    name="nama" required placeholder="Masukkan Nama Mitra Binaan..."
-                                   value="{{ old('nama', $category->nama) }}">
-                            @error('nama')
+                                   value="<?php echo e(old('nama', $category->nama)); ?>">
+                            <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-4">
@@ -199,14 +212,29 @@
                                 <i class="bi bi-telephone text-success"></i>
                                 Nomor Penanggung Jawab
                             </label>
-                            <input type="text" class="form-control @error('nomor_penanggung_jawab') is-invalid @enderror"
+                            <input type="text" class="form-control <?php $__errorArgs = ['nomor_penanggung_jawab'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                    name="nomor_penanggung_jawab" placeholder="Masukkan Nomor Telepon/HP..."
-                                   value="{{ old('nomor_penanggung_jawab', $category->nomor_penanggung_jawab) }}">
-                            @error('nomor_penanggung_jawab')
+                                   value="<?php echo e(old('nomor_penanggung_jawab', $category->nomor_penanggung_jawab)); ?>">
+                            <?php $__errorArgs = ['nomor_penanggung_jawab'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-4">
@@ -214,16 +242,31 @@
                                 <i class="bi bi-geo-alt text-warning"></i>
                                 Alamat Mitra
                             </label>
-                            <textarea class="form-control @error('alamat') is-invalid @enderror"
-                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra...">{{ old('alamat', $category->alamat) }}</textarea>
-                            @error('alamat')
+                            <textarea class="form-control <?php $__errorArgs = ['alamat'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra..."><?php echo e(old('alamat', $category->alamat)); ?></textarea>
+                            <?php $__errorArgs = ['alamat'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/categories" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
@@ -240,4 +283,6 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/categories/edit.blade.php ENDPATH**/ ?>
