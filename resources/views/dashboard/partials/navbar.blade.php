@@ -246,7 +246,7 @@
                                        href="/dashboard/transactions"><i class="bi bi-receipt icon"></i> Data Transaksi</a>
                                 </li>
                                 <li><a class="dropdown-item {{ Request::is('dashboard/users*') ? 'active' : '' }}"
-                                       href="/dashboard/users"><i class="bi bi-person-gear icon"></i> Data Pengguna</a>
+                                        href="/dashboard/users" class="dropdown-item"><span class="icon">👤</span> Data Pengguna</a>
                                 </li>
                             </ul>
                         </li>
