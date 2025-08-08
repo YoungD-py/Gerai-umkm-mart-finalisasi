@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
   /* --- CSS Styles copied from other dashboards for consistency --- */
   .umkm-card {
@@ -211,19 +209,21 @@
       <p>Kelola inventori dan stok barang GERAI UMKM MART</p>
   </div>
 
-  @if (session()->has('success'))
+  <?php if(session()->has('success')): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-          <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-  @endif
+          <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-  @if (session()->has('error'))
-      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-          <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
-  @endif
+  <?php endif; ?>
+
+  <?php if(session()->has('error')): ?>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+          <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+  <?php endif; ?>
 
   <div class="umkm-card">
       <div class="umkm-card-header">
@@ -258,7 +258,7 @@
                           </label>
                           <div class="input-group">
                               <input type="text" class="form-control" placeholder="Masukkan nama barang atau barcode..."
-                                  name="search" value="{{ request('search') }}" id="search-input">
+                                  name="search" value="<?php echo e(request('search')); ?>" id="search-input">
                               <button class="btn btn-umkm" type="submit">
                                   <i class="bi bi-search"></i> Cari
                               </button>
@@ -270,25 +270,26 @@
                           </label>
                           <select class="form-select" name="category_id" id="category-filter">
                               <option value="all">Semua Mitra</option>
-                              @foreach($categories as $category)
-                                  <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                      {{ $category->nama }}
+                              <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                  <option value="<?php echo e($category->id); ?>" <?php echo e(request('category_id') == $category->id ? 'selected' : ''); ?>>
+                                      <?php echo e($category->nama); ?>
+
                                   </option>
-                              @endforeach
+                              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                           </select>
                       </div>
                       <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
                           <div class="text-white">
-                              <small><i class="bi bi-info-circle me-1"></i>Total: {{ $goods->total() }} barang</small>
+                              <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($goods->total()); ?> barang</small>
                           </div>
                       </div>
                   </div>
               </form>
           </div>
 
-          <form id="bulk-delete-form" action="{{ route('goods.bulkDelete') }}" method="POST">
-              @csrf
-              @method('DELETE')
+          <form id="bulk-delete-form" action="<?php echo e(route('goods.bulkDelete')); ?>" method="POST">
+              <?php echo csrf_field(); ?>
+              <?php echo method_field('DELETE'); ?>
 
               <div class="table-responsive">
                   <table class="table table-umkm">
@@ -302,9 +303,9 @@
                                   Tgl Masuk
                                   <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                           data-sort-param="tgl_masuk"
-                                          data-sort-order="{{ request('sort_tgl_masuk', 'none') }}"
+                                          data-sort-order="<?php echo e(request('sort_tgl_masuk', 'none')); ?>"
                                           title="Urutkan berdasarkan tanggal masuk">
-                                      <i class="bi {{ request('sort_tgl_masuk') == 'asc' ? 'bi-sort-up' : (request('sort_tgl_masuk') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                      <i class="bi <?php echo e(request('sort_tgl_masuk') == 'asc' ? 'bi-sort-up' : (request('sort_tgl_masuk') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                   </button>
                               </th>
                               <th style="width: 24%;">Nama Barang</th>
@@ -313,9 +314,9 @@
                                   Expired
                                   <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                           data-sort-param="expired"
-                                          data-sort-order="{{ request('sort_expired', 'none') }}"
+                                          data-sort-order="<?php echo e(request('sort_expired', 'none')); ?>"
                                           title="Urutkan berdasarkan tanggal expired">
-                                      <i class="bi {{ request('sort_expired') == 'asc' ? 'bi-sort-up' : (request('sort_expired') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                      <i class="bi <?php echo e(request('sort_expired') == 'asc' ? 'bi-sort-up' : (request('sort_expired') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                   </button>
                               </th>
                               <th style="width: 13%;">Mitra Binaan</th>
@@ -323,98 +324,101 @@
                                   Stok
                                   <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                           data-sort-param="stok"
-                                          data-sort-order="{{ request('sort_stok', 'none') }}"
+                                          data-sort-order="<?php echo e(request('sort_stok', 'none')); ?>"
                                           title="Urutkan berdasarkan stok">
-                                      <i class="bi {{ request('sort_stok') == 'asc' ? 'bi-sort-up' : (request('sort_stok') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                      <i class="bi <?php echo e(request('sort_stok') == 'asc' ? 'bi-sort-up' : (request('sort_stok') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                   </button>
                               </th>
                               <th style="width: 9%;">
                                   Harga
                                   <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                           data-sort-param="harga"
-                                          data-sort-order="{{ request('sort_harga', 'none') }}"
+                                          data-sort-order="<?php echo e(request('sort_harga', 'none')); ?>"
                                           title="Urutkan berdasarkan harga">
-                                      <i class="bi {{ request('sort_harga') == 'asc' ? 'bi-sort-up' : (request('sort_harga') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                      <i class="bi <?php echo e(request('sort_harga') == 'asc' ? 'bi-sort-up' : (request('sort_harga') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                   </button>
                               </th>
                               <th style="width: 5%; text-align: center;">Aksi</th>
                           </tr>
                       </thead>
                       <tbody>
-                          @forelse ($goods as $key => $good)
+                          <?php $__empty_1 = true; $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                           <tr>
                               <td class="text-center">
-                                  <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="{{ $good->id }}">
+                                  <input class="form-check-input item-checkbox" type="checkbox" name="selected_ids[]" value="<?php echo e($good->id); ?>">
                               </td>
-                              <td><strong>{{ $goods->firstItem() + $key }}</strong></td>
+                              <td><strong><?php echo e($goods->firstItem() + $key); ?></strong></td>
                               <td>
                                   <i class="bi bi-calendar3 text-success me-1"></i>
-                                  {{ \Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y') }}
+                                  <?php echo e(\Carbon\Carbon::parse($good->tgl_masuk)->format('d/m/Y')); ?>
+
                               </td>
                               <td>
                                   <div class="d-flex align-items-center">
                                       <i class="bi bi-box text-primary me-2"></i>
                                       <div>
                                           <div class="d-flex align-items-center gap-2">
-                                              <strong>{{ $good->nama }}</strong>
-                                              @if($good->is_grosir_active)
-                                                  <span class="wholesale-indicator" title="Barang Grosir - Min {{ $good->min_qty_grosir }} unit: Rp {{ number_format($good->harga_grosir, 0, ',', '.') }}">
+                                              <strong><?php echo e($good->nama); ?></strong>
+                                              <?php if($good->is_grosir_active): ?>
+                                                  <span class="wholesale-indicator" title="Barang Grosir - Min <?php echo e($good->min_qty_grosir); ?> unit: Rp <?php echo e(number_format($good->harga_grosir, 0, ',', '.')); ?>">
                                                       🏷️ GROSIR
                                                   </span>
-                                              @endif
-                                              @if($good->is_tebus_murah_active)
-                                                  <span class="tebus-murah-indicator" title="Tebus Murah - Min. Transaksi Rp {{ number_format($good->min_total_tebus_murah, 0, ',', '.') }}: Harga Spesial Rp {{ number_format($good->harga_tebus_murah, 0, ',', '.') }}">
+                                              <?php endif; ?>
+                                              <?php if($good->is_tebus_murah_active): ?>
+                                                  <span class="tebus-murah-indicator" title="Tebus Murah - Min. Transaksi Rp <?php echo e(number_format($good->min_total_tebus_murah, 0, ',', '.')); ?>: Harga Spesial Rp <?php echo e(number_format($good->harga_tebus_murah, 0, ',', '.')); ?>">
                                                       % TEBUS MURAH
                                                   </span>
-                                              @endif
+                                              <?php endif; ?>
                                           </div>
-                                          @if($good->barcode)
-                                              <small class="text-muted">{{ $good->barcode }}</small>
-                                          @endif
+                                          <?php if($good->barcode): ?>
+                                              <small class="text-muted"><?php echo e($good->barcode); ?></small>
+                                          <?php endif; ?>
                                       </div>
                                   </div>
                               </td>
                               <td>
-                                  <span class="type-badge type-{{ str_replace('_', '-', $good->type) }}">
-                                      @if($good->type == 'makanan')
+                                  <span class="type-badge type-<?php echo e(str_replace('_', '-', $good->type)); ?>">
+                                      <?php if($good->type == 'makanan'): ?>
                                           Makanan & Minuman
-                                      @elseif($good->type == 'non_makanan')
+                                      <?php elseif($good->type == 'non_makanan'): ?>
                                           Non Makanan & Minuman
-                                      @elseif($good->type == 'handycraft')
+                                      <?php elseif($good->type == 'handycraft'): ?>
                                           Handycraft
-                                      @elseif($good->type == 'fashion')
+                                      <?php elseif($good->type == 'fashion'): ?>
                                           Fashion
-                                      @else
+                                      <?php else: ?>
                                           Lainnya
-                                      @endif
+                                      <?php endif; ?>
                                   </span>
                               </td>
                               <td style="white-space: nowrap;">
-                                  @if($good->expired_date)
+                                  <?php if($good->expired_date): ?>
                                       <div>
-                                          <small class="text-muted">{{ $good->expired_date->format('d/m/Y') }}</small>
-                                          @php $status = $good->getExpirationStatus(); @endphp
-                                          @if($status == 'expired') <span class="expired-badge expired-danger">⚠️ EXPIRED</span>
-                                          @elseif($status == 'expiring_soon') <span class="expired-badge expired-warning">⏰ {{ $good->getDaysUntilExpiration() }} hari</span>
-                                          @else <span class="expired-badge expired-success">✅ {{ $good->getDaysUntilExpiration() }} hari</span>
-                                          @endif
+                                          <small class="text-muted"><?php echo e($good->expired_date->format('d/m/Y')); ?></small>
+                                          <?php $status = $good->getExpirationStatus(); ?>
+                                          <?php if($status == 'expired'): ?> <span class="expired-badge expired-danger">⚠️ EXPIRED</span>
+                                          <?php elseif($status == 'expiring_soon'): ?> <span class="expired-badge expired-warning">⏰ <?php echo e($good->getDaysUntilExpiration()); ?> hari</span>
+                                          <?php else: ?> <span class="expired-badge expired-success">✅ <?php echo e($good->getDaysUntilExpiration()); ?> hari</span>
+                                          <?php endif; ?>
                                       </div>
-                                  @else
+                                  <?php else: ?>
                                       <span class="text-muted"><i class="bi bi-dash-circle"></i> Tidak ada</span>
-                                  @endif
+                                  <?php endif; ?>
                               </td>
                               <td>
                                   <i class="bi bi-building text-info me-1"></i>
-                                  {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
+                                  <?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?>
+
                               </td>
                               <td>
-                                  <span class="badge {{ $good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger') }}">
-                                      {{ $good->stok }} unit
+                                  <span class="badge <?php echo e($good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger')); ?>">
+                                      <?php echo e($good->stok); ?> unit
                                   </span>
                               </td>
                               <td>
                                   <strong class="text-success">
-                                      Rp {{ number_format($good->harga, 0, ',', '.') }}
+                                      Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>
+
                                   </strong>
                               </td>
                               <td class="text-center">
@@ -423,19 +427,19 @@
                                           <i class="bi bi-three-dots-vertical fs-5"></i>
                                       </button>
                                       <ul class="dropdown-menu dropdown-menu-end">
-                                          <li><a class="dropdown-item" href="/dashboard/goods/{{ $good->id }}/edit"><i class="bi bi-pencil-square text-warning"></i> Edit</a></li>
+                                          <li><a class="dropdown-item" href="/dashboard/goods/<?php echo e($good->id); ?>/edit"><i class="bi bi-pencil-square text-warning"></i> Edit</a></li>
                                           <li>
-                                              <form action="/dashboard/goods/{{ $good->id }}" method="post" class="dropdown-item-form" id="deleteForm{{ $good->id }}">
-                                                  @method('delete')
-                                                  @csrf
-                                                  <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '{{ $good->id }}', '{{ $good->nama }}')"><i class="bi bi-trash"></i> Hapus</button>
+                                              <form action="/dashboard/goods/<?php echo e($good->id); ?>" method="post" class="dropdown-item-form" id="deleteForm<?php echo e($good->id); ?>">
+                                                  <?php echo method_field('delete'); ?>
+                                                  <?php echo csrf_field(); ?>
+                                                  <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this, '<?php echo e($good->id); ?>', '<?php echo e($good->nama); ?>')"><i class="bi bi-trash"></i> Hapus</button>
                                               </form>
                                           </li>
                                       </ul>
                                   </div>
                               </td>
                           </tr>
-                          @empty
+                          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                           <tr>
                               <td colspan="10" class="text-center py-5">
                                   <div class="text-muted">
@@ -446,24 +450,25 @@
                                   </div>
                               </td>
                           </tr>
-                          @endforelse
+                          <?php endif; ?>
                       </tbody>
                   </table>
               </div>
           </form>
 
-          @if($goods->hasPages())
+          <?php if($goods->hasPages()): ?>
           <div class="d-flex justify-content-center mt-4">
               <div class="pagination-wrapper">
-                  {{ $goods->links() }}
+                  <?php echo e($goods->links()); ?>
+
               </div>
           </div>
-          @endif
+          <?php endif; ?>
       </div>
   </div>
 </div>
 
-{{-- Modal dan script lainnya tidak perlu diubah --}}.
+.
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -680,4 +685,6 @@
       }
   });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/goods/index.blade.php ENDPATH**/ ?>
