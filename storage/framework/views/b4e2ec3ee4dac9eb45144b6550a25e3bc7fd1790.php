@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -137,12 +137,13 @@
         <p>Pilih barang yang ingin dicetak barcodenya dalam satu lembar A4</p>
     </div>
 
-    @if (session()->has('error'))
+    <?php if(session()->has('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
@@ -152,9 +153,9 @@
             </h3>
         </div>
         <div class="umkm-card-body">
-            <form action="{{ route('goods.cetakbarcode.pdf') }}" method="POST" id="barcodePrintForm" onsubmit="handleFormSubmit(this)">
-                @csrf
-                {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            <form action="<?php echo e(route('goods.cetakbarcode.pdf')); ?>" method="POST" id="barcodePrintForm" onsubmit="handleFormSubmit(this)">
+                <?php echo csrf_field(); ?>
+                
                 <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center mb-4 gap-3">
                     <div class="form-text fw-bold">
                         <span id="selectedCount">Terpilih: 0</span> barang
@@ -185,25 +186,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($goods as $key => $good)
+                            <?php $__empty_1 = true; $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td>
                                     <div class="form-check d-flex justify-content-center">
-                                        <input class="form-check-input good-checkbox" type="checkbox" name="selected_goods[]" value="{{ $good->id }}" id="goodCheckbox{{ $good->id }}" {{ $good->barcode ? '' : 'disabled' }}>
+                                        <input class="form-check-input good-checkbox" type="checkbox" name="selected_goods[]" value="<?php echo e($good->id); ?>" id="goodCheckbox<?php echo e($good->id); ?>" <?php echo e($good->barcode ? '' : 'disabled'); ?>>
                                     </div>
                                 </td>
-                                <td>{{ $loop->iteration }}</td>
+                                <td><?php echo e($loop->iteration); ?></td>
                                 <td>
-                                    <strong>{{ $good->nama }}</strong>
-                                    @if(!$good->barcode)
+                                    <strong><?php echo e($good->nama); ?></strong>
+                                    <?php if(!$good->barcode): ?>
                                         <span class="badge bg-danger ms-2">Tidak ada Barcode</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="d-none d-md-table-cell">{{ $good->barcode ?? '-' }}</td>
-                                <td class="d-none d-sm-table-cell">Rp. {{ number_format($good->harga, 0, ',', '.') }}</td>
-                                <td class="d-none d-md-table-cell">{{ $good->stok }} unit</td>
+                                <td class="d-none d-md-table-cell"><?php echo e($good->barcode ?? '-'); ?></td>
+                                <td class="d-none d-sm-table-cell">Rp. <?php echo e(number_format($good->harga, 0, ',', '.')); ?></td>
+                                <td class="d-none d-md-table-cell"><?php echo e($good->stok); ?> unit</td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
@@ -213,7 +214,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -319,4 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSelectionCount();
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/goods/cetakbarcode.blade.php ENDPATH**/ ?>

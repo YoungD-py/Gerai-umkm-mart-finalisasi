@@ -69,33 +69,34 @@
     </style>
 </head>
 <body>
-    @php
+    <?php
         // Mengubah jumlah barcode per halaman menjadi 52 (13 baris * 4 kolom)
         $chunkedBarcodes = array_chunk($barcodesData, 52);
-    @endphp
+    ?>
 
-    @foreach ($chunkedBarcodes as $pageBarcodes)
+    <?php $__currentLoopData = $chunkedBarcodes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pageBarcodes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <table class="barcode-table">
-            @foreach (array_chunk($pageBarcodes, 4) as $row)
+            <?php $__currentLoopData = array_chunk($pageBarcodes, 4); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                    @foreach ($row as $data)
+                    <?php $__currentLoopData = $row; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <td class="barcode-cell">
                             <div class="barcode-item">
-                                <p class="item-name">{{ $data['nama'] }}</p>
-                                <p class="item-price">Rp {{ number_format($data['harga'], 0, ',', '.') }}</p>
-                                <img src="data:image/svg+xml;base64,{{ base64_encode($data['barcode_svg']) }}" alt="Barcode">
-                                <p class="item-barcode-value">{{ $data['barcode_value'] }}</p>
+                                <p class="item-name"><?php echo e($data['nama']); ?></p>
+                                <p class="item-price">Rp <?php echo e(number_format($data['harga'], 0, ',', '.')); ?></p>
+                                <img src="data:image/svg+xml;base64,<?php echo e(base64_encode($data['barcode_svg'])); ?>" alt="Barcode">
+                                <p class="item-barcode-value"><?php echo e($data['barcode_value']); ?></p>
                             </div>
                         </td>
-                    @endforeach
-                    @if (count($row) < 4)
-                        @for ($i = 0; $i < (4 - count($row)); $i++)
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php if(count($row) < 4): ?>
+                        <?php for($i = 0; $i < (4 - count($row)); $i++): ?>
                             <td class="barcode-cell"></td>
-                        @endfor
-                    @endif
+                        <?php endfor; ?>
+                    <?php endif; ?>
                 </tr>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </table>
-    @endforeach
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </body>
 </html>
+<?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/multiple_barcode_pdf.blade.php ENDPATH**/ ?>
