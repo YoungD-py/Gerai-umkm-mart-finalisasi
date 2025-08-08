@@ -279,17 +279,101 @@
 </div>
 
 <script>
+    // Helper function to create a FileList from a single File
+    function createFileListItem(file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        return dataTransfer.files;
+    }
+
+    // Function to compress image
+    function compressImage(file, quality, maxWidth) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Calculate new dimensions while maintaining aspect ratio
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(blob => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, {
+                                type: blob.type,
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            reject(new Error('Canvas to Blob conversion failed.'));
+                        }
+                    }, file.type, quality);
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Modified previewImage function to include compression
     function previewImage() {
-        const image = document.querySelector('#bukti_resi');
+        const imageInput = document.querySelector('#bukti_resi');
         const imgPreview = document.querySelector('.img-preview');
 
-        imgPreview.style.display = 'block';
+        if (imageInput.files && imageInput.files[0]) {
+            const originalFile = imageInput.files[0];
 
-        const oFReader = new FileReader();
-        oFReader.readAsDataURL(image.files[0]);
+            // Display preview immediately
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgPreview.src = e.target.result;
+                imgPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(originalFile);
 
-        oFReader.onload = function(oFREvent) {
-            imgPreview.src = oFREvent.target.result;
+            // Compress the image if it's larger than 2MB (2048 KB)
+            // Note: The backend validation is still 2MB. This client-side compression
+            // aims to reduce size to fit, but if the compressed file is still >2MB,
+            // the server will reject it.
+            if (originalFile.size > 2 * 1024 * 1024) { 
+                console.log('File is larger than 2MB, attempting compression...');
+                // Compress with 80% quality and max width of 1920px
+                compressImage(originalFile, 0.8, 1920) 
+                    .then(compressedFile => {
+                        console.log('Compressed file size:', (compressedFile.size / 1024 / 1024).toFixed(2), 'MB');
+                        // Replace the original file with the compressed one in the input
+                        imageInput.files = createFileListItem(compressedFile);
+                    })
+                    .catch(error => {
+                        console.error('Image compression failed:', error);
+                        alert('Gagal mengompres gambar. Silakan coba lagi atau gunakan gambar yang lebih kecil.');
+                        // Optionally clear the input if compression fails
+                        imageInput.value = '';
+                        imgPreview.style.display = 'none';
+                        imgPreview.src = '';
+                    });
+            } else {
+                console.log('File size is within limit, no compression needed.');
+                // Ensure the original file is kept if no compression is needed
+                imageInput.files = createFileListItem(originalFile);
+            }
+        } else {
+            imgPreview.style.display = 'none';
+            imgPreview.src = '';
         }
     }
 
