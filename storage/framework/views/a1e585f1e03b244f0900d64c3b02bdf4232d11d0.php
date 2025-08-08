@@ -1,8 +1,8 @@
 <style>
     /* [DIUBAH TOTAL] Style baru yang terinspirasi dari Tabler UI */
     .header {
-        background-color: #fff;
-        border-bottom: 1px solid #e6e7e9;
+        background-color: #f2f3f5 !important; /* Abu-abu muda untuk navbar */
+        border-bottom: 1px solid #f2f3f5;
         padding: 0 1rem;
         z-index: 1030; /* Menambahkan z-index agar selalu di atas konten lain */
     }
@@ -25,14 +25,14 @@
 
     .navbar-nav .nav-link:hover {
         color: #1d273b;
-        background-color: #f8fafc;
+        background-color: #f2f3f5;
     }
 
     /* [PERINTAH LU] Biar nav-link aktif dikasih garis bawah aja */
     .navbar-nav .nav-link.active {
         background-color: transparent !important;
-        color: #f6f6f6ff;
-        border-bottom: 3px solid #f7f7f7ff;
+        color: #f2f3f5;
+        border-bottom: 3px solid #f2f3f5;
         border-radius: 0;
     }
 
@@ -42,7 +42,7 @@
 
     .dropdown-menu {
         border-radius: 8px;
-        border: 1px solid #e6e7e9;
+        border: 1px solid #f2f3f5;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         padding: 0.5rem 0;
     }
@@ -135,8 +135,10 @@
         }
     }
 </style>
-
-<header class="navbar navbar-expand-md navbar-light d-print-none header sticky-top">
+<head>
+    
+</head>
+    <header class="navbar navbar-expand-md navbar-light d-print-none header sticky-top">
     <div class="container-fluid">
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
