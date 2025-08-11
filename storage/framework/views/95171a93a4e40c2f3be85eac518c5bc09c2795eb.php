@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     /* [DIUBAH] Menyesuaikan warna tema menjadi hijau */
     .umkm-card {
@@ -189,11 +187,11 @@
 <div class="container-fluid py-4">
     <div class="page-title">
         <h1>📦 RESTOCK BARANG</h1>
-        <p>Tambah stok untuk barang: <strong>{{ $good->nama }}</strong></p>
+        <p>Tambah stok untuk barang: <strong><?php echo e($good->nama); ?></strong></p>
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -204,16 +202,16 @@
                 </div>
 
                 <div class="card-body p-4">
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Info Barang -->
                     <div class="info-section">
@@ -226,29 +224,29 @@
                             <div class="col-12 col-md-6">
                                 <div class="info-item">
                                     <strong>Nama Barang:</strong><br>
-                                    <span class="text-primary">{{ $good->nama }}</span>
+                                    <span class="text-primary"><?php echo e($good->nama); ?></span>
                                 </div>
                                 <div class="info-item">
                                     <strong>Supplier:</strong><br>
-                                    <span class="text-muted">{{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}</span>
+                                    <span class="text-muted"><?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?></span>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="info-item">
                                     <strong>Stok Saat Ini:</strong><br>
-                                    <span class="text-success fw-bold fs-4" id="current-stock">{{ $good->stok }}</span> unit
+                                    <span class="text-success fw-bold fs-4" id="current-stock"><?php echo e($good->stok); ?></span> unit
                                 </div>
                                 <div class="info-item">
                                     <strong>Harga Jual:</strong><br>
-                                    <span class="text-success">Rp {{ number_format($good->harga, 0, ',', '.') }}</span>
+                                    <span class="text-success">Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <form method="post" action="/dashboard/restock/{{ $good->id }}">
-                        @method('put')
-                        @csrf
+                    <form method="post" action="/dashboard/restock/<?php echo e($good->id); ?>">
+                        <?php echo method_field('put'); ?>
+                        <?php echo csrf_field(); ?>
 
                         <div class="mb-4">
                             <label for="stok_tambahan" class="form-label">
@@ -256,16 +254,30 @@
                                 Jumlah Stok Tambahan <span class="required">*</span>
                             </label>
                             <div class="input-group">
-                                <input type="number" class="form-control @error('stok_tambahan') is-invalid @enderror"
+                                <input type="number" class="form-control <?php $__errorArgs = ['stok_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                        id="stok_tambahan" name="stok_tambahan"
-                                       value="{{ old('stok_tambahan') }}"
+                                       value="<?php echo e(old('stok_tambahan')); ?>"
                                        required min="1" placeholder="Masukkan jumlah stok yang akan ditambahkan..."
                                        oninput="calculateNewStock()">
                                 <span class="input-group-text">unit</span>
                             </div>
-                            @error('stok_tambahan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['stok_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             <small class="text-muted mt-2 d-block">
                                 <i class="bi bi-info-circle"></i>
                                 Minimal 1 unit untuk menambah stok
@@ -277,12 +289,26 @@
                                 <i class="bi bi-chat-text text-success"></i>
                                 Keterangan (Opsional)
                             </label>
-                            <textarea class="form-control @error('keterangan') is-invalid @enderror"
+                            <textarea class="form-control <?php $__errorArgs = ['keterangan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                       id="keterangan" name="keterangan" rows="3"
-                                      placeholder="Catatan tambahan untuk restock ini...">{{ old('keterangan') }}</textarea>
-                            @error('keterangan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                                      placeholder="Catatan tambahan untuk restock ini..."><?php echo e(old('keterangan')); ?></textarea>
+                            <?php $__errorArgs = ['keterangan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div id="calculation-info" class="calculation-info" style="display: none;">
@@ -291,13 +317,13 @@
                             </h6>
                             <div class="row">
                                 <div class="col-12 col-md-4 mb-2 mb-md-0">
-                                    <p class="mb-1"><strong>Stok Lama:</strong> <span class="text-muted">{{ $good->stok }} unit</span></p>
+                                    <p class="mb-1"><strong>Stok Lama:</strong> <span class="text-muted"><?php echo e($good->stok); ?> unit</span></p>
                                 </div>
                                 <div class="col-12 col-md-4 mb-2 mb-md-0">
                                     <p class="mb-1"><strong>Stok Tambahan:</strong> <span id="display-tambahan" class="text-info">0 unit</span></p>
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <p class="mb-0"><strong>Total Stok Baru:</strong> <span id="display-total" class="text-success fw-bold">{{ $good->stok }} unit</span></p>
+                                    <p class="mb-0"><strong>Total Stok Baru:</strong> <span id="display-total" class="text-success fw-bold"><?php echo e($good->stok); ?> unit</span></p>
                                 </div>
                             </div>
                         </div>
@@ -322,7 +348,7 @@
 
 <script>
 function calculateNewStock() {
-    const currentStock = {{ $good->stok }};
+    const currentStock = <?php echo e($good->stok); ?>;
     const additionalStock = parseInt(document.getElementById('stok_tambahan').value) || 0;
     const calculationInfo = document.getElementById('calculation-info');
 
@@ -338,4 +364,6 @@ function calculateNewStock() {
     }
 }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/restock/edit.blade.php ENDPATH**/ ?>

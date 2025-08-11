@@ -1,5 +1,4 @@
 @extends('dashboard.layouts.main')
-
 @section('container')
 <style>
     body {
@@ -56,7 +55,7 @@
     }
 
     .form-control:focus, .form-select:focus {
-        border-color: #4b6cb7;
+        border-color: #28a745, #20c997;
         box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.3);
         background-color: white;
     }
@@ -75,7 +74,7 @@
     }
 
     .btn-primary-return {
-        background: linear-gradient(135deg, #4b6cb7, #182848);
+        background: linear-gradient(135deg, #28a745, #20c997);
         border: none;
     }
 
@@ -217,7 +216,6 @@
     @endif
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="return-card">
                 <div class="return-card-header">

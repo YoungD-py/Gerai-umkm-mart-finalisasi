@@ -3,10 +3,12 @@
 @section('container')
     <style>
         body {
-            background: linear-gradient(135deg, #4b6cb7, #182848);
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            color: #333;
+        background: linear-gradient(180deg, #e0e0e0, #dcdcdc);
+        backdrop-filter: blur(6px);
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
         }
 
         .return-card {
@@ -20,7 +22,7 @@
         }
 
         .return-card-header {
-            background: linear-gradient(135deg, #00c9ff, #92fe9d);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 20px;
             border-radius: 20px 20px 0 0;
@@ -61,7 +63,7 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #4b6cb7;
+            border-color: #28a745, #20c997;
             box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.3);
             background-color: white;
         }
@@ -80,7 +82,7 @@
         }
 
         .btn-primary-return {
-            background: linear-gradient(135deg, #4b6cb7, #182848);
+            background: linear-gradient(135deg, #28a745, #20c997);
             border: none;
         }
 
