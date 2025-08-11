@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -169,7 +167,7 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -180,33 +178,48 @@
                 </div>
 
                 <div class="umkm-card-body">
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    <form method="post" action="{{ route('biayaoperasional.update', $biayaOperasional->id) }}" enctype="multipart/form-data">
-                        @method('put')
-                        @csrf
+                    <form method="post" action="<?php echo e(route('biayaoperasional.update', $biayaOperasional->id)); ?>" enctype="multipart/form-data">
+                        <?php echo method_field('put'); ?>
+                        <?php echo csrf_field(); ?>
 
                         <div class="mb-3">
                             <label for="uraian" class="form-label">
                                 <i class="bi bi-chat-left-text text-warning"></i>
                                 Uraian/Keterangan <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-control @error('uraian') is-invalid @enderror" id="uraian"
-                                name="uraian" required autofocus value="{{ old('uraian', $biayaOperasional->uraian) }}" placeholder="Contoh: Pembelian ATK">
-                            @error('uraian')
+                            <input type="text" class="form-control <?php $__errorArgs = ['uraian'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="uraian"
+                                name="uraian" required autofocus value="<?php echo e(old('uraian', $biayaOperasional->uraian)); ?>" placeholder="Contoh: Pembelian ATK">
+                            <?php $__errorArgs = ['uraian'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="row">
@@ -217,27 +230,57 @@
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" class="form-control @error('nominal') is-invalid @enderror" id="nominal"
-                                        name="nominal" required value="{{ old('nominal', $biayaOperasional->nominal) }}" min="0" placeholder="Contoh: 50000">
+                                    <input type="number" class="form-control <?php $__errorArgs = ['nominal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="nominal"
+                                        name="nominal" required value="<?php echo e(old('nominal', $biayaOperasional->nominal)); ?>" min="0" placeholder="Contoh: 50000">
                                 </div>
-                                @error('nominal')
+                                <?php $__errorArgs = ['nominal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                     <div class="invalid-feedback">
-                                        {{ $message }}
+                                        <?php echo e($message); ?>
+
                                     </div>
-                                @enderror
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="qty" class="form-label">
                                     <i class="bi bi-box text-warning"></i>
                                     Kuantitas (Qty) <span class="required">*</span>
                                 </label>
-                                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty"
-                                    name="qty" required value="{{ old('qty', $biayaOperasional->qty) }}" min="1" placeholder="Contoh: 1">
-                                @error('qty')
+                                <input type="number" class="form-control <?php $__errorArgs = ['qty'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="qty"
+                                    name="qty" required value="<?php echo e(old('qty', $biayaOperasional->qty)); ?>" min="1" placeholder="Contoh: 1">
+                                <?php $__errorArgs = ['qty'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                     <div class="invalid-feedback">
-                                        {{ $message }}
+                                        <?php echo e($message); ?>
+
                                     </div>
-                                @enderror
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -246,13 +289,28 @@
                                 <i class="bi bi-calendar-event text-warning"></i>
                                 Tanggal <span class="required">*</span>
                             </label>
-                            <input type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal"
-                                name="tanggal" required value="{{ old('tanggal', \Carbon\Carbon::parse($biayaOperasional->tanggal)->format('Y-m-d')) }}">
-                            @error('tanggal')
+                            <input type="date" class="form-control <?php $__errorArgs = ['tanggal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" id="tanggal"
+                                name="tanggal" required value="<?php echo e(old('tanggal', \Carbon\Carbon::parse($biayaOperasional->tanggal)->format('Y-m-d'))); ?>">
+                            <?php $__errorArgs = ['tanggal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-4">
@@ -261,25 +319,40 @@
                                 Ganti Bukti/Resi (Opsional)
                             </label>
 
-                            @if($biayaOperasional->bukti_resi)
+                            <?php if($biayaOperasional->bukti_resi): ?>
                                 <div class="mb-2">
                                     <p class="form-label mb-1" style="font-size: 0.9rem;">Bukti Saat Ini:</p>
-                                    <img src="{{ asset('storage/' . $biayaOperasional->bukti_resi) }}" class="img-fluid" style="max-width: 300px; border-radius: 15px; border: 2px solid #e9ecef;">
+                                    <img src="<?php echo e(asset('storage/' . $biayaOperasional->bukti_resi)); ?>" class="img-fluid" style="max-width: 300px; border-radius: 15px; border: 2px solid #e9ecef;">
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <img class="img-preview img-fluid mb-3 col-sm-5" style="display: none; border-radius: 15px;">
-                            <input class="form-control @error('bukti_resi') is-invalid @enderror" type="file" id="bukti_resi" name="bukti_resi" onchange="previewImage()">
+                            <input class="form-control <?php $__errorArgs = ['bukti_resi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" type="file" id="bukti_resi" name="bukti_resi" onchange="previewImage()">
                             <small class="text-muted mt-2 d-block">Kosongkan jika tidak ingin mengubah bukti.</small>
-                            @error('bukti_resi')
+                            <?php $__errorArgs = ['bukti_resi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 border-top gap-2">
-                            <a href="{{ route('biayaoperasional.index') }}" class="btn btn-secondary-umkm">
+                            <a href="<?php echo e(route('biayaoperasional.index')); ?>" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
@@ -394,4 +467,6 @@
         }
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/biayaoperasional/edit.blade.php ENDPATH**/ ?>
