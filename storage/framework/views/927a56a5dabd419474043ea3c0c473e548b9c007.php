@@ -11,8 +11,8 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
-        color: #000;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: White;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
@@ -41,7 +41,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem;
     }
 
     .form-label {
@@ -63,8 +63,8 @@
     }
 
     .form-control:focus, .form-select:focus {
-        border-color: #ffc107;
-        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        border-color: (135deg, #28a745, #20c997);
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         background: white;
         transform: translateY(-1px);
     }
@@ -77,8 +77,8 @@
     }
 
     .input-group-text {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
-        color: #000;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: White;
         border: none;
         border-radius: 15px 0 0 15px;
         font-weight: 600;
@@ -102,7 +102,7 @@
     }
 
     .btn-warning-umkm {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
+        background: linear-gradient(135deg, #28a745, #20c997);
         border: none;
         color: #000;
         text-transform: uppercase;
@@ -111,7 +111,7 @@
 
     .btn-warning-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
         color: #000;
     }
 
@@ -150,7 +150,7 @@
     }
 
     .btn-info-restock:hover {
-        background: linear-gradient(135deg, #138496, #117a8b);
+        background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
         transform: translateY(-1px);
     }
@@ -171,20 +171,20 @@
     }
 
     .page-title h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            color: #ffffff;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
-        }
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 15px;
+        color: #ffffff;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    }
 
-        .page-title p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            opacity: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
+    .page-title p {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        opacity: 1;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
 
     .form-section {
         background: rgba(248, 249, 250, 0.5);
@@ -195,7 +195,7 @@
     }
 
     .section-title {
-        color: #ffc107;
+        color: #28a745;
         font-weight: 700;
         font-size: 1.1rem;
         margin-bottom: 15px;
@@ -213,7 +213,7 @@
         padding: 15px;
         margin-top: 15px;
     }
-    .expired-section { background: rgba(255, 193, 7, 0.1); border: 2px solid rgba(255, 193, 7, 0.3); }
+    .expired-section { background: rgba(40, 167, 69, 0.1); border: 2px solid rgba(40, 167, 69, 0.3); }
 
     .expired-section.show, .wholesale-fields.show, .tebus-murah-fields.show {
         display: block;
