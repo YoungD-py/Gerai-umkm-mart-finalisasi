@@ -65,7 +65,7 @@
     }
 
     .form-control:focus {
-        border-color: #007bff;
+        border-color: (135deg, #28a745, #28a745);
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         background: white;
         transform: translateY(-1px);
@@ -80,12 +80,12 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center;
         gap: 8px;
     }
 
     .btn-primary-umkm {
-        background: linear-gradient(135deg, #007bff, #0056b3);
+        background: linear-gradient(135deg, #28a745, #28a745);
         border: none;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -135,6 +135,14 @@
         color: #dc3545;
     }
 
+    .bi-building,
+    .bi-telephone,
+    .bi-geo-alt,
+    .text-primary,
+    .text-success,
+    .text-warning {
+    color: #28a745 !important;
+    }
     @media (min-width: 768px) {
         .page-title h1 {
             font-size: 2.5rem;

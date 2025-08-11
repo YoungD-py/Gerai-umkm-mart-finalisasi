@@ -136,6 +136,13 @@
                 padding: 30px;
             }
         }
+        .bi-calendar3,
+        .text-primary,
+        .bi-123,
+        .bi-exclamation-triangle,
+        .bi-person-gear {
+        Color: #28a745 !important;
+    }
     </style>
 
     <div class="container-fluid py-4">

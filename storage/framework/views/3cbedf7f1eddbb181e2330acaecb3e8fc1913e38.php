@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -13,8 +11,8 @@
     }
 
     .umkm-card-header {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: White;
+        background: linear-gradient(135deg, #28a745, #28a745);
+        color: white;
         padding: 20px;
         border-radius: 20px 20px 0 0;
         position: relative;
@@ -65,42 +63,41 @@
     }
 
     .form-control:focus {
-        border-color: #28a745, #20c997;
-        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        border-color: (135deg, #28a745, #28a745);
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         background: white;
         transform: translateY(-1px);
     }
 
-    .btn-warning-umkm, .btn-secondary-umkm {
+    .btn-primary-umkm, .btn-secondary-umkm {
         border-radius: 15px;
         padding: 12px 25px;
         font-weight: 600;
+        color: white;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center;
         gap: 8px;
     }
 
-    .btn-warning-umkm {
-        background: linear-gradient(135deg, #28a745, #20c997);
+    .btn-primary-umkm {
+        background: linear-gradient(135deg, #28a745, #28a745);
         border: none;
-        color: #000;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
-    .btn-warning-umkm:hover {
+    .btn-primary-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-        color: #000;
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        color: white;
     }
 
     .btn-secondary-umkm {
         background: linear-gradient(135deg, #6c757d, #5a6268);
         border: none;
-        color: white;
     }
 
     .btn-secondary-umkm:hover {
@@ -137,10 +134,11 @@
     }
 
     .bi-building,
-    .text-warning,
     .bi-telephone,
+    .bi-geo-alt,
+    .text-primary,
     .text-success,
-    .bi-geo-alt   {
+    .text-warning {
     color: #28a745 !important;
     }
     @media (min-width: 768px) {
@@ -155,50 +153,64 @@
 
 <div class="container-fluid py-4">
     <div class="page-title">
-        <h1>✏️ EDIT MITRA BINAAN</h1>
-        <p>Perbarui informasi mitra binaan GERAI UMKM MART</p>
+        <h1>➕ TAMBAH Mitra Binaan BARU</h1>
+        <p>Tambahkan mitra binaan baru untuk GERSI UMKM MART</p>
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-6 menjadi lebih fleksibel --}}
+        
         <div class="col-xl-6 col-lg-8 col-md-10">
             <div class="umkm-card">
                 <div class="umkm-card-header">
                     <h3 class="umkm-card-title">
-                        <i class="bi bi-pencil-square"></i>
-                        Form Edit Mitra Binaan
+                        <i class="bi bi-plus-circle"></i>
+                        Form Tambah Mitra Binaan
                     </h3>
                 </div>
 
                 <div class="umkm-card-body">
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    <form method="post" action="/dashboard/categories/{{ $category->id }}">
-                        @method('put')
-                        @csrf
+                    <form method="post" action="/dashboard/categories">
+                        <?php echo csrf_field(); ?>
 
                         <div class="mb-4">
                             <label for="nama" class="form-label">
-                                <i class="bi bi-building text-warning"></i>
+                                <i class="bi bi-building text-primary"></i>
                                 Nama Mitra Binaan <span class="required">*</span>
                             </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                            <input type="text" class="form-control <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                    name="nama" required placeholder="Masukkan Nama Mitra Binaan..."
-                                   value="{{ old('nama', $category->nama) }}">
-                            @error('nama')
+                                   value="<?php echo e(old('nama')); ?>">
+                            <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-4">
@@ -206,14 +218,29 @@
                                 <i class="bi bi-telephone text-success"></i>
                                 Nomor Penanggung Jawab
                             </label>
-                            <input type="text" class="form-control @error('nomor_penanggung_jawab') is-invalid @enderror"
+                            <input type="text" class="form-control <?php $__errorArgs = ['nomor_penanggung_jawab'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                    name="nomor_penanggung_jawab" placeholder="Masukkan Nomor Telepon/HP..."
-                                   value="{{ old('nomor_penanggung_jawab', $category->nomor_penanggung_jawab) }}">
-                            @error('nomor_penanggung_jawab')
+                                   value="<?php echo e(old('nomor_penanggung_jawab')); ?>">
+                            <?php $__errorArgs = ['nomor_penanggung_jawab'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-4">
@@ -221,24 +248,39 @@
                                 <i class="bi bi-geo-alt text-warning"></i>
                                 Alamat Mitra
                             </label>
-                            <textarea class="form-control @error('alamat') is-invalid @enderror"
-                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra...">{{ old('alamat', $category->alamat) }}</textarea>
-                            @error('alamat')
+                            <textarea class="form-control <?php $__errorArgs = ['alamat'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                      name="alamat" rows="3" placeholder="Masukkan Alamat Lengkap Mitra..."><?php echo e(old('alamat')); ?></textarea>
+                            <?php $__errorArgs = ['alamat'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <div class="invalid-feedback">
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </div>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
+                        
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/categories" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>
                                 Kembali
                             </a>
-                            <button type="submit" class="btn btn-warning-umkm">
+                            <button type="submit" class="btn btn-primary-umkm">
                                 <i class="bi bi-save"></i>
-                                Update Mitra Binaan
+                                Simpan Mitra Binaan
                             </button>
                         </div>
                     </form>
@@ -247,4 +289,6 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/categories/create.blade.php ENDPATH**/ ?>

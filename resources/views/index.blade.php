@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login Kasir - UMKM MART</title>
+    <title>Login Kasir - GERAI UMKM MART</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -143,7 +143,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control @error('username') is-invalid @enderror" 
+                        <input type="text" class="form-control @error('username') is-invalid @enderror"
                                id="username" name="username" placeholder="Masukkan username" value="{{ old('username') }}" required>
                         @error('username')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +152,7 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                        <input type="password" class="form-control @error('password') is-invalid @enderror"
                                id="password" name="password" placeholder="Masukkan password" required>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -168,7 +168,7 @@
 
                     <div class="mb-3">
                         <label for="captcha_answer" class="form-label">Jawaban Verifikasi</label>
-                        <input type="number" class="form-control @error('captcha_answer') is-invalid @enderror" 
+                        <input type="number" class="form-control @error('captcha_answer') is-invalid @enderror"
                                id="captcha_answer" name="captcha_answer" placeholder="Masukkan jawaban" required>
                         @error('captcha_answer')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -181,7 +181,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="footer-link">
             <a href="/loginadmin"><i class="bi bi-gear"></i> Login sebagai Administrator</a>
         </div>
@@ -218,7 +218,7 @@
             const captcha = generateMathCaptcha();
             currentAnswer = captcha.answer;
             document.getElementById('math-question').textContent = captcha.question;
-            
+
             // Store answer in session via AJAX
             fetch('/store-math-captcha', {
                 method: 'POST',

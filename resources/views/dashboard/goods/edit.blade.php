@@ -246,6 +246,18 @@
             padding: 30px;
         }
     }
+
+    .bi-pencil-square,
+    .bi-building,
+    .text-warning,
+    .bi-calendar-event,
+    .bi-box,
+    .bi-tags,
+    .expired-section,
+    .bi-collection,
+    .bi-calendar-x {
+        Color : #28a745 !important;
+    }
 </style>
 
 <div class="container-fluid py-4">
