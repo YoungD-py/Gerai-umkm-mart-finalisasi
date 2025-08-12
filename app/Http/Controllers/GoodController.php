@@ -441,12 +441,12 @@ class GoodController extends Controller
   public function generateMultipleBarcodesPdf(Request $request)
   {
       $request->validate([
-          'selected_goods' => 'required|array|min:1|max:15',
+          'selected_goods' => 'required|array|min:1|max:52',
           'selected_goods.*' => 'exists:goods,id',
       ], [
           'selected_goods.required' => 'Pilih setidaknya satu barang untuk dicetak.',
           'selected_goods.min' => 'Pilih setidaknya satu barang untuk dicetak.',
-          'selected_goods.max' => 'Anda hanya dapat memilih maksimal 15 barang untuk dicetak dalam satu lembar.',
+          'selected_goods.max' => 'Anda hanya dapat memilih maksimal 52 barang untuk dicetak dalam satu lembar.',
           'selected_goods.*.exists' => 'Salah satu barang yang dipilih tidak valid.',
       ]);
 
