@@ -497,7 +497,7 @@
                                 <div class="text-center">
                                     <small class="text-muted">
                                         <i class="bi bi-info-circle"></i> 
-                                        Produk di atas dapat dibeli dengan harga tebus murah karena total belanja Anda sudah mencapai syarat minimum.
+                                        Produk di atas dapat dibeli dengan harga tebus murah karena total belanja sudah mencapai syarat minimum.
                                     </small>
                                 </div>
                             </div>
