@@ -595,36 +595,66 @@ class CashierController extends Controller
      */
     public function nota(Request $request)
     {
-        $request->validate([
-            'no_nota' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'no_nota' => 'required|string'
+            ]);
 
-        $no_nota = $request->no_nota;
-        
-        // Get transaction data
-        $transaction = Transaction::where('no_nota', $no_nota)->get();
-        
-        if ($transaction->isEmpty()) {
-            return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+            $no_nota = $request->no_nota;
+            
+            Log::info('Generating nota for: ' . $no_nota);
+            
+            // Get transaction data
+            $transaction = Transaction::where('no_nota', $no_nota)->get();
+            
+            if ($transaction->isEmpty()) {
+                Log::error('Transaction not found: ' . $no_nota);
+                return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+            }
+            
+            // Get orders data - PERBAIKAN: Jangan filter berdasarkan status transaksi
+            $orders = Order::where('no_nota', $no_nota)->with('good')->get();
+            
+            // PERBAIKAN: Jika tidak ada orders, buat dummy order untuk transaksi gagal
+            if ($orders->isEmpty()) {
+                Log::warning('No orders found for transaction: ' . $no_nota . '. Creating dummy order for failed transaction.');
+                
+                // Buat dummy order untuk transaksi gagal
+                $orders = collect([
+                    (object) [
+                        'good' => (object) [
+                            'nama' => 'Transaksi Gagal - Tidak ada item'
+                        ],
+                        'qty' => 0,
+                        'price' => 0,
+                        'subtotal' => 0
+                    ]
+                ]);
+            }
+            
+            Log::info('Orders found: ' . $orders->count());
+            
+            // Generate PDF
+            $pdf = PDF::loadview('nota_pdf', [
+                'transaction' => $transaction,
+                'orders' => $orders
+            ]);
+            
+            // Set paper size for thermal printer (80mm width)
+            $pdf->setPaper([0, 0, 226.77, 841.89], 'portrait'); // 80mm x 297mm in points
+            
+            Log::info('PDF generated successfully for: ' . $no_nota);
+            
+            return $pdf->download('nota-' . $no_nota . '.pdf');
+            
+        } catch (\Exception $e) {
+            Log::error('Error generating nota: ' . $e->getMessage(), [
+                'no_nota' => $request->no_nota ?? 'unknown',
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat membuat nota: ' . $e->getMessage());
         }
-        
-        // Get orders data
-        $orders = Order::where('no_nota', $no_nota)->with('good')->get();
-        
-        if ($orders->isEmpty()) {
-            return redirect()->back()->with('error', 'Detail pesanan tidak ditemukan.');
-        }
-        
-        // Generate PDF
-        $pdf = PDF::loadview('nota_pdf', [
-            'transaction' => $transaction,
-            'orders' => $orders
-        ]);
-        
-        // Set paper size for thermal printer (80mm width)
-        $pdf->setPaper([0, 0, 226.77, 841.89], 'portrait'); // 80mm x 297mm in points
-        
-        return $pdf->download('nota-' . $no_nota . '.pdf');
     }
 
     /**
