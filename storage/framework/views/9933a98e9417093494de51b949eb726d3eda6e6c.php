@@ -100,6 +100,35 @@
             font-weight: bold;
             font-size: 14px;
         }
+
+        /* Tebus Murah Cart Styles */
+        .tebus-murah-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid #dc3545;
+        }
+
+        .tebus-murah-item:hover {
+            background-color: #fff5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
+        }
+
+        .tebus-murah-badge {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .savings-badge {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            font-size: 0.7rem;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
     </style>
 
     
@@ -395,6 +424,93 @@
                         <?php endif; ?>
                     </div>
                 </div>
+
+                
+                <?php
+                    $totalTransaction = $orders->sum('subtotal');
+                    $tebusMusahProducts = $goods->filter(function ($good) use ($totalTransaction) {
+                        return $good->is_tebus_murah_active && 
+                               $totalTransaction >= $good->min_total_tebus_murah &&
+                               $good->stok > 0;
+                    });
+                ?>
+
+                <?php if($tebusMusahProducts->count() > 0): ?>
+                    <div class="card shadow-sm border-0 mt-4" id="tebus-murah-card" style="background: white;">
+                        <div class="card-header text-white py-3" style="background: linear-gradient(45deg, #dc3545, #e74c3c);">
+                            <h4 class="mb-0 fw-bold">
+                                <i class="bi bi-percent fs-3"></i> BARANG TEBUS MURAH
+                                <span class="badge bg-light text-dark ms-2 fs-6"><?php echo e($tebusMusahProducts->count()); ?></span>
+                            </h4>
+                            <small class="opacity-90">Produk yang bisa ditebus murah dengan total belanja saat ini</small>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="fw-bold py-3 px-3">Produk</th>
+                                            <th class="fw-bold py-3 text-center">Harga</th>
+                                            <th class="fw-bold py-3 text-center">Hemat</th>
+                                            <th class="fw-bold py-3 text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $__currentLoopData = $tebusMusahProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php
+                                                $savings = $product->harga - $product->harga_tebus_murah;
+                                                $savingsPercent = round(($savings / $product->harga) * 100, 1);
+                                            ?>
+                                            <tr class="tebus-murah-item">
+                                                <td class="py-3 px-3">
+                                                    <div class="fw-semibold"><?php echo e($product->nama); ?></div>
+                                                    <small class="text-muted">Stok: <?php echo e($product->stok); ?> pcs</small>
+                                                    <br><span class="tebus-murah-badge">TEBUS MURAH</span>
+                                                </td>
+                                                <td class="py-3 text-center">
+                                                    <div class="fw-bold text-danger fs-5">
+                                                        Rp <?php echo e(number_format($product->harga_tebus_murah, 0, ',', '.')); ?>
+
+                                                    </div>
+                                                    <small class="text-muted text-decoration-line-through">
+                                                        Rp <?php echo e(number_format($product->harga, 0, ',', '.')); ?>
+
+                                                    </small>
+                                                </td>
+                                                <td class="py-3 text-center">
+                                                    <div class="savings-badge">
+                                                        <?php echo e($savingsPercent); ?>%
+                                                    </div>
+                                                    <small class="text-success fw-bold d-block mt-1">
+                                                        Rp <?php echo e(number_format($savings, 0, ',', '.')); ?>
+
+                                                    </small>
+                                                </td>
+                                                <td class="py-3 text-center">
+                                                    <button type="button" 
+                                                            class="btn btn-danger btn-sm fw-bold" 
+                                                            onclick="addTebusMusahToCart(<?php echo e($product->id); ?>, '<?php echo e(addslashes($product->nama)); ?>', <?php echo e($product->harga_tebus_murah); ?>, <?php echo e($product->stok); ?>)"
+                                                            title="Tambah ke pesanan"
+                                                            id="tebus-btn-<?php echo e($product->id); ?>">
+                                                        <i class="bi bi-plus-circle"></i> TAMBAH
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="p-3 bg-light border-top">
+                                <div class="text-center">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle"></i> 
+                                        Produk di atas dapat dibeli dengan harga tebus murah karena total belanja Anda sudah mencapai syarat minimum.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -642,6 +758,7 @@
             alertContainer.appendChild(alertDiv);
             setTimeout(() => { alertDiv.remove(); }, 5000);
         }
+
         // Update quantity function for cart items
         function updateQty(orderId, newQty) {
             if (newQty < 1) return;
@@ -688,6 +805,78 @@
                 if (plusBtn) plusBtn.disabled = false;
             });
         } 
+
+        // Function to add tebus murah product to cart - PERBAIKAN DENGAN DEBUGGING
+        function addTebusMusahToCart(productId, productName, tebusMusahPrice, stock) {
+            console.log('=== DEBUGGING TEBUS MURAH ===');
+            console.log('Product ID:', productId);
+            console.log('Product Name:', productName);
+            console.log('Tebus Murah Price:', tebusMusahPrice);
+            console.log('Stock:', stock);
+            console.log('No Nota:', '<?php echo e($no_nota); ?>');
+
+            if (stock <= 0) {
+                showAlert('warning', '⚠️ Stok produk habis!');
+                return;
+            }
+
+            const button = document.getElementById(`tebus-btn-${productId}`);
+            if (!button) {
+                console.error('Button not found for product ID:', productId);
+                showAlert('danger', '❌ Button tidak ditemukan!');
+                return;
+            }
+
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-hourglass-split"></i> Menambah...';
+            button.disabled = true;
+
+            const formData = new FormData();
+            formData.append('no_nota', '<?php echo e($no_nota); ?>');
+            formData.append('good_id', productId);
+            formData.append('qty', 1); // Default quantity 1
+            formData.append('subtotal', tebusMusahPrice); // Use tebus murah price
+            formData.append('is_tebus_murah', 'true'); // PENTING: Flag tebus murah
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+            console.log('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
+            fetch('/dashboard/cashier/storeorder', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(responseText => {
+                console.log('Response text:', responseText);
+                
+                // Check if response contains success indicators
+                if (responseText.includes('success') || responseText.includes('berhasil')) {
+                    showAlert('success', `✅ "${productName}" berhasil ditambahkan dengan harga tebus murah!`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error('Response tidak mengindikasikan sukses');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', '❌ Terjadi kesalahan: ' + error.message);
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
 
         // --- Event Listeners ---
         document.getElementById('manual-form').addEventListener('submit', function (e) {
