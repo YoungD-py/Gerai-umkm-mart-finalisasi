@@ -155,6 +155,9 @@ class CashierController extends Controller
     public function storeorder(Request $request)
     {
         try {
+            // Log semua data request untuk debugging
+            Log::info('Store order request received:', $request->all());
+
             $request->validate([
                 'no_nota' => 'required',
                 'good_id' => 'required|exists:goods,id',
@@ -163,6 +166,7 @@ class CashierController extends Controller
             ]);
 
             $barang = Good::findOrFail($request->good_id);
+            Log::info('Product found:', ['id' => $barang->id, 'name' => $barang->nama, 'stock' => $barang->stok]);
 
             // Check if product already exists in cart
             $existingOrder = Order::where('no_nota', $request->no_nota)
@@ -170,32 +174,56 @@ class CashierController extends Controller
                                   ->first();
 
             if ($existingOrder) {
+                Log::info('Existing order found, updating quantity');
+                
                 // Update existing order quantity
                 $newQty = $existingOrder->qty + $request->qty;
                 
                 // Check stock
                 if ($barang->stok < $newQty) {
+                    Log::warning('Insufficient stock', ['available' => $barang->stok, 'requested' => $newQty]);
                     return redirect()->back()->with('error', 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok . ', sudah di cart: ' . $existingOrder->qty);
                 }
 
                 // Get current transaction total to determine tebus murah eligibility
                 $currentOrders = Order::where('no_nota', $request->no_nota)->get();
                 $currentTotal = $currentOrders->sum('subtotal');
+                Log::info('Current transaction total:', ['total' => $currentTotal]);
 
                 // Determine price based on quantity and transaction total
                 $unitPrice = $barang->harga; // Default to retail price
 
-                // Check tebus murah first (higher priority)
-                if ($barang->is_tebus_murah_active && 
-                    $currentTotal >= $barang->min_total_tebus_murah && 
-                    $barang->harga_tebus_murah > 0) {
-                    $unitPrice = $barang->harga_tebus_murah;
-                }
-                // Then check wholesale
-                elseif ($barang->is_grosir_active && 
-                        $newQty >= $barang->min_qty_grosir && 
-                        $barang->harga_grosir > 0) {
-                    $unitPrice = $barang->harga_grosir;
+                // PERBAIKAN: Cek apakah ini request dari tebus murah cart
+                $isFromTebusMusahCart = $request->has('is_tebus_murah') && $request->is_tebus_murah == 'true';
+                Log::info('Is from tebus murah cart:', ['is_tebus_murah' => $isFromTebusMusahCart]);
+                
+                if ($isFromTebusMusahCart) {
+                    // Validasi apakah memang memenuhi syarat tebus murah
+                    if ($barang->is_tebus_murah_active && 
+                        $currentTotal >= $barang->min_total_tebus_murah && 
+                        $barang->harga_tebus_murah > 0) {
+                        $unitPrice = $barang->harga_tebus_murah;
+                        Log::info('Using tebus murah price:', ['price' => $unitPrice]);
+                    } else {
+                        Log::warning('Product does not meet tebus murah requirements');
+                        return redirect()->back()->with('error', 'Produk tidak memenuhi syarat tebus murah!');
+                    }
+                } else {
+                    // Logic normal untuk penentuan harga
+                    // Check tebus murah first (higher priority)
+                    if ($barang->is_tebus_murah_active && 
+                        $currentTotal >= $barang->min_total_tebus_murah && 
+                        $barang->harga_tebus_murah > 0) {
+                        $unitPrice = $barang->harga_tebus_murah;
+                        Log::info('Auto applying tebus murah price:', ['price' => $unitPrice]);
+                    }
+                    // Then check wholesale
+                    elseif ($barang->is_grosir_active && 
+                            $newQty >= $barang->min_qty_grosir && 
+                            $barang->harga_grosir > 0) {
+                        $unitPrice = $barang->harga_grosir;
+                        Log::info('Using wholesale price:', ['price' => $unitPrice]);
+                    }
                 }
 
                 $newSubtotal = $unitPrice * $newQty;
@@ -207,39 +235,69 @@ class CashierController extends Controller
                     'price' => $unitPrice,
                 ]);
 
+                Log::info('Order updated successfully:', ['order_id' => $existingOrder->id, 'new_qty' => $newQty, 'new_subtotal' => $newSubtotal]);
+
+                $successMessage = $isFromTebusMusahCart ? 
+                    'Produk berhasil ditambahkan dengan harga tebus murah! Total: ' . $newQty :
+                    'Jumlah produk berhasil ditambahkan! Total: ' . $newQty;
+
                 return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
-                                    ->with('success', 'Jumlah produk berhasil ditambahkan! Total: ' . $newQty);
+                                    ->with('success', $successMessage);
             } else {
+                Log::info('Creating new order');
+                
                 // Check stock for new order
                 if ($barang->stok < $request->qty) {
+                    Log::warning('Insufficient stock for new order', ['available' => $barang->stok, 'requested' => $request->qty]);
                     return redirect()->back()->with('error', 'Stok tidak mencukupi! Stok tersedia: ' . $barang->stok);
                 }
 
                 // Get current transaction total to determine tebus murah eligibility
                 $currentOrders = Order::where('no_nota', $request->no_nota)->get();
                 $currentTotal = $currentOrders->sum('subtotal');
+                Log::info('Current transaction total for new order:', ['total' => $currentTotal]);
 
                 // Determine price based on quantity and transaction total
                 $qty = $request->qty;
                 $unitPrice = $barang->harga; // Default to retail price
 
-                // Check tebus murah first (higher priority)
-                if ($barang->is_tebus_murah_active && 
-                    $currentTotal >= $barang->min_total_tebus_murah && 
-                    $barang->harga_tebus_murah > 0) {
-                    $unitPrice = $barang->harga_tebus_murah;
-                }
-                // Then check wholesale
-                elseif ($barang->is_grosir_active && 
-                        $qty >= $barang->min_qty_grosir && 
-                        $barang->harga_grosir > 0) {
-                    $unitPrice = $barang->harga_grosir;
+                // PERBAIKAN: Cek apakah ini request dari tebus murah cart
+                $isFromTebusMusahCart = $request->has('is_tebus_murah') && $request->is_tebus_murah == 'true';
+                Log::info('Is from tebus murah cart (new order):', ['is_tebus_murah' => $isFromTebusMusahCart]);
+                
+                if ($isFromTebusMusahCart) {
+                    // Validasi apakah memang memenuhi syarat tebus murah
+                    if ($barang->is_tebus_murah_active && 
+                        $currentTotal >= $barang->min_total_tebus_murah && 
+                        $barang->harga_tebus_murah > 0) {
+                        $unitPrice = $barang->harga_tebus_murah;
+                        Log::info('Using tebus murah price for new order:', ['price' => $unitPrice]);
+                    } else {
+                        Log::warning('Product does not meet tebus murah requirements for new order');
+                        return redirect()->back()->with('error', 'Produk tidak memenuhi syarat tebus murah!');
+                    }
+                } else {
+                    // Logic normal untuk penentuan harga
+                    // Check tebus murah first (higher priority)
+                    if ($barang->is_tebus_murah_active && 
+                        $currentTotal >= $barang->min_total_tebus_murah && 
+                        $barang->harga_tebus_murah > 0) {
+                        $unitPrice = $barang->harga_tebus_murah;
+                        Log::info('Auto applying tebus murah price for new order:', ['price' => $unitPrice]);
+                    }
+                    // Then check wholesale
+                    elseif ($barang->is_grosir_active && 
+                            $qty >= $barang->min_qty_grosir && 
+                            $barang->harga_grosir > 0) {
+                        $unitPrice = $barang->harga_grosir;
+                        Log::info('Using wholesale price for new order:', ['price' => $unitPrice]);
+                    }
                 }
 
                 $subtotal = $unitPrice * $qty;
 
                 // Create new order
-                Order::create([
+                $newOrder = Order::create([
                     'no_nota' => $request->no_nota,
                     'good_id' => $request->good_id,
                     'qty' => $qty,
@@ -247,11 +305,18 @@ class CashierController extends Controller
                     'price' => $unitPrice,
                 ]);
 
+                Log::info('New order created successfully:', ['order_id' => $newOrder->id, 'qty' => $qty, 'subtotal' => $subtotal]);
+
+                $successMessage = $isFromTebusMusahCart ? 
+                    'Produk berhasil ditambahkan dengan harga tebus murah!' :
+                    'Pesanan berhasil ditambahkan!';
+
                 return redirect('/dashboard/cashier/createorder?no_nota=' . $request->no_nota)
-                                    ->with('success', 'Pesanan berhasil ditambahkan!');
+                                    ->with('success', $successMessage);
             }
 
         } catch (\Exception $e) {
+            Log::error('Error in storeorder:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
