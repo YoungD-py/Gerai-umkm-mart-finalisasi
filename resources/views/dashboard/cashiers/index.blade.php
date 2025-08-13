@@ -235,7 +235,7 @@
     <div class="container-fluid py-4">
         <div class="page-title">
             <h1><i class="bi bi-cash-register"></i> SISTEM KASIR</h1>
-            <p>Lakukan transaksi penjualan dan lihat riwayat transaksi hari ini</p>
+            <p>Lakukan transaksi penjualan dan lihat riwayat transaksi</p>
         </div>
 
         @if (session()->has('success'))
@@ -251,7 +251,7 @@
                 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                     <h3 class="cashier-card-title mb-2 mb-md-0">
                         <i class="bi bi-receipt"></i>
-                        Transaksi Hari Ini
+                        Riwayat Tansaksi
                     </h3>
                     <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto mt-2 mt-md-0">
                         <i class="bi bi-plus-circle"></i>
