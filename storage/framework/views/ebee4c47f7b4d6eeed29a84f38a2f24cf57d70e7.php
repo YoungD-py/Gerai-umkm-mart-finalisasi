@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
    .umkm-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -250,19 +248,21 @@
         <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
+
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
@@ -272,15 +272,15 @@
                     Data Return Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    {{-- [ACUAN CODE 2] Form bulk delete terpisah, tidak bersarang --}}
-                    <form id="bulk-delete-form" action="{{ route('returns.bulkDelete') }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
+                    
+                    <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST" style="display: inline;">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                             <i class="bi bi-trash-fill"></i> Hapus Terpilih
                         </button>
                     </form>
-                    <a href="{{ route('returns.create') }}" class="btn btn-umkm btn-umkm-sm">
+                    <a href="<?php echo e(route('returns.create')); ?>" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Return
                     </a>
@@ -290,7 +290,7 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                <form action="{{ route('returns.index') }}" method="GET">
+                <form action="<?php echo e(route('returns.index')); ?>" method="GET">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
@@ -298,7 +298,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -306,17 +306,17 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $returns->total() }} data return</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
 
-            {{-- [ACUAN CODE 2] Form tidak membungkus tabel --}}
+            
             <div class="table-responsive">
                 <table class="table table-umkm">
-                    {{-- [PENGGABUNGAN] Menggunakan header tabel dari CODE 1 + Keterangan --}}
+                    
                     <thead>
                         <tr>
                             <th style="width: 3%; text-align: center;">
@@ -328,60 +328,64 @@
                             <th style="width: 20%;">Nama Barang</th>
                             <th style="width: 7%;">Qty</th>
                             <th style="width: 15%;">Alasan</th>
-                            <th style="width: 15%;">Keterangan</th> {{-- Kolom tambahan yang diminta --}}
+                            <th style="width: 15%;">Keterangan</th> 
                             <th style="width: 10%;">Administrator</th>
                             <th style="width: 5%; text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($returns as $key => $return)
+                        <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            {{-- [PENGGABUNGAN] Checkbox dari CODE 2 (tanpa name) dan data kolom dari CODE 1 --}}
+                            
                             <td class="text-center">
-                                <input class="form-check-input item-checkbox" type="checkbox" value="{{ $return->id }}">
+                                <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($return->id); ?>">
                             </td>
-                            <td><strong>{{ $returns->firstItem() + $key }}</strong></td>
+                            <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                             <td>
                                 <i class="bi bi-calendar-x text-danger me-1"></i>
-                                {{-- Ganti 'tgl_return' sesuai dengan nama field di database Anda --}}
-                                {{ \Carbon\Carbon::parse($return->tgl_return ?? $return->tanggal_retur)->format('d/m/Y') }}
+                                
+                                <?php echo e(\Carbon\Carbon::parse($return->tgl_return ?? $return->tanggal_retur)->format('d/m/Y')); ?>
+
                             </td>
                             <td>
                                 <i class="bi bi-building text-info me-1"></i>
-                                {{-- Pastikan relasi ini ada: $return->good->category->nama --}}
-                                {{ $return->good->category->nama ?? 'N/A' }}
+                                
+                                <?php echo e($return->good->category->nama ?? 'N/A'); ?>
+
                             </td>
                             <td>
                                 <i class="bi bi-box text-primary me-2"></i>
-                                {{-- Ganti 'nama' atau 'nama_barang' sesuai field di database Anda --}}
-                                {{ $return->good->nama ?? $return->good->nama_barang }}
+                                
+                                <?php echo e($return->good->nama ?? $return->good->nama_barang); ?>
+
                             </td>
                             <td>
-                                <span class="badge bg-secondary">{{ $return->qty_return }} unit</span>
+                                <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
                             </td>
-                            <td>{{ $return->alasan }}</td>
-                            <td>{{ $return->keterangan }}</td> {{-- Menampilkan data keterangan --}}
+                            <td><?php echo e($return->alasan); ?></td>
+                            <td><?php echo e($return->keterangan); ?></td> 
                             <td>
                                 <i class="bi bi-person-check text-success me-1"></i>
-                                {{ $return->user->nama }}
+                                <?php echo e($return->user->nama); ?>
+
                             </td>
                             <td class="text-center">
-                                {{-- [ACUAN CODE 2] Dropdown dan form hapus satuan dengan logika yang benar --}}
+                                
                                 <div class="dropdown action-dropdown">
                                     <button class="btn btn-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical fs-5"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('returns.edit', $return->id) }}">
+                                            <a class="dropdown-item" href="<?php echo e(route('returns.edit', $return->id)); ?>">
                                                 <i class="bi bi-pencil-square text-warning"></i> Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="{{ route('returns.destroy', $return->id) }}" method="post" class="dropdown-item-form">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $return->good->nama ?? $return->good->nama_barang }}')">
+                                            <form action="<?php echo e(route('returns.destroy', $return->id)); ?>" method="post" class="dropdown-item-form">
+                                                <?php echo method_field('delete'); ?>
+                                                <?php echo csrf_field(); ?>
+                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($return->good->nama ?? $return->good->nama_barang); ?>')">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </form>
@@ -390,33 +394,34 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
-                            {{-- [PENGGABUNGAN] Colspan disesuaikan dengan jumlah kolom baru (10) --}}
+                            
                             <td colspan="10" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-inbox display-4 d-block mb-3"></i>
                                     <h5>Belum ada data return</h5>
                                     <p>Silakan tambah data return baru untuk memulai</p>
-                                    <a href="{{ route('returns.create') }}" class="btn-umkm">
+                                    <a href="<?php echo e(route('returns.create')); ?>" class="btn-umkm">
                                         <i class="bi bi-plus-circle"></i>
                                         Tambah Data Return
                                     </a>
                                 </div>
                             </td>
                         </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            @if($returns->hasPages())
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $returns->appends(request()->query())->links() }}
+                    <?php echo e($returns->appends(request()->query())->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -458,7 +463,7 @@
 </div>
 
 
-{{-- [ACUAN CODE 2] SCRIPT YANG SUDAH DIPERBAIKI DAN ANDAL UNTUK SEMUA OPERASI DELETE --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT UNTUK HAPUS SATUAN ---
@@ -552,4 +557,6 @@
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>

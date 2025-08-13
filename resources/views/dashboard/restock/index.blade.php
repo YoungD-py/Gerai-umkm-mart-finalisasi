@@ -158,6 +158,42 @@
             font-size: 2.5rem;
         }
     }
+
+    /* Pagination yang lebih jelas */
+    .pagination-wrapper .pagination {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .pagination-wrapper .page-link {
+        border: none;
+        padding: 12px 16px;
+        color: #28a745; /* Hijau tegas */
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .pagination-wrapper .page-link:hover {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        transform: translateY(-1px);
+    }
+    .pagination-wrapper .page-item.active .page-link {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border-color: #28a745;
+        color: white;
+        font-weight: 700;
+    }
+    .pagination-wrapper .page-item .page-link[aria-label="Previous"],
+    .pagination-wrapper .page-item .page-link[aria-label="Next"] {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .pagination-wrapper .page-item.disabled .page-link {
+        color: #a5a5a5;
+        background: transparent;
+    }
 </style>
 
 <div class="container-fluid py-4">

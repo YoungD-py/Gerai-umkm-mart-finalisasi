@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
    /* --- CSS Styles copied from other dashboards for consistency --- */
    .umkm-card {
@@ -235,41 +235,30 @@
        color: #c82333 !important;
    }
 
-    /* Pagination yang lebih jelas */
-    .pagination-wrapper .pagination {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .pagination-wrapper .page-link {
-        border: none;
-        padding: 12px 16px;
-        color: #28a745; /* Hijau tegas */
-        font-weight: 700;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-    .pagination-wrapper .page-link:hover {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        transform: translateY(-1px);
-    }
-    .pagination-wrapper .page-item.active .page-link {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        border-color: #28a745;
-        color: white;
-        font-weight: 700;
-    }
-    .pagination-wrapper .page-item .page-link[aria-label="Previous"],
-    .pagination-wrapper .page-item .page-link[aria-label="Next"] {
-        color: #28a745;
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-    .pagination-wrapper .page-item.disabled .page-link {
-        color: #a5a5a5;
-        background: transparent;
-    }
+   .pagination-wrapper .pagination {
+       border-radius: 15px;
+       overflow: hidden;
+       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+   }
+
+   .pagination-wrapper .page-link {
+       border: none;
+       padding: 12px 16px;
+       color: #28a745;
+       font-weight: 600;
+       transition: all 0.3s ease;
+   }
+
+   .pagination-wrapper .page-link:hover {
+       background: linear-gradient(135deg, #28a745, #20c997);
+       color: white;
+       transform: translateY(-1px);
+   }
+
+   .pagination-wrapper .page-item.active .page-link {
+       background: linear-gradient(135deg, #28a745, #20c997);
+       border-color: #28a745;
+   }
 
    .mitra-info {
        font-size: 0.85rem;
@@ -299,33 +288,35 @@
        <p>Kelola data mitra binaan GERAI UMKM MART</p>
    </div>
 
-   @if (session()->has('success'))
+   <?php if(session()->has('success')): ?>
        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-           <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-       </div>
-   @endif
+           <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-   @if (session()->has('error'))
-       <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-           <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
        </div>
-   @endif
+   <?php endif; ?>
+
+   <?php if(session()->has('error')): ?>
+       <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+           <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+       </div>
+   <?php endif; ?>
 
    <div class="umkm-card">
        <div class="umkm-card-header">
-           {{-- [REVISI] Menggunakan layout responsif yang sama dengan halaman Data Barang --}}
+           
            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                <h3 class="umkm-card-title mb-2 mb-md-0">
                    <i class="bi bi-building"></i>
                    Data Mitra Binaan
                </h3>
                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                   {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
-                   <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST" style="display: inline;">
-                       @csrf
-                       @method('DELETE')
+                   
+                   <form id="bulk-delete-form" action="<?php echo e(route('categories.bulkDelete')); ?>" method="POST" style="display: inline;">
+                       <?php echo csrf_field(); ?>
+                       <?php echo method_field('DELETE'); ?>
                        <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                            <i class="bi bi-trash-fill"></i> Hapus Terpilih
                        </button>
@@ -349,7 +340,7 @@
                            </label>
                            <div class="input-group">
                                <input type="text" class="form-control" placeholder="Masukkan nama mitra binaan..."
-                                      name="search" value="{{ request('search') }}">
+                                      name="search" value="<?php echo e(request('search')); ?>">
                                <button class="btn btn-umkm" type="submit">
                                    <i class="bi bi-search"></i>
                                </button>
@@ -357,14 +348,14 @@
                        </div>
                        <div class="col-12 col-md-4">
                            <div class="text-white text-md-end">
-                               <small><i class="bi bi-info-circle me-1"></i>Total: {{ $categories->total() }} mitra binaan</small>
+                               <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($categories->total()); ?> mitra binaan</small>
                            </div>
                        </div>
                    </div>
                </form>
            </div>
 
-           {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
+           
            <div class="table-responsive">
                <table class="table table-umkm">
                    <thead>
@@ -379,53 +370,54 @@
                        </tr>
                    </thead>
                    <tbody>
-                       @forelse ($categories as $key => $category)
+                       <?php $__empty_1 = true; $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                        <tr>
                            <td class="text-center">
-                               <input class="form-check-input item-checkbox" type="checkbox" value="{{ $category->id }}">
+                               <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($category->id); ?>">
                            </td>
-                           <td><strong>{{ $categories->firstItem() + $key }}</strong></td>
+                           <td><strong><?php echo e($categories->firstItem() + $key); ?></strong></td>
                            <td>
                                <div class="d-flex align-items-start flex-column">
                                    <div class="d-flex align-items-center mb-1">
                                        <i class="bi bi-building text-success me-2"></i>
-                                       <strong>{{ $category->nama }}</strong>
+                                       <strong><?php echo e($category->nama); ?></strong>
                                    </div>
-                                   @if($category->alamat)
+                                   <?php if($category->alamat): ?>
                                    <div class="mitra-info">
                                        <i class="bi bi-geo-alt text-muted"></i>
-                                       {{ Str::limit($category->alamat, 50) }}
+                                       <?php echo e(Str::limit($category->alamat, 50)); ?>
+
                                    </div>
-                                   @endif
+                                   <?php endif; ?>
                                </div>
                            </td>
                            <td>
-                               @if($category->nomor_penanggung_jawab)
+                               <?php if($category->nomor_penanggung_jawab): ?>
                                    <div class="d-flex align-items-center">
                                        <i class="bi bi-telephone text-primary me-2"></i>
-                                       <span class="fw-medium">{{ $category->nomor_penanggung_jawab }}</span>
+                                       <span class="fw-medium"><?php echo e($category->nomor_penanggung_jawab); ?></span>
                                    </div>
-                               @else
+                               <?php else: ?>
                                    <span class="text-muted fst-italic">-</span>
-                               @endif
+                               <?php endif; ?>
                            </td>
                            <td class="text-center">
                                <div class="dropdown action-dropdown">
-                                   <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$category->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                   <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($category->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                        <i class="bi bi-three-dots-vertical fs-5"></i>
                                    </button>
-                                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$category->id}}">
+                                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($category->id); ?>">
                                        <li>
-                                           <a class="dropdown-item" href="/dashboard/categories/{{ $category->id }}/edit">
+                                           <a class="dropdown-item" href="/dashboard/categories/<?php echo e($category->id); ?>/edit">
                                                <i class="bi bi-pencil-square text-warning"></i> Edit
                                            </a>
                                        </li>
                                        <li>
-                                           {{-- Form delete satuan, sekarang tidak bersarang --}}
-                                           <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form">
-                                               @method('delete')
-                                               @csrf
-                                               <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $category->nama }}')">
+                                           
+                                           <form action="/dashboard/categories/<?php echo e($category->id); ?>" method="post" class="dropdown-item-form">
+                                               <?php echo method_field('delete'); ?>
+                                               <?php echo csrf_field(); ?>
+                                               <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($category->nama); ?>')">
                                                    <i class="bi bi-trash"></i> Hapus
                                                </button>
                                            </form>
@@ -434,7 +426,7 @@
                                </div>
                            </td>
                        </tr>
-                       @empty
+                       <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                        <tr>
                            <td colspan="5" class="text-center py-5">
                                <div class="text-muted">
@@ -448,19 +440,20 @@
                                </div>
                            </td>
                        </tr>
-                       @endforelse
+                       <?php endif; ?>
                    </tbody>
                </table>
            </div>
 
            <!-- Pagination -->
-           @if($categories->hasPages())
+           <?php if($categories->hasPages()): ?>
            <div class="d-flex justify-content-center mt-4">
                <div class="pagination-wrapper">
-                   {{ $categories->links() }}
+                   <?php echo e($categories->links()); ?>
+
                </div>
            </div>
-           @endif
+           <?php endif; ?>
        </div>
    </div>
 </div>
@@ -594,4 +587,6 @@
         updateBulkDeleteButtonState();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/categories/index.blade.php ENDPATH**/ ?>
