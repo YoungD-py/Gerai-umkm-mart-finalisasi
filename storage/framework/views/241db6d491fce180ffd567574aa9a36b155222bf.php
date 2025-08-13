@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('container'); ?>
 <style>
     /* --- [TETAP] Semua style yang sudah ada dipertahankan --- */
@@ -158,6 +156,42 @@
         font-weight: 600;
         margin-left: 5px;
     }
+        /* Pagination yang lebih jelas */
+    .pagination-wrapper .pagination {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .pagination-wrapper .page-link {
+        border: none;
+        padding: 12px 16px;
+        color: #28a745; /* Hijau tegas */
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .pagination-wrapper .page-link:hover {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        transform: translateY(-1px);
+    }
+    .pagination-wrapper .page-item.active .page-link {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border-color: #28a745;
+        color: white;
+        font-weight: 700;
+    }
+    .pagination-wrapper .page-item .page-link[aria-label="Previous"],
+    .pagination-wrapper .page-item .page-link[aria-label="Next"] {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .pagination-wrapper .page-item.disabled .page-link {
+        color: #a5a5a5;
+        background: transparent;
+    }
+
     .expired-danger { background: #dc3545; color: white; animation: pulse 1s infinite; }
     .expired-warning { background: #ffc107; color: #000; }
     .expired-success { background: #28a745; color: white; }
@@ -430,7 +464,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <?php if($goods->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                  <?php echo e($goods->appends(request()->query())->links()); ?>
@@ -585,7 +619,7 @@
                 if (newSortOrder !== 'none') {
                     url.searchParams.set(`sort_${sortParam}`, newSortOrder);
                 }
-                
+
                 url.searchParams.delete('page');
                 window.location.href = url.toString();
             });
@@ -600,4 +634,5 @@
     });
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/goods/index.blade.php ENDPATH**/ ?>
