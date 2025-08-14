@@ -21,11 +21,45 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        // [MODIFIED] Add search functionality by 'no_nota'
-        $transactions = Transaction::latest();
+        $sortStatus = request('sort_status');
 
+        // Start with base query without ordering
+        $transactions = Transaction::query();
+
+        // Search by transaction number
         if(request('search')) {
             $transactions->where('no_nota', 'like', '%' . request('search') . '%');
+        }
+
+        // Search by date range
+        if(request('start_date')) {
+            $transactions->whereDate('created_at', '>=', request('start_date'));
+        }
+
+        if(request('end_date')) {
+            $transactions->whereDate('created_at', '<=', request('end_date'));
+        }
+
+        // Apply sorting based on status sort parameter
+        if($sortStatus === 'failed_first') {
+            // Show failed/gagal status first, then successful/lunas
+            $transactions->orderByRaw("CASE
+                WHEN LOWER(TRIM(status)) IN ('gagal', 'belum bayar') THEN 1
+                WHEN LOWER(TRIM(status)) = 'lunas' THEN 2
+                ELSE 3
+            END ASC")
+            ->orderBy('created_at', 'desc'); // Secondary sort by date
+        } elseif($sortStatus === 'success_first') {
+            // Show successful/lunas status first, then failed/gagal
+            $transactions->orderByRaw("CASE
+                WHEN LOWER(TRIM(status)) = 'lunas' THEN 1
+                WHEN LOWER(TRIM(status)) IN ('gagal', 'belum bayar') THEN 2
+                ELSE 3
+            END ASC")
+            ->orderBy('created_at', 'desc'); // Secondary sort by date
+        } else {
+            // Default: latest transactions first (reset state)
+            $transactions->latest();
         }
 
         return view('dashboard.transactions.index', [
@@ -132,10 +166,10 @@ class TransactionController extends Controller
 
         // Delete related orders first
         Order::where('no_nota', $transaction->no_nota)->delete();
-        
+
         // Delete transaction
         Transaction::destroy($transaction->id);
-        
+
         return redirect('/dashboard/transactions')->with('success', 'Transaksi telah dihapus dan stok barang telah dikembalikan.');
     }
 
@@ -153,7 +187,7 @@ class TransactionController extends Controller
         ]);
 
         $selectedIds = $request->input('selected_ids');
-        
+
         if (empty($selectedIds)) {
             return redirect('/dashboard/transactions')->with('error', 'Tidak ada transaksi yang dipilih untuk dihapus.');
         }
@@ -174,7 +208,7 @@ class TransactionController extends Controller
         if (!empty($noNotas)) {
             Order::whereIn('no_nota', $noNotas)->delete();
         }
-        
+
         // Hapus semua transaksi yang dipilih
         $deletedCount = Transaction::destroy($selectedIds);
 
@@ -201,9 +235,9 @@ class TransactionController extends Controller
     private function handleStockUpdate($no_nota, $oldStatus, $newStatus)
     {
         Log::info("HandleStockUpdate called - No Nota: {$no_nota}, Old: {$oldStatus}, New: {$newStatus}");
-        
+
         $orders = Order::where('no_nota', $no_nota)->get();
-        
+
         if ($orders->isEmpty()) {
             Log::info("No orders found for no_nota: {$no_nota}");
             return;
@@ -212,17 +246,17 @@ class TransactionController extends Controller
         // Jika berubah dari status non-lunas ke lunas (stok harus berkurang)
         if ($oldStatus !== 'lunas' && $newStatus === 'lunas') {
             Log::info("Reducing stock - changing from {$oldStatus} to {$newStatus}");
-            
+
             foreach ($orders as $order) {
                 $good = Good::find($order->good_id);
                 if ($good) {
                     $oldStock = $good->stok;
-                    
+
                     if ($good->stok >= $order->qty) {
                         // Kurangi stok
                         $newStock = $good->stok - $order->qty;
                         $good->update(['stok' => $newStock]);
-                        
+
                         Log::info("Stock reduced for good ID {$good->id}: {$oldStock} -> {$newStock} (qty: {$order->qty})");
                     } else {
                         Log::warning("Insufficient stock for good ID {$good->id}. Available: {$good->stok}, Required: {$order->qty}");
@@ -233,16 +267,16 @@ class TransactionController extends Controller
         // Jika berubah dari lunas ke non-lunas (stok harus dikembalikan)
         elseif ($oldStatus === 'lunas' && $newStatus !== 'lunas') {
             Log::info("Restoring stock - changing from {$oldStatus} to {$newStatus}");
-            
+
             foreach ($orders as $order) {
                 $good = Good::find($order->good_id);
                 if ($good) {
                     $oldStock = $good->stok;
-                    
+
                     // Kembalikan stok
                     $newStock = $good->stok + $order->qty;
                     $good->update(['stok' => $newStock]);
-                    
+
                     Log::info("Stock restored for good ID {$good->id}: {$oldStock} -> {$newStock} (qty: {$order->qty})");
                 }
             }
@@ -257,16 +291,16 @@ class TransactionController extends Controller
     private function restoreStock($no_nota)
     {
         Log::info("Restoring stock for deleted transaction: {$no_nota}");
-        
+
         $orders = Order::where('no_nota', $no_nota)->get();
-        
+
         foreach ($orders as $order) {
             $good = Good::find($order->good_id);
             if ($good) {
                 $oldStock = $good->stok;
                 $newStock = $good->stok + $order->qty;
                 $good->update(['stok' => $newStock]);
-                
+
                 Log::info("Stock restored for deleted transaction - Good ID {$good->id}: {$oldStock} -> {$newStock}");
             }
         }

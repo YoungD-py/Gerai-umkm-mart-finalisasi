@@ -276,22 +276,66 @@
             <!-- Search Section -->
             <div class="search-section">
                 <form action="/dashboard/transactions" method="GET">
-                    <div class="row align-items-center">
-                        <div class="col-12 col-md-8 mb-3 mb-md-0">
+                    <div class="row align-items-end">
+                        <!-- Enhanced search form with date inputs and reset button -->
+                        <div class="col-12 col-lg-4 mb-3">
                             <label class="form-label text-white fw-bold">
                                 <i class="bi bi-search me-2"></i>Cari Berdasarkan Nomor Nota
                             </label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nomor nota..."
-                                       name="search" value="{{ request('search') }}">
-                                <button class="btn btn-umkm" type="submit">
+                            <input type="text" class="form-control" placeholder="Masukkan nomor nota..."
+                                   name="search" value="{{ request('search') }}">
+                        </div>
+                        <div class="col-12 col-lg-3 mb-3">
+                            <label class="form-label text-white fw-bold">
+                                <i class="bi bi-calendar me-2"></i>Tanggal Mulai
+                            </label>
+                            <input type="date" class="form-control" name="start_date" value="{{ request('start_date') }}">
+                        </div>
+                        <div class="col-12 col-lg-3 mb-3">
+                            <label class="form-label text-white fw-bold">
+                                <i class="bi bi-calendar-check me-2"></i>Tanggal Akhir
+                            </label>
+                            <input type="date" class="form-control" name="end_date" value="{{ request('end_date') }}">
+                        </div>
+                        <div class="col-12 col-lg-2 mb-3">
+                            <div class="d-flex gap-2 flex-column flex-sm-row">
+                                <!-- Reduced button padding and font size to match input fields -->
+                                <button class="btn btn-umkm flex-fill" type="submit" style="padding: 12px 16px; font-size: 0.9rem;">
                                     <i class="bi bi-search"></i>
+                                    <span class="d-none d-sm-inline">CARI</span>
                                 </button>
+                                <!-- Reduced reset button padding and font size to match input fields -->
+                                <a href="/dashboard/transactions" class="btn btn-secondary text-white flex-fill" style="border-radius: 15px; padding: 12px 16px; font-weight: 600; font-size: 0.9rem;">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                    <span class="d-none d-sm-inline">Reset</span>
+                                </a>
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $transactions->total() }} transaksi</small>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="text-white">
+                                <small>
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Total: {{ $transactions->total() }} transaksi
+                                    @if(request('search') || request('start_date') || request('end_date'))
+                                        | Filter aktif:
+                                        @if(request('search'))
+                                            Nota "{{ request('search') }}"
+                                        @endif
+                                        @if(request('start_date') || request('end_date'))
+                                            @if(request('search')) • @endif
+                                            Tanggal
+                                            @if(request('start_date') && request('end_date'))
+                                                {{ \Carbon\Carbon::parse(request('start_date'))->format('d/m/Y') }} - {{ \Carbon\Carbon::parse(request('end_date'))->format('d/m/Y') }}
+                                            @elseif(request('start_date'))
+                                                dari {{ \Carbon\Carbon::parse(request('start_date'))->format('d/m/Y') }}
+                                            @elseif(request('end_date'))
+                                                sampai {{ \Carbon\Carbon::parse(request('end_date'))->format('d/m/Y') }}
+                                            @endif
+                                        @endif
+                                    @endif
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -315,7 +359,16 @@
                                 <th>Waktu</th>
                                 <th>Petugas</th>
                                 <th>Metode Bayar</th>
-                                <th>Status</th>
+                                <th>
+                                    {{-- Updated status sorting to use toggle button like goods page --}}
+                                    Status
+                                    <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
+                                        data-sort-param="status"
+                                        data-sort-order="{{ request('sort_status', 'none') }}"
+                                        title="Urutkan berdasarkan status">
+                                        <i class="bi {{ request('sort_status') == 'failed_first' ? 'bi-sort-up text-warning' : (request('sort_status') == 'success_first' ? 'bi-sort-down text-success' : 'bi-arrow-down-up') }}"></i>
+                                    </button>
+                                </th>
                                 <th>Total</th>
                                 <th>Bayar</th>
                                 <th>Kembalian</th>
@@ -547,6 +600,36 @@
                 bulkDeleteForm.submit();
             });
         }
+
+        const sortToggles = document.querySelectorAll('.sort-toggle');
+        sortToggles.forEach(toggleButton => {
+            toggleButton.addEventListener('click', function() {
+                const sortParam = this.dataset.sortParam;
+                let currentSortOrder = this.dataset.sortOrder;
+                let newSortOrder;
+
+                if (sortParam === 'status') {
+                    if (currentSortOrder === 'none') {
+                        newSortOrder = 'failed_first';
+                    } else if (currentSortOrder === 'failed_first') {
+                        newSortOrder = 'success_first';
+                    } else {
+                        newSortOrder = 'none';
+                    }
+
+                    const url = new URL(window.location.href);
+
+                    if (newSortOrder !== 'none') {
+                        url.searchParams.set('sort_status', newSortOrder);
+                    } else {
+                        url.searchParams.delete('sort_status');
+                    }
+
+                    url.searchParams.delete('page');
+                    window.location.href = url.toString();
+                }
+            });
+        });
 
         // --- [PERBAIKAN UTAMA] Handle download nota untuk baris pertama dengan link langsung ---
         const directDownloadLinks = document.querySelectorAll('.download-nota-direct');
