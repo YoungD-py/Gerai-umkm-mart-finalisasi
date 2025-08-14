@@ -280,7 +280,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div id="manual-wholesale-info" class="mt-3 p-3 bg-warning bg-opacity-10 rounded border-start border-warning border-3" style="display: none;">
                                 <h6 class="text-warning mb-2"><i class="bi bi-cart-plus"></i> Harga Grosir Aktif!</h6>
                                 <div class="row">
@@ -344,13 +344,18 @@
                                         @foreach($orders as $order)
                                             <tr id="order-row-{{ $order->id }}">
                                                 <td class="py-3 px-3">
-                                                    <div class="fw-semibold">{{ $order->good->nama }}</div>
+                                                    {{-- Added null check for good relationship --}}
+                                                    <div class="fw-semibold">{{ $order->good ? $order->good->nama : 'Produk tidak ditemukan' }}</div>
                                                     <small class="text-muted">@ Rp {{ number_format($order->price, 0, ',', '.') }}</small>
-                                                    @if($order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir)
+                                                    @if($order->good && $order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir)
                                                         <br><small class="text-success fw-bold"><i class="bi bi-cart-plus"></i> Harga Grosir</small>
                                                     @endif
-                                                    @if($order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah)
+                                                    @if($order->good && $order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah)
                                                         <br><small class="text-danger fw-bold"><i class="bi bi-percent"></i> Harga Tebus Murah</small>
+                                                    @endif
+                                                    {{-- Show warning if product is missing --}}
+                                                    @if(!$order->good)
+                                                        <br><small class="text-warning fw-bold"><i class="bi bi-exclamation-triangle"></i> Produk telah dihapus</small>
                                                     @endif
                                                 </td>
                                                 <td class="py-3 text-center">
@@ -368,7 +373,8 @@
                                                     Rp {{ number_format($order->subtotal, 0, ',', '.') }}
                                                 </td>
                                                 <td class="py-3 text-center">
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteOrderItem({{ $order->id }}, '{{ $order->good->nama }}')" title="Hapus item">
+                                                    {{-- Updated delete button to handle missing product names --}}
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteOrderItem({{ $order->id }}, '{{ $order->good ? addslashes($order->good->nama) : 'Produk tidak ditemukan' }}')" title="Hapus item">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
@@ -425,7 +431,7 @@
                 @php
                     $totalTransaction = $orders->sum('subtotal');
                     $tebusMusahProducts = $goods->filter(function ($good) use ($totalTransaction) {
-                        return $good->is_tebus_murah_active && 
+                        return $good->is_tebus_murah_active &&
                                $totalTransaction >= $good->min_total_tebus_murah &&
                                $good->stok > 0;
                     });
@@ -480,8 +486,8 @@
                                                     </small>
                                                 </td>
                                                 <td class="py-3 text-center">
-                                                    <button type="button" 
-                                                            class="btn btn-danger btn-sm fw-bold" 
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-sm fw-bold"
                                                             onclick="addTebusMusahToCart({{ $product->id }}, '{{ addslashes($product->nama) }}', {{ $product->harga_tebus_murah }}, {{ $product->stok }})"
                                                             title="Tambah ke pesanan"
                                                             id="tebus-btn-{{ $product->id }}">
@@ -496,7 +502,7 @@
                             <div class="p-3 bg-light border-top">
                                 <div class="text-center">
                                     <small class="text-muted">
-                                        <i class="bi bi-info-circle"></i> 
+                                        <i class="bi bi-info-circle"></i>
                                         Produk di atas dapat dibeli dengan harga tebus murah karena total belanja sudah mencapai syarat minimum.
                                     </small>
                                 </div>
@@ -522,32 +528,32 @@
         function detectMobileDevice() {
             // Check for touch capability
             const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-            
+
             // Check for camera capability
             const hasCamera = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-            
+
             // Check user agent for mobile indicators
             const userAgent = navigator.userAgent.toLowerCase();
             const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'tablet', 'blackberry', 'windows phone'];
             const isMobileUserAgent = mobileKeywords.some(keyword => userAgent.includes(keyword));
-            
+
             // Device is considered mobile if it has touch AND camera capabilities, OR mobile user agent
             isMobileDevice = (hasTouch && hasCamera) || isMobileUserAgent;
-            
+
             console.log('Mobile detection:', {
                 hasTouch,
                 hasCamera,
                 isMobileUserAgent,
                 isMobileDevice
             });
-            
+
             // Show/hide camera section based on mobile detection
             if (isMobileDevice) {
                 const mobileElements = document.querySelectorAll('.mobile-only');
                 mobileElements.forEach(element => {
                     element.classList.add('show-mobile');
                 });
-                
+
                 // Show camera scan section
                 const cameraScanSection = document.getElementById('camera-scan-section');
                 if (cameraScanSection) {
@@ -571,7 +577,7 @@
                 showAlert('warning', '⚠️ Fitur kamera hanya tersedia di perangkat mobile.');
                 return;
             }
-            
+
             const isSecureContext = window.location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
             if (!isSecureContext) {
                 showAlert('danger', '❌ Akses kamera butuh HTTPS atau localhost.');
@@ -596,15 +602,15 @@
                 }).catch(err => console.error("Gagal stop scanner.", err));
             }
         }
-        
+
         function formatRupiah(number) {
             return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
         }
-        
+
         function processBarcode(barcode) {
             barcode = barcode.trim();
             if (!barcode) return;
-            
+
             fetch(`/dashboard/cashier/search-goods?query=${encodeURIComponent(barcode)}`)
             .then(response => response.json())
             .then(products => {
@@ -618,12 +624,12 @@
                     document.getElementById('product-price').textContent = formatRupiah(productData.harga);
                     document.getElementById('product-stock').textContent = productData.stok + ' pcs';
                     document.getElementById('scan-qty').value = 1;
-                    
+
                     // Perbaikan: Pastikan updateBarcodePrice dipanggil setelah semua data diset
                     setTimeout(() => {
                         updateBarcodePrice();
                     }, 100);
-                    
+
                     showAlert('success', `✅ Produk ditemukan: ${productData.nama}`);
                 } else {
                     document.getElementById('barcode-result').style.display = 'none';
@@ -642,7 +648,7 @@
             const qtyElement = document.getElementById('scan-qty');
             const totalPriceElement = document.getElementById('total-price');
             const priceTypeElement = document.getElementById('price-type');
-            
+
             if (!qtyElement || !totalPriceElement || !priceTypeElement) {
                 console.log('Missing elements');
                 return;
@@ -657,15 +663,15 @@
             console.log('Quantity:', qty);
 
             // Check tebus murah first (higher priority)
-            const isTebusMurahEligible = currentProduct.is_tebus_murah_active && 
-                                       currentTransactionTotal >= currentProduct.min_total_tebus_murah && 
+            const isTebusMurahEligible = currentProduct.is_tebus_murah_active &&
+                                       currentTransactionTotal >= currentProduct.min_total_tebus_murah &&
                                        currentProduct.harga_tebus_murah > 0;
-            
+
             // Check wholesale
-            const isWholesaleEligible = currentProduct.is_grosir_active && 
-                                      qty >= currentProduct.min_qty_grosir && 
+            const isWholesaleEligible = currentProduct.is_grosir_active &&
+                                      qty >= currentProduct.min_qty_grosir &&
                                       currentProduct.harga_grosir > 0;
-            
+
             if (isTebusMurahEligible) {
                 unitPrice = parseFloat(currentProduct.harga_tebus_murah) || unitPrice;
                 priceType = 'Harga Tebus Murah';
@@ -680,11 +686,11 @@
 
             // Update total price
             totalPriceElement.textContent = formatRupiah(totalPrice);
-            
+
             // Update price type
             priceTypeElement.textContent = priceType;
-            priceTypeElement.className = isTebusMurahEligible ? 'small text-danger fw-bold' : 
-                                       isWholesaleEligible ? 'small text-warning fw-bold' : 
+            priceTypeElement.className = isTebusMurahEligible ? 'small text-danger fw-bold' :
+                                       isWholesaleEligible ? 'small text-warning fw-bold' :
                                        'small text-muted';
         }
 
@@ -699,7 +705,7 @@
             tebusMusahInfo.style.display = 'none';
             subtotalInput.value = '';
             manualSubmitBtn.disabled = true;
-            
+
             if (!manualSelectedProduct || !qtyInput.value) return;
 
             const product = manualSelectedProduct;
@@ -797,7 +803,7 @@
                 if (minusBtn) minusBtn.disabled = newQty <= 1;
                 if (plusBtn) plusBtn.disabled = false;
             });
-        } 
+        }
 
         // Function to add tebus murah product to cart - PERBAIKAN DENGAN DEBUGGING
         function addTebusMusahToCart(productId, productName, tebusMusahPrice, stock) {
@@ -844,7 +850,7 @@
             .then(response => {
                 console.log('Response status:', response.status);
                 console.log('Response ok:', response.ok);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -852,7 +858,7 @@
             })
             .then(responseText => {
                 console.log('Response text:', responseText);
-                
+
                 // Check if response contains success indicators
                 if (responseText.includes('success') || responseText.includes('berhasil')) {
                     showAlert('success', `✅ "${productName}" berhasil ditambahkan dengan harga tebus murah!`);
@@ -939,7 +945,7 @@
 
         document.getElementById('barcode-input').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); processBarcode(e.target.value); } });
         document.getElementById('search-barcode').addEventListener('click', () => processBarcode(document.getElementById('barcode-input').value));
-        
+
         const productSearchInput = document.getElementById('product-search-input');
         const searchResultsDiv = document.getElementById('search-results');
         let searchTimeout;
@@ -977,17 +983,17 @@
         });
 
         document.addEventListener('click', e => { if (!productSearchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) { searchResultsDiv.style.display = 'none'; } });
-        
+
         // Only add camera event listeners if mobile device
         document.addEventListener('DOMContentLoaded', () => {
             detectMobileDevice();
-            
+
             if (isMobileDevice) {
                 document.getElementById('start-scan-btn').addEventListener('click', startScanner);
                 document.getElementById('stop-scan-btn').addEventListener('click', stopScanner);
                 window.addEventListener('beforeunload', () => stopScanner());
             }
-            
+
             document.getElementById('barcode-input').focus();
         });
 

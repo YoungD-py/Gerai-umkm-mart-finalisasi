@@ -232,13 +232,15 @@
                             <select class="form-select" id="user_id" disabled>
                                 <option value="">-- Pilih Administrator --</option>
                                 @foreach ($users as $user)
+                                    {{-- Added null check for user nama property --}}
                                     <option value="{{ $user->id }}" {{ (old('user_id', $transaction->user_id) == $user->id) ? 'selected' : '' }}>
-                                        {{ $user->nama }}
+                                        {{ $user->nama ?? 'Nama tidak tersedia' }}
                                     </option>
                                 @endforeach
                             </select>
+                            {{-- Show current user info with null check --}}
                             <small class="text-muted d-block mt-1">
-                                <i class="bi bi-info-circle-fill"></i> Administrator tidak dapat diubah.
+                                <i class="bi bi-info-circle-fill"></i> Administrator saat ini: {{ $transaction->user->nama ?? 'User tidak ditemukan' }}
                             </small>
                         </div>
 

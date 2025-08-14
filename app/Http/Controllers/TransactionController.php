@@ -108,6 +108,17 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
+        $transaction->load('user');
+
+        if (!$transaction) {
+            return redirect('/dashboard/transactions')->with('error', 'Transaksi tidak ditemukan.');
+        }
+
+        if (!$transaction->user) {
+            // If user doesn't exist, we can still show the form but with a warning
+            session()->flash('warning', 'User yang terkait dengan transaksi ini tidak ditemukan.');
+        }
+
         return view('dashboard.transactions.edit', [
             'active' => 'transaction',
             'transaction' => $transaction,
