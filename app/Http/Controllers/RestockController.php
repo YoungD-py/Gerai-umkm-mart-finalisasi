@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Good;
 use App\Models\Restock; // Import model Restock
+use App\Models\Category; // Added Category import for mitra filter
 use Illuminate\Http\Request;
 
 class RestockController extends Controller
@@ -13,12 +14,47 @@ class RestockController extends Controller
      */
     public function index()
     {
+        $query = Good::with('category')
+            ->filter(request(['search', 'mitra']));
+
+        // Handle sorting
+        if (request('sort_stok')) {
+            if (request('sort_stok') === 'asc') {
+                $query->orderBy('stok', 'asc');
+            } elseif (request('sort_stok') === 'desc') {
+                $query->orderBy('stok', 'desc');
+            }
+        }
+
+        if (request('sort_mitra')) {
+            if (request('sort_mitra') === 'asc') {
+                $query->join('categories', 'goods.category_id', '=', 'categories.id')
+                      ->orderBy('categories.nama', 'asc')
+                      ->select('goods.*');
+            } elseif (request('sort_mitra') === 'desc') {
+                $query->join('categories', 'goods.category_id', '=', 'categories.id')
+                      ->orderBy('categories.nama', 'desc')
+                      ->select('goods.*');
+            }
+        }
+
+        if (request('filter_status')) {
+            if (request('filter_status') === 'aman') {
+                // Show only "Stok Aman" (stock > 20)
+                $query->where('stok', '>', 20);
+            } elseif (request('filter_status') === 'sedang') {
+                // Show only "Stok Sedang" (stock 6-20)
+                $query->whereBetween('stok', [6, 20]);
+            } elseif (request('filter_status') === 'rendah') {
+                // Show only "Stok Rendah" (stock <= 5)
+                $query->where('stok', '<=', 5);
+            }
+        }
+
         return view('dashboard.restock.index', [
             'active' => 'restock',
-            'goods' => Good::with('category')
-                ->filter(request(['search']))
-                ->paginate(10)
-                ->withQueryString(),
+            'goods' => $query->paginate(10)->withQueryString(),
+            'categories' => Category::all(), // Added categories for mitra filter dropdown
         ]);
     }
 
@@ -45,7 +81,7 @@ class RestockController extends Controller
 
         // Add new stock to existing stock
         $stokBaru = $good->stok + $validatedData['stok_tambahan'];
-        
+
         $good->update([
             'stok' => $stokBaru,
         ]);
@@ -59,7 +95,7 @@ class RestockController extends Controller
             'tgl_restock' => now()->toDateString(), // Use current date for restock
         ]);
 
-        return redirect('/dashboard/restock')->with('success', 
+        return redirect('/dashboard/restock')->with('success',
             "Berhasil menambah stok {$good->nama} sebanyak {$validatedData['stok_tambahan']} unit. Stok sekarang: {$stokBaru} unit.");
     }
 }

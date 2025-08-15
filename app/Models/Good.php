@@ -56,12 +56,21 @@ class Good extends Model
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
             return $query->where('nama', 'like', '%' . $search . '%')
-                        ->orWhere('barcode', 'like', '%' . $search . '%');
+                        ->orWhere('barcode', 'like', '%' . $search . '%')
+                        ->orWhereHas('category', function ($query) use ($search) {
+                            $query->where('nama', 'like', '%' . $search . '%');
+                        });
         });
 
         $query->when($filters['category'] ?? false, function ($query, $category) {
             return $query->whereHas('category', function ($query) use ($category) {
                 $query->where('slug', $category);
+            });
+        });
+
+        $query->when($filters['mitra'] ?? false, function ($query, $mitra) {
+            return $query->whereHas('category', function ($query) use ($mitra) {
+                $query->where('id', $mitra);
             });
         });
     }

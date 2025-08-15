@@ -222,15 +222,44 @@
                 <div class="card-body p-3 p-md-4">
                     <!-- Search Box -->
                     <div class="search-box">
-                        <form action="/dashboard/restock">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Cari nama barang..."
-                                       name="search" value="<?php echo e(request('search')); ?>">
-                                <button class="btn btn-umkm" type="submit">
-                                    <i class="bi bi-search"></i>
-                                    <span class="d-none d-sm-inline ms-1">Cari</span>
-                                </button>
+                        <form action="/dashboard/restock" id="search-form">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Cari nama barang atau mitra..."
+                                               name="search" value="<?php echo e(request('search')); ?>">
+                                        <button class="btn btn-umkm" type="submit">
+                                            <i class="bi bi-search"></i>
+                                            <span class="d-none d-sm-inline ms-1">Cari</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Added mitra filter dropdown -->
+                                    <select name="mitra" class="form-select" onchange="this.form.submit()">
+                                        <option value="">Semua Mitra</option>
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($category->id); ?>" <?php echo e(request('mitra') == $category->id ? 'selected' : ''); ?>>
+                                                <?php echo e($category->nama); ?>
+
+                                            </option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
                             </div>
+                            <!-- Hidden inputs to preserve sorting when searching -->
+                            <?php if(request('sort_stok')): ?>
+                                <input type="hidden" name="sort_stok" value="<?php echo e(request('sort_stok')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('sort_mitra')): ?>
+                                <input type="hidden" name="sort_mitra" value="<?php echo e(request('sort_mitra')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('sort_status')): ?>
+                                <input type="hidden" name="sort_status" value="<?php echo e(request('sort_status')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('filter_status')): ?>
+                                <input type="hidden" name="filter_status" value="<?php echo e(request('filter_status')); ?>">
+                            <?php endif; ?>
                         </form>
                     </div>
 
@@ -241,9 +270,43 @@
                                 <tr>
                                     <th scope="col">NO</th>
                                     <th scope="col">Nama Barang</th>
-                                    <th scope="col" class="d-none d-md-table-cell">Supplier</th>
-                                    <th scope="col">Stok</th>
-                                    <th scope="col" class="d-none d-sm-table-cell">Status</th>
+                                    <!-- Updated sorting UI for Mitra column to match returns page style -->
+                                    <th scope="col" class="d-none d-md-table-cell">
+                                        Mitra
+                                        <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
+                                            data-sort-param="mitra"
+                                            data-sort-order="<?php echo e(request('sort_mitra', 'none')); ?>"
+                                            title="Urutkan berdasarkan mitra">
+                                            <i class="bi <?php echo e(request('sort_mitra') == 'asc' ? 'bi-sort-up' : (request('sort_mitra') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
+                                        </button>
+                                    </th>
+                                    <!-- Updated sorting UI for Stok column to match returns page style -->
+                                    <th scope="col">
+                                        Stok
+                                        <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
+                                            data-sort-param="stok"
+                                            data-sort-order="<?php echo e(request('sort_stok', 'none')); ?>"
+                                            title="Urutkan berdasarkan stok">
+                                            <i class="bi <?php echo e(request('sort_stok') == 'asc' ? 'bi-sort-up' : (request('sort_stok') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
+                                        </button>
+                                    </th>
+                                    <th scope="col" class="d-none d-sm-table-cell">
+                                        Status
+                                        <!-- Updated status button to use filtering instead of sorting -->
+                                        <button type="button" class="btn btn-sm btn-light ms-2 status-filter-toggle"
+                                            data-filter-status="<?php echo e(request('filter_status', 'none')); ?>"
+                                            title="Filter berdasarkan status stok">
+                                            <?php if(request('filter_status') == 'aman'): ?>
+                                                <i class="bi bi-check-circle text-success"></i>
+                                            <?php elseif(request('filter_status') == 'sedang'): ?>
+                                                <i class="bi bi-exclamation-triangle text-warning"></i>
+                                            <?php elseif(request('filter_status') == 'rendah'): ?>
+                                                <i class="bi bi-x-circle text-danger"></i>
+                                            <?php else: ?>
+                                                <i class="bi bi-funnel"></i>
+                                            <?php endif; ?>
+                                        </button>
+                                    </th>
                                     <th scope="col" class="d-none d-lg-table-cell">Harga</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
@@ -314,6 +377,84 @@
         </div>
     </div>
 </div>
+
+<!-- Added JavaScript for sorting functionality like in returns page -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- SCRIPT UNTUK SORTING ---
+        const sortToggles = document.querySelectorAll('.sort-toggle');
+        sortToggles.forEach(toggleButton => {
+            toggleButton.addEventListener('click', function() {
+                const sortParam = this.dataset.sortParam;
+                let currentSortOrder = this.dataset.sortOrder;
+                let newSortOrder;
+
+                // Cycle through: none -> asc -> desc -> none
+                if (currentSortOrder === 'none') {
+                    newSortOrder = 'asc';
+                } else if (currentSortOrder === 'asc') {
+                    newSortOrder = 'desc';
+                } else {
+                    newSortOrder = 'none';
+                }
+
+                // Build new URL with sort parameter
+                const url = new URL(window.location.href);
+
+                // Clear existing sort parameters
+                url.searchParams.delete('sort_stok');
+                url.searchParams.delete('sort_mitra');
+
+                // Set new sort parameter if not 'none'
+                if (newSortOrder !== 'none') {
+                    url.searchParams.set(`sort_${sortParam}`, newSortOrder);
+                }
+
+                // Remove page parameter to start from first page
+                url.searchParams.delete('page');
+
+                // Navigate to new URL
+                window.location.href = url.toString();
+            });
+        });
+
+        // --- SCRIPT UNTUK STATUS FILTERING ---
+        const statusFilterToggle = document.querySelector('.status-filter-toggle');
+        if (statusFilterToggle) {
+            statusFilterToggle.addEventListener('click', function() {
+                let currentFilter = this.dataset.filterStatus;
+                let newFilter;
+
+                // Cycle through: none -> aman -> sedang -> rendah -> none
+                if (currentFilter === 'none') {
+                    newFilter = 'aman';
+                } else if (currentFilter === 'aman') {
+                    newFilter = 'sedang';
+                } else if (currentFilter === 'sedang') {
+                    newFilter = 'rendah';
+                } else {
+                    newFilter = 'none';
+                }
+
+                // Build new URL with filter parameter
+                const url = new URL(window.location.href);
+
+                // Set new filter parameter if not 'none'
+                if (newFilter !== 'none') {
+                    url.searchParams.set('filter_status', newFilter);
+                } else {
+                    url.searchParams.delete('filter_status');
+                }
+
+                // Remove page parameter to start from first page
+                url.searchParams.delete('page');
+
+                // Navigate to new URL
+                window.location.href = url.toString();
+            });
+        }
+    });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/restock/index.blade.php ENDPATH**/ ?>
