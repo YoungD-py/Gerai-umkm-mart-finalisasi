@@ -120,20 +120,20 @@
     }
 
     .page-title h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            color: #ffffff;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
-        }
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 15px;
+        color: #ffffff;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    }
 
-        .page-title p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            opacity: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
+    .page-title p {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        opacity: 1;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
 
     /* Select2 Customization */
     .select2-container--default .select2-selection--single {
@@ -207,8 +207,26 @@
                             <select class="form-select" id="goods" name="good_id" onchange="Subtotal()">
                                 <option value="" disabled selected>-- Cari dan Pilih Barang --</option>
                                 <?php $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option price="<?php echo e($good->harga); ?>" value="<?php echo e($good->id); ?>">
-                                        <?php echo e($good->nama); ?> (Stok: <?php echo e($good->stok); ?> | Harga: Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>)
+                                    <option 
+                                        price="<?php echo e($good->harga); ?>"
+                                        harga_grosir="<?php echo e($good->harga_grosir); ?>"
+                                        min_qty_grosir="<?php echo e($good->min_qty_grosir); ?>"
+                                        is_grosir_active="<?php echo e($good->is_grosir_active); ?>"
+                                        harga_tebus_murah="<?php echo e($good->harga_tebus_murah); ?>"
+                                        min_total_tebus_murah="<?php echo e($good->min_total_tebus_murah); ?>"
+                                        is_tebus_murah_active="<?php echo e($good->is_tebus_murah_active); ?>"
+                                        value="<?php echo e($good->id); ?>">
+                                        <?php echo e($good->nama); ?> (Stok: <?php echo e($good->stok); ?> | Normal: Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?>
+
+                                        <?php if($good->is_grosir_active && $good->harga_grosir > 0): ?>
+                                            | Grosir: Rp <?php echo e(number_format($good->harga_grosir, 0, ',', '.')); ?> untuk Qty≥<?php echo e($good->min_qty_grosir); ?>
+
+                                        <?php endif; ?>
+                                        <?php if($good->is_tebus_murah_active && $good->harga_tebus_murah > 0): ?>
+                                            | Tebus Murah: Rp <?php echo e(number_format($good->harga_tebus_murah, 0, ',', '.')); ?> jika total≥Rp<?php echo e(number_format($good->min_total_tebus_murah, 0, ',', '.')); ?>
+
+                                        <?php endif; ?>
+                                        )
                                     </option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
@@ -224,6 +242,8 @@
                                 <label for="subtotal" class="form-label">Subtotal</label>
                                 <input type="text" class="form-control" id="subtotal_display" readonly placeholder="Rp 0">
                                 <input type="hidden" id="subtotal" name="subtotal" required>
+                                <!-- Menambahkan info harga yang digunakan -->
+                                <small id="price_info" class="text-muted"></small>
                             </div>
                         </div>
 
@@ -261,15 +281,54 @@
         if (!selectedOption || !selectedOption.hasAttribute('price')) {
             document.getElementById("subtotal_display").value = "Rp 0";
             document.getElementById("subtotal").value = "";
+            document.getElementById("price_info").innerHTML = "";
             return;
         }
 
-        var harga = selectedOption.getAttribute('price');
-        var qty = document.querySelector("#qty").value;
-        var hasil = harga * qty;
-
+        var hargaNormal = parseFloat(selectedOption.getAttribute('price'));
+        var hargaGrosir = parseFloat(selectedOption.getAttribute('harga_grosir')) || 0;
+        var minQtyGrosir = parseInt(selectedOption.getAttribute('min_qty_grosir')) || 0;
+        var isGrosirActive = selectedOption.getAttribute('is_grosir_active') === '1';
+        var hargaTebusMurah = parseFloat(selectedOption.getAttribute('harga_tebus_murah')) || 0;
+        var minTotalTebusMurah = parseFloat(selectedOption.getAttribute('min_total_tebus_murah')) || 0;
+        var isTebusMurahActive = selectedOption.getAttribute('is_tebus_murah_active') === '1';
+        
+        var qty = parseInt(document.querySelector("#qty").value) || 0;
+        var currentTotal = <?php echo e($currentTotal); ?>; // Total transaksi saat ini
+        
+        var unitPrice = hargaNormal;
+        var priceType = 'Normal';
+        var penghematan = 0;
+        
+        // Cek tebus murah terlebih dahulu (prioritas lebih tinggi)
+        if (isTebusMurahActive && currentTotal >= minTotalTebusMurah && hargaTebusMurah > 0) {
+            unitPrice = hargaTebusMurah;
+            priceType = 'Tebus Murah';
+            penghematan = (hargaNormal - unitPrice) * qty;
+        }
+        // Kemudian cek harga grosir
+        else if (isGrosirActive && qty >= minQtyGrosir && hargaGrosir > 0) {
+            unitPrice = hargaGrosir;
+            priceType = 'Grosir';
+            penghematan = (hargaNormal - unitPrice) * qty;
+        }
+        
+        var hasil = unitPrice * qty;
+        
         document.getElementById("subtotal").value = hasil;
         document.getElementById("subtotal_display").value = 'Rp ' + new Intl.NumberFormat('id-ID').format(hasil);
+        
+        // Update info harga
+        var priceInfo = '';
+        if (priceType === 'Tebus Murah') {
+            priceInfo = '<span class="badge bg-danger">TEBUS MURAH</span> Penghematan: Rp ' + new Intl.NumberFormat('id-ID').format(penghematan);
+        } else if (priceType === 'Grosir') {
+            priceInfo = '<span class="badge bg-warning text-dark">GROSIR</span> Penghematan: Rp ' + new Intl.NumberFormat('id-ID').format(penghematan);
+        } else {
+            priceInfo = '<span class="badge bg-secondary">HARGA NORMAL</span>';
+        }
+        
+        document.getElementById("price_info").innerHTML = priceInfo;
     }
 </script>
 <?php $__env->stopSection(); ?>
