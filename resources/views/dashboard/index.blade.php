@@ -146,7 +146,7 @@
     .pagination-wrapper .page-link:hover {
         background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
-        transform: translateY(-1px);
+        transform: trans lateY(-1px);
     }
     .pagination-wrapper .page-item.active .page-link {
         background: linear-gradient(135deg, #28a745, #20c997);

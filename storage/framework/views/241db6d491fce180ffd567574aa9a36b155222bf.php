@@ -419,7 +419,7 @@
 
                             </td>
                             <td>
-                                <span class="badge <?php echo e($good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger')); ?>">
+                                <span class="badge <?php echo e($good->stok <= 5 ? 'bg-danger' : ($good->stok <= 20 ? 'bg-warning' : 'bg-success')); ?>">
                                     <?php echo e($good->stok); ?> unit
                                 </span>
                             </td>

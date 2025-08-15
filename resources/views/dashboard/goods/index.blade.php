@@ -416,7 +416,7 @@
                                 {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
                             </td>
                             <td>
-                                <span class="badge {{ $good->stok > 10 ? 'bg-success' : ($good->stok > 0 ? 'bg-warning' : 'bg-danger') }}">
+                                <span class="badge {{ $good->stok <= 5 ? 'bg-danger' : ($good->stok <= 20 ? 'bg-warning' : 'bg-success') }}">
                                     {{ $good->stok }} unit
                                 </span>
                             </td>
