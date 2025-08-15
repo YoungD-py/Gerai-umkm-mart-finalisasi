@@ -5,19 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\ReturnBarang;
 use App\Models\Good;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ReturnController extends Controller
 {
     public function index()
     {
+        $query = ReturnBarang::query()->with(['good.category', 'user']);
+
+        // Apply filters
+        $query->filter(request(['search', 'category_id']));
+
+        $sortApplied = false;
+
+        // Sorting by tgl_return (return date)
+        $sortTglReturn = request('sort_tgl_return');
+        if ($sortTglReturn === 'asc') {
+            $query->orderBy('tgl_return', 'asc');
+            $sortApplied = true;
+        } elseif ($sortTglReturn === 'desc') {
+            $query->orderBy('tgl_return', 'desc');
+            $sortApplied = true;
+        }
+
+        // Default sorting if no specific sort is applied
+        if (!$sortApplied) {
+            $query->latest(); // Order by created_at DESC
+        }
+
         return view('dashboard.returns.index', [
             'active' => 'returns',
-            'returns' => ReturnBarang::with(['good.category', 'user']) // Eager load good and its category
-                ->latest()
-                ->filter(request(['search']))
-                ->paginate(10)
-                ->withQueryString(),
+            'returns' => $query->paginate(10)->withQueryString(),
+            'categories' => Category::all(), // Added categories for mitra filter
         ]);
     }
 
@@ -32,11 +52,11 @@ class ReturnController extends Controller
     public function searchGoods(Request $request)
     {
         $query = $request->get('q');
-        
+
         if (empty($query)) {
             return response()->json([]);
         }
-        
+
         $goods = Good::where('stok', '>', 0)
             ->where(function($q) use ($query) {
                 $q->where('nama', 'LIKE', '%' . $query . '%')
@@ -45,7 +65,7 @@ class ReturnController extends Controller
             ->select('id', 'nama', 'barcode', 'stok')
             ->limit(10)
             ->get();
-        
+
         return response()->json($goods);
     }
 
@@ -148,7 +168,7 @@ class ReturnController extends Controller
         ]);
 
         $selectedIds = $request->input('selected_ids');
-        
+
         if (empty($selectedIds)) {
             return redirect('/dashboard/returns')->with('error', 'Tidak ada data return yang dipilih untuk dihapus.');
         }
@@ -162,7 +182,7 @@ class ReturnController extends Controller
                 $good->increment('stok', $return->qty_return);
             }
         }
-        
+
         // Hapus data return
         $deletedCount = ReturnBarang::destroy($selectedIds);
 

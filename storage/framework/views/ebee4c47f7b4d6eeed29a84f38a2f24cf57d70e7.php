@@ -1,6 +1,4 @@
-@extends('dashboard.layouts.main')
-
-@section('container')
+<?php $__env->startSection('container'); ?>
 <style>
    .umkm-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -250,19 +248,21 @@
         <p>Kelola data pengembalian barang dari Mitra Binaan</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
+
+    <?php if(session()->has('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
@@ -272,14 +272,14 @@
                     Data Return Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    <form id="bulk-delete-form" action="{{ route('returns.bulkDelete') }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
+                    <form id="bulk-delete-form" action="<?php echo e(route('returns.bulkDelete')); ?>" method="POST" style="display: inline;">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                             <i class="bi bi-trash-fill"></i> Hapus Terpilih
                         </button>
                     </form>
-                    <a href="{{ route('returns.create') }}" class="btn btn-umkm btn-umkm-sm">
+                    <a href="<?php echo e(route('returns.create')); ?>" class="btn btn-umkm btn-umkm-sm">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Return
                     </a>
@@ -289,8 +289,8 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                {{-- Enhanced search form with mitra filter --}}
-                <form action="{{ route('returns.index') }}" method="GET" id="search-form">
+                
+                <form action="<?php echo e(route('returns.index')); ?>" method="GET" id="search-form">
                     <div class="row align-items-end">
                         <div class="col-12 col-md-4 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
@@ -298,7 +298,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
-                                       name="search" value="{{ request('search') }}">
+                                       name="search" value="<?php echo e(request('search')); ?>">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -310,16 +310,17 @@
                             </label>
                             <select class="form-select" name="category_id" id="category-filter">
                                 <option value="all">Semua Mitra</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->nama }}
+                                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($category->id); ?>" <?php echo e(request('category_id') == $category->id ? 'selected' : ''); ?>>
+                                        <?php echo e($category->nama); ?>
+
                                     </option>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
-                                <small><i class="bi bi-info-circle me-1"></i>Total: {{ $returns->total() }} data return</small>
+                                <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($returns->total()); ?> data return</small>
                             </div>
                         </div>
                     </div>
@@ -335,13 +336,13 @@
                             </th>
                             <th style="width: 5%;">NO</th>
                             <th style="width: 10%;">
-                                {{-- Added sortable date column similar to goods --}}
+                                
                                 Tgl Return
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="tgl_return"
-                                    data-sort-order="{{ request('sort_tgl_return', 'none') }}"
+                                    data-sort-order="<?php echo e(request('sort_tgl_return', 'none')); ?>"
                                     title="Urutkan berdasarkan tanggal return">
-                                    <i class="bi {{ request('sort_tgl_return') == 'asc' ? 'bi-sort-up' : (request('sort_tgl_return') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                    <i class="bi <?php echo e(request('sort_tgl_return') == 'asc' ? 'bi-sort-up' : (request('sort_tgl_return') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                 </button>
                             </th>
                             <th style="width: 15%;">Mitra Binaan</th>
@@ -354,32 +355,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($returns as $key => $return)
+                        <?php $__empty_1 = true; $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td class="text-center">
-                                <input class="form-check-input item-checkbox" type="checkbox" value="{{ $return->id }}">
+                                <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($return->id); ?>">
                             </td>
-                            <td><strong>{{ $returns->firstItem() + $key }}</strong></td>
+                            <td><strong><?php echo e($returns->firstItem() + $key); ?></strong></td>
                             <td>
                                 <i class="bi bi-calendar-x text-danger me-1"></i>
-                                {{ \Carbon\Carbon::parse($return->tgl_return ?? $return->tanggal_retur)->format('d/m/Y') }}
+                                <?php echo e(\Carbon\Carbon::parse($return->tgl_return ?? $return->tanggal_retur)->format('d/m/Y')); ?>
+
                             </td>
                             <td>
                                 <i class="bi bi-building text-info me-1"></i>
-                                {{ $return->good->category->nama ?? 'N/A' }}
+                                <?php echo e($return->good->category->nama ?? 'N/A'); ?>
+
                             </td>
                             <td>
                                 <i class="bi bi-box text-primary me-2"></i>
-                                {{ $return->good->nama ?? $return->good->nama_barang }}
+                                <?php echo e($return->good->nama ?? $return->good->nama_barang); ?>
+
                             </td>
                             <td>
-                                <span class="badge bg-secondary">{{ $return->qty_return }} unit</span>
+                                <span class="badge bg-secondary"><?php echo e($return->qty_return); ?> unit</span>
                             </td>
-                            <td>{{ $return->alasan }}</td>
-                            <td>{{ $return->keterangan }}</td>
+                            <td><?php echo e($return->alasan); ?></td>
+                            <td><?php echo e($return->keterangan); ?></td>
                             <td>
                                 <i class="bi bi-person-check text-success me-1"></i>
-                                {{ $return->user->nama }}
+                                <?php echo e($return->user->nama); ?>
+
                             </td>
                             <td class="text-center">
                                 <div class="dropdown action-dropdown">
@@ -388,15 +393,15 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('returns.edit', $return->id) }}">
+                                            <a class="dropdown-item" href="<?php echo e(route('returns.edit', $return->id)); ?>">
                                                 <i class="bi bi-pencil-square text-warning"></i> Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="{{ route('returns.destroy', $return->id) }}" method="post" class="dropdown-item-form">
-                                                @method('delete')
-                                                @csrf
-                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $return->good->nama ?? $return->good->nama_barang }}')">
+                                            <form action="<?php echo e(route('returns.destroy', $return->id)); ?>" method="post" class="dropdown-item-form">
+                                                <?php echo method_field('delete'); ?>
+                                                <?php echo csrf_field(); ?>
+                                                <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($return->good->nama ?? $return->good->nama_barang); ?>')">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </form>
@@ -405,32 +410,33 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="10" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-inbox display-4 d-block mb-3"></i>
                                     <h5>Belum ada data return</h5>
                                     <p>Silakan tambah data return baru untuk memulai</p>
-                                    <a href="{{ route('returns.create') }}" class="btn-umkm">
+                                    <a href="<?php echo e(route('returns.create')); ?>" class="btn-umkm">
                                         <i class="bi bi-plus-circle"></i>
                                         Tambah Data Return
                                     </a>
                                 </div>
                             </td>
                         </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            @if($returns->hasPages())
+            <?php if($returns->hasPages()): ?>
             <div class="d-flex justify-content-center mt-4">
                 <div class="pagination-wrapper">
-                    {{ $returns->appends(request()->query())->links() }}
+                    <?php echo e($returns->appends(request()->query())->links()); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -471,7 +477,7 @@
     </div>
 </div>
 
-{{-- Enhanced JavaScript with date sorting functionality --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT UNTUK HAPUS SATUAN ---
@@ -609,4 +615,6 @@
         }
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/returns/index.blade.php ENDPATH**/ ?>

@@ -16,8 +16,19 @@ class ReturnBarang extends Model
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
             return $query->whereHas('good', function ($query) use ($search) {
-                $query->where('nama', 'like', '%' . $search . '%');
+                $query->where('nama', 'like', '%' . $search . '%')
+                      ->orWhereHas('category', function ($query) use ($search) {
+                          $query->where('nama', 'like', '%' . $search . '%');
+                      });
             });
+        });
+
+        $query->when($filters['category_id'] ?? false, function ($query, $categoryId) {
+            if ($categoryId !== 'all') {
+                return $query->whereHas('good', function ($query) use ($categoryId) {
+                    $query->where('category_id', $categoryId);
+                });
+            }
         });
     }
 
