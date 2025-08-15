@@ -327,4 +327,5 @@
         document.getElementById("price_info").innerHTML = priceInfo;
     }
 </script>
+
 @endsection
