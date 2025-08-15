@@ -32,10 +32,13 @@ class OrderController extends Controller
      */
     public function create(Request $request)
     {
+        $currentTotal = Order::where('no_nota', $request->no_nota)->sum('subtotal');
+        
         return view('dashboard.orders.create', [
             'active' => 'data',
             'goods' => Good::all(),
             'no_nota' => $request->no_nota,
+            'currentTotal' => $currentTotal, // Kirim total saat ini ke view
         ]);
     }
 
@@ -48,21 +51,56 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $barang = Good::where('id', $request['good_id'])->first();
-        $harga = $barang->harga;
+        
+        $qty = $request->qty;
+        $currentTotal = Order::where('no_nota', $request->no_nota)->sum('subtotal');
+        
+        // Default ke harga normal
+        $unitPrice = $barang->harga;
+        $priceType = 'normal';
+        
+        // Cek tebus murah terlebih dahulu (prioritas lebih tinggi)
+        if ($barang->is_tebus_murah_active && 
+            $currentTotal >= $barang->min_total_tebus_murah && 
+            $barang->harga_tebus_murah > 0) {
+            $unitPrice = $barang->harga_tebus_murah;
+            $priceType = 'tebus_murah';
+        }
+        // Kemudian cek harga grosir
+        elseif ($barang->is_grosir_active && 
+                $qty >= $barang->min_qty_grosir && 
+                $barang->harga_grosir > 0) {
+            $unitPrice = $barang->harga_grosir;
+            $priceType = 'grosir';
+        }
+        
+        $subtotal = $unitPrice * $qty;
+        
         Order::create([
             'no_nota' => $request->no_nota,
             'good_id' => $request->good_id,
-            'qty' => $request->qty,
-            'subtotal' => $request->subtotal,
-            'price' => $harga,
+            'qty' => $qty,
+            'subtotal' => $subtotal,
+            'price' => $unitPrice,
         ]);
-        Good::find($request->good_id)->decrement('stok', $request->qty);
+        
+        Good::find($request->good_id)->decrement('stok', $qty);
+        
+        $successMessage = 'Pesanan telah ditambahkan.';
+        if ($priceType === 'tebus_murah') {
+            $penghematan = ($barang->harga - $unitPrice) * $qty;
+            $successMessage = 'Pesanan telah ditambahkan dengan harga TEBUS MURAH! Penghematan: Rp ' . number_format($penghematan, 0, ',', '.');
+        } elseif ($priceType === 'grosir') {
+            $penghematan = ($barang->harga - $unitPrice) * $qty;
+            $successMessage = 'Pesanan telah ditambahkan dengan harga GROSIR! Penghematan: Rp ' . number_format($penghematan, 0, ',', '.');
+        }
+        
         return view('dashboard.orders.index', [
             'no_nota' => $request['no_nota'],
             'orders' => Order::where('no_nota', $request['no_nota'])->get(),
             'goods' => Good::all(),
             'active' => 'cashier',
-        ])->with('success', 'Pesanan telah ditambahkan.');
+        ])->with('success', $successMessage);
     }
 
     /**
