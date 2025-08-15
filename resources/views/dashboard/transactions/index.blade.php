@@ -745,6 +745,8 @@
     });
 </script>
 
+
+
 <!-- Tambahkan CSRF token untuk JavaScript -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
