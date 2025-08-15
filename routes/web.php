@@ -45,6 +45,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Transactions
     Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
+
+    // ORDER BY NOTA - HANYA ADMIN
+    Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
+    Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
+    Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
+    Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
 });
 
 // ROUTES YANG BISA DIAKSES ADMIN DAN KASIR
@@ -79,12 +86,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/restock/{good}/edit', [RestockController::class, 'edit']);
     Route::put('/dashboard/restock/{good}', [RestockController::class, 'update']);
 
-    // ORDER BY NOTA
-    Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
-    Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
-    Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
-    Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
+    // // ORDER BY NOTA
+    // Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
+    // Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
+    // Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
+    // Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
+    // Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
 
     // KASIR ROUTES
     Route::get('/dashboard/cashier', [CashierController::class, 'index']);
