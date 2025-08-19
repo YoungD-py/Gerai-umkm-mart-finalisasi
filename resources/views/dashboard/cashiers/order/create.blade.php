@@ -160,93 +160,56 @@
         <div class="row g-4">
             {{-- [RESPONSIVE] Menambahkan col-12 dan margin-bottom untuk stacking di mobile --}}
             <div class="col-12 col-lg-8 mb-4 mb-lg-0">
+                
+                {{-- ====================================================================== --}}
+                {{-- =================== AWAL BAGIAN HTML YANG DIUBAH =================== --}}
+                {{-- ====================================================================== --}}
+
                 <div class="card shadow-sm border-0 mb-4" style="background: white;">
-                    <div class="card-header bg-success text-white py-3">
-                        <h4 class="mb-0 fw-bold"><i class="bi bi-upc-scan fs-3"></i> INPUT BARCODE</h4>
-                        <small class="opacity-75">Scan atau ketik barcode produk</small>
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-upc-scan" style="font-size: 3rem; color: #198754;"></i>
+                        <h5 class="card-title mt-3 fw-bold">Sistem Kasir Siap</h5>
+                        <p class="card-text text-muted">Silakan pindai barcode produk menggunakan scanner untuk menampilkan detail produk.</p>
                     </div>
-                    <div class="card-body p-3 p-md-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <div class="mb-3">
-                                    <label for="barcode-input" class="form-label fs-5 fw-semibold text-dark">
-                                        <i class="bi bi-keyboard text-success"></i> Masukkan Barcode
-                                    </label>
-                                    <div class="input-group input-group-lg">
-                                        <span class="input-group-text bg-success text-white border-success">
-                                            <i class="bi bi-upc-scan"></i>
-                                        </span>
-                                        <input type="text" class="form-control form-control-lg border-success"
-                                            id="barcode-input" placeholder="Ketik atau scan..."
-                                            autocomplete="off" autofocus style="font-size: 1.2rem; font-weight: 500;">
-                                        <button class="btn btn-success btn-lg px-4" type="button" id="search-barcode">
-                                            <i class="bi bi-search"></i> <span class="d-none d-sm-inline">CARI</span>
-                                        </button>
-                                    </div>
-                                    <div class="form-text fs-6 mt-2">
-                                        <i class="bi bi-info-circle text-primary"></i>
-                                        <strong>Tips:</strong> Tekan Enter setelah mengetik barcode
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="alert alert-info border-0 shadow-sm">
-                                    <h6 class="fw-bold mb-2">
-                                        <i class="bi bi-lightbulb text-warning"></i> Cara Cepat:
-                                    </h6>
-                                    <ul class="mb-0 small lh-lg ps-3">
-                                        <li>Ketik barcode</li>
-                                        <li>Tekan Enter</li>
-                                        <li id="camera-tip" class="mobile-only">Gunakan kamera</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                </div>
 
-                        <div id="barcode-result" class="alert alert-success border-0 shadow-sm mt-4" style="display: none;">
-                            <div class="row align-items-center">
-                                <div class="col-lg-8">
-                                    <h5 class="fw-bold text-success mb-3"><i class="bi bi-check-circle-fill"></i> Produk Ditemukan!</h5>
-                                    <div class="product-info bg-light p-3 rounded">
-                                        <div class="row">
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-2"><strong>Kode:</strong> <span id="detected-barcode" class="badge bg-secondary fs-6"></span></p>
-                                                <p class="mb-2"><strong>Nama:</strong> <span id="product-name" class="fw-bold text-dark fs-5"></span></p>
-                                            </div>
-                                            <div class="col-12 col-sm-6">
-                                                <p class="mb-2"><strong>Harga:</strong> <span id="product-price" class="fw-bold text-success fs-4"></span></p>
-                                                <p class="mb-2"><strong>Stok:</strong> <span id="product-stock" class="badge bg-info fs-6"></span></p>
-                                            </div>
-                                        </div>
+                <div id="barcode-result" class="alert alert-success border-0 shadow-sm mb-4" style="display: none;">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h5 class="fw-bold text-success mb-3"><i class="bi bi-check-circle-fill"></i> Produk Ditemukan!</h5>
+                            <div class="product-info bg-light p-3 rounded">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">
+                                        <p class="mb-2"><strong>Kode:</strong> <span id="detected-barcode" class="badge bg-secondary fs-6"></span></p>
+                                        <p class="mb-2"><strong>Nama:</strong> <span id="product-name" class="fw-bold text-dark fs-5"></span></p>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 mt-3 mt-lg-0">
-                                    <div class="d-grid gap-2">
-                                        <label for="scan-qty" class="form-label fw-semibold fs-5">Jumlah:</label>
-                                        <input type="number" class="form-control form-control-lg text-center fw-bold" id="scan-qty" value="1" min="1" max="999" style="font-size: 1.5rem;" onchange="updateBarcodePrice()" oninput="updateBarcodePrice()">
-                                        <div id="price-info" class="text-center mb-2">
-                                            <div class="fw-bold fs-5">Total: <span id="total-price" class="text-success">Rp 0</span></div>
-                                            <div id="price-type" class="small text-muted"></div>
-                                        </div>
-                                        <button type="button" id="add-scanned-item" class="btn btn-success btn-lg py-3">
-                                            <i class="bi bi-plus-circle"></i> TAMBAH
-                                        </button>
+                                    <div class="col-12 col-sm-6">
+                                        <p class="mb-2"><strong>Harga:</strong> <span id="product-price" class="fw-bold text-success fs-4"></span></p>
+                                        <p class="mb-2"><strong>Stok:</strong> <span id="product-stock" class="badge bg-info fs-6"></span></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Camera Scan Section - Only show on mobile devices --}}
-                        <div id="camera-scan-section" class="mt-5 pt-4 border-top mobile-only">
-                            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-camera-video"></i> Scan Barcode dengan Kamera</h5>
-                            <div id="qr-reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
-                            <div class="d-grid gap-2 mt-3">
-                                <button type="button" class="btn btn-info btn-lg" id="start-scan-btn"><i class="bi bi-camera"></i> Mulai Scan</button>
-                                <button type="button" class="btn btn-danger btn-lg" id="stop-scan-btn" style="display: none;"><i class="bi bi-stop-circle"></i> Hentikan Scan</button>
+                        <div class="col-lg-4 mt-3 mt-lg-0">
+                            <div class="d-grid gap-2">
+                                <label for="scan-qty" class="form-label fw-semibold fs-5">Jumlah:</label>
+                                <input type="number" class="form-control form-control-lg text-center fw-bold" id="scan-qty" value="1" min="1" max="999" style="font-size: 1.5rem;" onchange="updateBarcodePrice()" oninput="updateBarcodePrice()">
+                                <div id="price-info" class="text-center mb-2">
+                                    <div class="fw-bold fs-5">Total: <span id="total-price" class="text-success">Rp 0</span></div>
+                                    <div id="price-type" class="small text-muted"></div>
+                                </div>
+                                <button type="button" id="add-scanned-item" class="btn btn-success btn-lg py-3">
+                                    <i class="bi bi-plus-circle"></i> TAMBAH
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- ====================================================================== --}}
+                {{-- =================== AKHIR BAGIAN HTML YANG DIUBAH =================== --}}
+                {{-- ====================================================================== --}}
+
 
                 <div class="card shadow-sm border-0" style="background: white;">
                     <div class="card-header bg-primary text-white py-3">
@@ -344,7 +307,6 @@
                                         @foreach($orders as $order)
                                             <tr id="order-row-{{ $order->id }}">
                                                 <td class="py-3 px-3">
-                                                    {{-- Added null check for good relationship --}}
                                                     <div class="fw-semibold">{{ $order->good ? $order->good->nama : 'Produk tidak ditemukan' }}</div>
                                                     <small class="text-muted">@ Rp {{ number_format($order->price, 0, ',', '.') }}</small>
                                                     @if($order->good && $order->good->is_grosir_active && $order->qty >= $order->good->min_qty_grosir)
@@ -353,7 +315,6 @@
                                                     @if($order->good && $order->good->is_tebus_murah_active && $orders->sum('subtotal') >= $order->good->min_total_tebus_murah)
                                                         <br><small class="text-danger fw-bold"><i class="bi bi-percent"></i> Harga Tebus Murah</small>
                                                     @endif
-                                                    {{-- Show warning if product is missing --}}
                                                     @if(!$order->good)
                                                         <br><small class="text-warning fw-bold"><i class="bi bi-exclamation-triangle"></i> Produk telah dihapus</small>
                                                     @endif
@@ -373,7 +334,6 @@
                                                     Rp {{ number_format($order->subtotal, 0, ',', '.') }}
                                                 </td>
                                                 <td class="py-3 text-center">
-                                                    {{-- Updated delete button to handle missing product names --}}
                                                     <button type="button" class="btn btn-danger btn-sm" onclick="deleteOrderItem({{ $order->id }}, '{{ $order->good ? addslashes($order->good->nama) : 'Produk tidak ditemukan' }}')" title="Hapus item">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
@@ -383,7 +343,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <div class="p-4 bg-light border-top">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="mb-0 fw-bold">TOTAL BELANJA:</h5>
@@ -391,21 +350,18 @@
                                         Rp {{ number_format($orders->sum('subtotal'), 0, ',', '.') }}
                                     </h4>
                                 </div>
-
                                 @php
                                     $totalTransaction = $orders->sum('subtotal');
                                     $tebusMusahProducts = $goods->filter(function ($good) use ($totalTransaction) {
                                         return $good->is_tebus_murah_active && $totalTransaction >= $good->min_total_tebus_murah;
                                     });
                                 @endphp
-
                                 @if($tebusMusahProducts->count() > 0)
                                     <div class="alert alert-danger border-0 shadow-sm mb-3">
                                         <h6 class="fw-bold text-danger mb-2"><i class="bi bi-percent"></i> TEBUS MURAH AKTIF!</h6>
                                         <small class="text-muted">{{ $tebusMusahProducts->count() }} produk memenuhi syarat tebus murah.</small>
                                     </div>
                                 @endif
-
                                 <form method="post" action="/dashboard/cashiers/checkout">
                                     @csrf
                                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
@@ -427,7 +383,6 @@
                     </div>
                 </div>
 
-                {{-- CART KEDUA: BARANG TEBUS MURAH --}}
                 @php
                     $totalTransaction = $orders->sum('subtotal');
                     $tebusMusahProducts = $goods->filter(function ($good) use ($totalTransaction) {
@@ -436,7 +391,6 @@
                                $good->stok > 0;
                     });
                 @endphp
-
                 @if($tebusMusahProducts->count() > 0)
                     <div class="card shadow-sm border-0 mt-4" id="tebus-murah-card" style="background: white;">
                         <div class="card-header text-white py-3" style="background: linear-gradient(45deg, #dc3545, #e74c3c);">
@@ -516,6 +470,9 @@
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
+    {{-- ====================================================================== --}}
+    {{-- =================== AWAL BLOK SCRIPT YANG DIUBAH =================== --}}
+    {{-- ====================================================================== --}}
     <script>
         let currentProduct = null;
         let currentTransactionTotal = {{ $orders->sum('subtotal') }};
@@ -524,48 +481,31 @@
         let isScanning = false;
         let isMobileDevice = false;
 
-        // Detect mobile device on page load
+        // FUNGSI INI SUDAH TIDAK DIPERLUKAN LAGI KARENA SCANNER AKAN MEMANGGIL processBarcode
+        // function addBarcodeToCart(barcode) { ... }
+
         function detectMobileDevice() {
-            // Check for touch capability
             const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-
-            // Check for camera capability
             const hasCamera = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-
-            // Check user agent for mobile indicators
             const userAgent = navigator.userAgent.toLowerCase();
             const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'tablet', 'blackberry', 'windows phone'];
             const isMobileUserAgent = mobileKeywords.some(keyword => userAgent.includes(keyword));
-
-            // Device is considered mobile if it has touch AND camera capabilities, OR mobile user agent
             isMobileDevice = (hasTouch && hasCamera) || isMobileUserAgent;
-
-            console.log('Mobile detection:', {
-                hasTouch,
-                hasCamera,
-                isMobileUserAgent,
-                isMobileDevice
-            });
-
-            // Show/hide camera section based on mobile detection
+            
             if (isMobileDevice) {
                 const mobileElements = document.querySelectorAll('.mobile-only');
                 mobileElements.forEach(element => {
                     element.classList.add('show-mobile');
                 });
-
-                // Show camera scan section
                 const cameraScanSection = document.getElementById('camera-scan-section');
                 if (cameraScanSection) {
                     cameraScanSection.style.display = 'block';
                 }
-            } else {
-                console.log('Desktop detected - camera features hidden');
             }
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('barcode-input').value = decodedText;
+            // [PERUBAHAN] Scan dari kamera HP juga akan memanggil processBarcode
             processBarcode(decodedText);
             stopScanner();
         }
@@ -577,7 +517,6 @@
                 showAlert('warning', '⚠️ Fitur kamera hanya tersedia di perangkat mobile.');
                 return;
             }
-
             const isSecureContext = window.location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
             if (!isSecureContext) {
                 showAlert('danger', '❌ Akses kamera butuh HTTPS atau localhost.');
@@ -624,8 +563,7 @@
                     document.getElementById('product-price').textContent = formatRupiah(productData.harga);
                     document.getElementById('product-stock').textContent = productData.stok + ' pcs';
                     document.getElementById('scan-qty').value = 1;
-
-                    // Perbaikan: Pastikan updateBarcodePrice dipanggil setelah semua data diset
+                    
                     setTimeout(() => {
                         updateBarcodePrice();
                     }, 100);
@@ -640,37 +578,22 @@
         }
 
         function updateBarcodePrice() {
-            if (!currentProduct) {
-                console.log('No current product');
-                return;
-            }
-
+            if (!currentProduct) return;
             const qtyElement = document.getElementById('scan-qty');
             const totalPriceElement = document.getElementById('total-price');
             const priceTypeElement = document.getElementById('price-type');
-
-            if (!qtyElement || !totalPriceElement || !priceTypeElement) {
-                console.log('Missing elements');
-                return;
-            }
+            if (!qtyElement || !totalPriceElement || !priceTypeElement) return;
 
             const qty = parseInt(qtyElement.value) || 1;
             let unitPrice = parseFloat(currentProduct.harga) || 0;
             let priceType = 'Harga Normal';
 
-            console.log('Current product:', currentProduct);
-            console.log('Base price:', unitPrice);
-            console.log('Quantity:', qty);
-
-            // Check tebus murah first (higher priority)
             const isTebusMurahEligible = currentProduct.is_tebus_murah_active &&
-                                       currentTransactionTotal >= currentProduct.min_total_tebus_murah &&
-                                       currentProduct.harga_tebus_murah > 0;
-
-            // Check wholesale
+                                        currentTransactionTotal >= currentProduct.min_total_tebus_murah &&
+                                        currentProduct.harga_tebus_murah > 0;
             const isWholesaleEligible = currentProduct.is_grosir_active &&
-                                      qty >= currentProduct.min_qty_grosir &&
-                                      currentProduct.harga_grosir > 0;
+                                        qty >= currentProduct.min_qty_grosir &&
+                                        currentProduct.harga_grosir > 0;
 
             if (isTebusMurahEligible) {
                 unitPrice = parseFloat(currentProduct.harga_tebus_murah) || unitPrice;
@@ -679,52 +602,37 @@
                 unitPrice = parseFloat(currentProduct.harga_grosir) || unitPrice;
                 priceType = 'Harga Grosir';
             }
-
             const totalPrice = unitPrice * qty;
-            console.log('Final unit price:', unitPrice);
-            console.log('Total price:', totalPrice);
-
-            // Update total price
             totalPriceElement.textContent = formatRupiah(totalPrice);
-
-            // Update price type
             priceTypeElement.textContent = priceType;
             priceTypeElement.className = isTebusMurahEligible ? 'small text-danger fw-bold' :
-                                       isWholesaleEligible ? 'small text-warning fw-bold' :
-                                       'small text-muted';
+                                          isWholesaleEligible ? 'small text-warning fw-bold' :
+                                          'small text-muted';
         }
 
         function calculateSubtotal() {
             const qtyInput = document.getElementById('qty');
             const subtotalInput = document.getElementById('subtotal');
             const manualSubmitBtn = document.getElementById('manual-submit-btn');
-
             const wholesaleInfo = document.getElementById('manual-wholesale-info');
             const tebusMusahInfo = document.getElementById('manual-tebus-murah-info');
             wholesaleInfo.style.display = 'none';
             tebusMusahInfo.style.display = 'none';
             subtotalInput.value = '';
             manualSubmitBtn.disabled = true;
-
             if (!manualSelectedProduct || !qtyInput.value) return;
 
             const product = manualSelectedProduct;
             const retailPrice = product.harga || 0;
             const qty = parseInt(qtyInput.value) || 0;
             const stock = product.stok || 0;
-            if (qty > stock) {
-                // [PERMINTAAN] Menampilkan alert ketika jumlah melebihi stok
-            showAlert('warning', `Barang yang dibeli melebihi stok produk yang tersedia. (Stok saat ini: ${stock})`);
-    
-                // Otomatis mengoreksi jumlah ke nilai stok maksimal yang tersedia
-            qtyInput.value = stock;
-    
-                    // Panggil ulang fungsi agar subtotal ikut terupdate dengan nilai yang benar
-            calculateSubtotal(); 
             
-            // Hentikan eksekusi fungsi saat ini untuk menghindari kalkulasi ganda
-            return;
-        }
+            if (qty > stock) {
+                showAlert('warning', `Barang yang dibeli melebihi stok produk yang tersedia. (Stok saat ini: ${stock})`);
+                qtyInput.value = stock;
+                calculateSubtotal(); 
+                return;
+            }
 
             let unitPrice = retailPrice;
             const isTebusMurahEligible = product.is_tebus_murah_active && currentTransactionTotal >= product.min_total_tebus_murah && product.harga_tebus_murah > 0;
@@ -735,8 +643,7 @@
             } else if (isWholesaleEligible) {
                 unitPrice = product.harga_grosir;
             }
-
-            if(isWholesaleEligible) {
+            if (isWholesaleEligible) {
                 const savings = (retailPrice - product.harga_grosir) * qty;
                 document.getElementById('manual-unit-price').textContent = formatRupiah(product.harga_grosir);
                 document.getElementById('manual-total-savings').textContent = formatRupiah(savings);
@@ -744,15 +651,13 @@
                 document.getElementById('manual-wholesale-min-qty').textContent = product.min_qty_grosir;
                 wholesaleInfo.style.display = 'block';
             }
-
-            if(isTebusMurahEligible) {
+            if (isTebusMurahEligible) {
                 const savings = (retailPrice - product.harga_tebus_murah) * qty;
                 document.getElementById('manual-tebus-unit-price').textContent = formatRupiah(product.harga_tebus_murah);
                 document.getElementById('manual-tebus-total-savings').textContent = formatRupiah(savings);
                 document.getElementById('manual-tebus-discount-percent').textContent = ((retailPrice - product.harga_tebus_murah) / retailPrice * 100).toFixed(1) + '%';
                 tebusMusahInfo.style.display = 'block';
             }
-
             subtotalInput.value = unitPrice * qty;
             manualSubmitBtn.disabled = false;
         }
@@ -766,16 +671,11 @@
             setTimeout(() => { alertDiv.remove(); }, 5000);
         }
 
-        // Update quantity function for cart items
         function updateQty(orderId, newQty) {
             if (newQty < 1) return;
-
-            // Dapatkan referensi ke baris dan tombol di dalamnya
             const orderRow = document.getElementById(`order-row-${orderId}`);
             const minusBtn = orderRow.querySelector('.qty-controls .btn-danger');
             const plusBtn = orderRow.querySelector('.qty-controls .btn-success');
-
-            // Nonaktifkan kedua tombol selama proses update
             if (minusBtn) minusBtn.disabled = true;
             if (plusBtn) plusBtn.disabled = true;
 
@@ -790,84 +690,55 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // ==================================================================
-                    // PERUBAHAN UTAMA DI SINI REFRESH HALAMAN KETIKA BUTTON + DAN - DI KLIK
-                    // ==================================================================
                     showAlert('success', data.message);
                     setTimeout(() => {
                         location.reload();
-                    }, 1000); // Refresh halaman setelah 1 detik agar notifikasi terbaca
-
+                    }, 1000);
                 } else {
-                    // Jika gagal dari sisi server, tampilkan error dan aktifkan kembali tombol
                     showAlert('danger', data.message);
                     if (minusBtn) minusBtn.disabled = newQty <= 1;
                     if (plusBtn) plusBtn.disabled = false;
                 }
             })
             .catch(error => {
-                // Jika terjadi error jaringan, tampilkan error dan aktifkan kembali tombol
                 showAlert('danger', 'Terjadi kesalahan jaringan');
                 if (minusBtn) minusBtn.disabled = newQty <= 1;
                 if (plusBtn) plusBtn.disabled = false;
             });
         }
 
-        // Function to add tebus murah product to cart - PERBAIKAN DENGAN DEBUGGING
         function addTebusMusahToCart(productId, productName, tebusMusahPrice, stock) {
-            console.log('=== DEBUGGING TEBUS MURAH ===');
-            console.log('Product ID:', productId);
-            console.log('Product Name:', productName);
-            console.log('Tebus Murah Price:', tebusMusahPrice);
-            console.log('Stock:', stock);
-            console.log('No Nota:', '{{ $no_nota }}');
-
             if (stock <= 0) {
                 showAlert('warning', '⚠️ Stok produk habis!');
                 return;
             }
-
             const button = document.getElementById(`tebus-btn-${productId}`);
             if (!button) {
-                console.error('Button not found for product ID:', productId);
                 showAlert('danger', '❌ Button tidak ditemukan!');
                 return;
             }
-
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="bi bi-hourglass-split"></i> Menambah...';
             button.disabled = true;
-
             const formData = new FormData();
             formData.append('no_nota', '{{ $no_nota }}');
             formData.append('good_id', productId);
-            formData.append('qty', 1); // Default quantity 1
-            formData.append('subtotal', tebusMusahPrice); // Use tebus murah price
-            formData.append('is_tebus_murah', 'true'); // PENTING: Flag tebus murah
+            formData.append('qty', 1);
+            formData.append('subtotal', tebusMusahPrice);
+            formData.append('is_tebus_murah', 'true');
             formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-            console.log('FormData contents:');
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
 
             fetch('/dashboard/cashier/storeorder', {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response ok:', response.ok);
-
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.text();
             })
             .then(responseText => {
-                console.log('Response text:', responseText);
-
-                // Check if response contains success indicators
                 if (responseText.includes('success') || responseText.includes('berhasil')) {
                     showAlert('success', `✅ "${productName}" berhasil ditambahkan dengan harga tebus murah!`);
                     setTimeout(() => {
@@ -878,7 +749,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 showAlert('danger', '❌ Terjadi kesalahan: ' + error.message);
                 button.innerHTML = originalText;
                 button.disabled = false;
@@ -915,9 +785,8 @@
         });
 
         document.getElementById('add-scanned-item').addEventListener('click', function () {
-            const barcode = document.getElementById('barcode-input').value.trim();
             const qty = document.getElementById('scan-qty').value;
-            if (!barcode || !currentProduct) {
+            if (!currentProduct) {
                 showAlert('warning', '⚠️ Cari produk via barcode dulu!');
                 return;
             }
@@ -929,9 +798,8 @@
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menambahkan...';
             submitBtn.disabled = true;
-
             const formData = new FormData();
-            formData.append('barcode', barcode);
+            formData.append('barcode', currentProduct.barcode);
             formData.append('qty', parseInt(qty));
             formData.append('no_nota', '{{ $no_nota }}');
             formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
@@ -941,18 +809,19 @@
                 body: formData
             }).then(response => {
                 if (!response.ok) return response.json().then(err => { throw err; });
-                return response.text();
-            }).then(() => {
-                showAlert('success', '✅ Produk ditambahkan ke pesanan!');
-                setTimeout(() => location.reload(), 1000);
+                return response.json();
+            }).then(data => {
+                if(data.success) {
+                    showAlert('success', '✅ Produk ditambahkan ke pesanan!');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showAlert('danger', `❌ ${data.message || 'Gagal menambahkan produk.'}`);
+                }
             }).catch(error => showAlert('danger', '❌ ' + (error.message || 'Error jaringan.'))).finally(() => {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             });
         });
-
-        document.getElementById('barcode-input').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); processBarcode(e.target.value); } });
-        document.getElementById('search-barcode').addEventListener('click', () => processBarcode(document.getElementById('barcode-input').value));
 
         const productSearchInput = document.getElementById('product-search-input');
         const searchResultsDiv = document.getElementById('search-results');
@@ -992,7 +861,6 @@
 
         document.addEventListener('click', e => { if (!productSearchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) { searchResultsDiv.style.display = 'none'; } });
 
-        // Only add camera event listeners if mobile device
         document.addEventListener('DOMContentLoaded', () => {
             detectMobileDevice();
 
@@ -1002,12 +870,37 @@
                 window.addEventListener('beforeunload', () => stopScanner());
             }
 
-            document.getElementById('barcode-input').focus();
+            // --- [PERUBAHAN] LISTENER UNTUK SCANNER BARCODE GLOBAL ---
+            let barcodeBuffer = '';
+            let lastInputTime = Date.now();
+            document.addEventListener('keydown', function(e) {
+                const currentTime = Date.now();
+                if (currentTime - lastInputTime > 50) {
+                    barcodeBuffer = '';
+                }
+                if (e.key === 'Enter') {
+                    if (barcodeBuffer.length > 3) {
+                        e.preventDefault();
+                        const activeElement = document.activeElement.tagName;
+                        if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+                            // Mengganti addBarcodeToCart dengan processBarcode
+                            processBarcode(barcodeBuffer);
+                        }
+                    }
+                    barcodeBuffer = '';
+                } else {
+                    if (e.key.length === 1) {
+                        barcodeBuffer += e.key;
+                    }
+                }
+                lastInputTime = currentTime;
+            });
+            // --- AKHIR DARI LISTENER SCANNER ---
         });
 
         function deleteOrderItem(orderId, productName) {
             if (confirm(`Yakin ingin menghapus "${productName}" dari pesanan?`)) {
-                const button = document.querySelector(`button[onclick="deleteOrderItem(${orderId}, '${productName}')"]`);
+                const button = document.querySelector(`button[onclick="deleteOrderItem(${orderId}, '${productName.replace(/'/g, "\\'")}')"]`);
                 const originalText = button.innerHTML;
                 button.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 button.disabled = true;
@@ -1023,7 +916,6 @@
                 .then(data => {
                     if (data.success) {
                         showAlert('success', data.message);
-                        // Reload halaman untuk update cart dan total
                         setTimeout(() => location.reload(), 1000);
                     } else {
                         showAlert('danger', data.message);
