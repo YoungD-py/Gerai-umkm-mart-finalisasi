@@ -752,6 +752,8 @@
     });
 </script>
 
+
+
 <!-- Tambahkan CSRF token untuk JavaScript -->
 <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 <?php $__env->stopSection(); ?>

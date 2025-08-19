@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('container'); ?>
 <style>
     body {
@@ -144,7 +146,7 @@
     .pagination-wrapper .page-link:hover {
         background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
-        transform: translateY(-1px);
+        transform: trans lateY(-1px);
     }
     .pagination-wrapper .page-item.active .page-link {
         background: linear-gradient(135deg, #28a745, #20c997);
@@ -455,4 +457,4 @@
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/index.blade.php ENDPATH**/ ?>

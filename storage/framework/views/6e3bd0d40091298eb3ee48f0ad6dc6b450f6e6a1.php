@@ -61,14 +61,14 @@
 <body>
     <div class="header">
         <h2>Laporan Biaya Operasional</h2>
-        {{-- PERBAIKAN: Langsung format dari objek Carbon, tidak perlu parse lagi --}}
-        <p>Periode: {{ $startDate->format('d M Y') }} - {{ $endDate->format('d M Y') }}</p>
+        
+        <p>Periode: <?php echo e($startDate->format('d M Y')); ?> - <?php echo e($endDate->format('d M Y')); ?></p>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th style="width: 5%;">NO</th>
+                <th style="width: 5%;">#</th>
                 <th style="width: 15%;">Tanggal</th>
                 <th>Uraian/Keterangan</th>
                 <th style="width: 10%;">Qty</th>
@@ -76,31 +76,33 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($biayaOperasional as $biaya)
+            <?php $__empty_1 = true; $__currentLoopData = $biayaOperasional; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $biaya): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ \Carbon\Carbon::parse($biaya->tanggal)->format('d M Y') }}</td>
-                    <td>{{ $biaya->uraian }}</td>
-                    <td style="text-align: center;">{{ $biaya->qty }}</td>
-                    <td class="text-right">Rp {{ number_format($biaya->nominal, 0, ',', '.') }}</td>
+                    <td><?php echo e($loop->iteration); ?></td>
+                    <td><?php echo e(\Carbon\Carbon::parse($biaya->tanggal)->format('d M Y')); ?></td>
+                    <td><?php echo e($biaya->uraian); ?></td>
+                    <td style="text-align: center;"><?php echo e($biaya->qty); ?></td>
+                    <td class="text-right">Rp <?php echo e(number_format($biaya->nominal, 0, ',', '.')); ?></td>
                 </tr>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td colspan="5" style="text-align: center; padding: 20px;">Tidak ada data pada periode ini.</td>
                 </tr>
-            @endforelse
+            <?php endif; ?>
         </tbody>
         <tfoot>
             <tr class="total-row">
                 <td colspan="4" class="text-right"><strong>Total Biaya Operasional:</strong></td>
-                {{-- PERBAIKAN: Menggunakan variabel $totalBiaya dari controller --}}
-                <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                
+                <td class="text-right"><strong>Rp <?php echo e(number_format($totalBiaya, 0, ',', '.')); ?></strong></td>
             </tr>
         </tfoot>
     </table>
 
     <div class="footer">
-        Dicetak pada: {{ $generated_at->format('d M Y H:i:s') }}
+        Dicetak pada: <?php echo e($generated_at->format('d M Y H:i:s')); ?>
+
     </div>
 </body>
 </html>
+<?php /**PATH /var/www/resources/views/biaya_operasional_pdf.blade.php ENDPATH**/ ?>
