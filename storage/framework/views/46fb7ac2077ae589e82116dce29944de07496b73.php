@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
@@ -173,27 +173,28 @@
 <div class="container-fluid py-4">
     <div class="page-title">
         <h1>🛒 DETAIL PESANAN</h1>
-        <p>Kelola item belanja untuk nota nomor <strong>{{ $no_nota }}</strong></p>
+        <p>Kelola item belanja untuk nota nomor <strong><?php echo e($no_nota); ?></strong></p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+            
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-cart3"></i>
                     Keranjang Belanja
                 </h3>
                 <form method="post" action="/dashboard/orders/create" class="w-100 w-md-auto">
-                    @csrf
-                    <input type="hidden" name="no_nota" value="{{ $no_nota }}">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
                     <button type="submit" class="btn btn-umkm btn-umkm-sm w-100" style="background: white; color: #28a745;">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Belanja
@@ -217,26 +218,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($orders as $order)
+                        <?php $__empty_1 = true; $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
-                                <td><strong>{{ $loop->iteration }}</strong></td>
-                                {{-- Menambahkan pengecekan null untuk barang yang sudah dihapus --}}
-                                <td>{{ $order->good ? $order->good->nama : 'Barang sudah tidak ada' }}</td>
-                                <td>Rp {{ number_format($order->price, 0, ',', '.') }}</td>
-                                <td>{{ $order->qty }}</td>
-                                <td>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                                <td><strong><?php echo e($loop->iteration); ?></strong></td>
+                                
+                                <td><?php echo e($order->good ? $order->good->nama : 'Barang sudah tidak ada'); ?></td>
+                                <td>Rp <?php echo e(number_format($order->price, 0, ',', '.')); ?></td>
+                                <td><?php echo e($order->qty); ?></td>
+                                <td>Rp <?php echo e(number_format($order->subtotal, 0, ',', '.')); ?></td>
                                 <td class="text-center">
-                                    <form action="/dashboard/orders/{{ $order->id }}" method="post" class="d-inline">
-                                        @method('delete')
-                                        @csrf
-                                        <input type="hidden" name="no_nota" value="{{ $order->no_nota }}">
+                                    <form action="/dashboard/orders/<?php echo e($order->id); ?>" method="post" class="d-inline">
+                                        <?php echo method_field('delete'); ?>
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" name="no_nota" value="<?php echo e($order->no_nota); ?>">
                                         <button class="btn btn-danger btn-sm" onclick="return confirm('Hapus item ini dari keranjang?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
@@ -246,20 +247,20 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
             <!-- Checkout Section -->
-            @if($orders->count() > 0)
+            <?php if($orders->count() > 0): ?>
             <div class="checkout-section">
                 <form method="post" action="/dashboard/transactions/checkout">
-                    @csrf
-                    <input type="hidden" name="no_nota" value="{{ $no_nota }}">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
                     <input type="hidden" name="nama_pembeli" value="CASH"> <!-- Default payment method -->
 
-                    {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
+                    
                     <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-3">
                         <div class="text-center text-sm-start">
                             <span class="text-muted">Total Harga</span>
@@ -275,7 +276,7 @@
                     </div>
                 </form>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -300,4 +301,6 @@
         calculateTotal();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/orders/index.blade.php ENDPATH**/ ?>
