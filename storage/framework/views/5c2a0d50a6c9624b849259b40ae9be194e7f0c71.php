@@ -378,6 +378,91 @@
             </div>
         </div>
     </div>
+
+    <!-- Added Restock History Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="umkm-card">
+                <div class="umkm-card-header">
+                    <h3 class="umkm-card-title">
+                        <i class="bi bi-clock-history"></i>
+                        Riwayat Restock Barang
+                    </h3>
+                </div>
+
+                <div class="card-body p-3 p-md-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">NO</th>
+                                    <th scope="col">Nama Barang</th>
+                                    <th scope="col">Tanggal Restock</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Stok Sebelum</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Stok Sesudah</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">Administrasi</th>
+                                    <th scope="col">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $__empty_1 = true; $__currentLoopData = $restockHistory; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $restock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                    <tr>
+                                        <td><?php echo e(($restockHistory->currentPage() - 1) * $restockHistory->perPage() + $loop->iteration); ?></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <h6 class="mb-0"><?php echo e($restock->good->nama ?? 'Barang Terhapus'); ?></h6>
+                                                    <small class="text-muted"><?php echo e($restock->good->category->nama ?? 'Tidak ada mitra'); ?></small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold"><?php echo e(\Carbon\Carbon::parse($restock->tgl_restock)->format('d/m/Y')); ?></span>
+                                            <br>
+                                            <small class="text-muted"><?php echo e(\Carbon\Carbon::parse($restock->created_at)->format('H:i')); ?></small>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <span class="text-warning fw-bold"><?php echo e($restock->good->stok - $restock->qty_restock); ?></span>
+                                            <small class="text-muted">unit</small>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <span class="text-success fw-bold"><?php echo e($restock->good->stok); ?></span>
+                                            <small class="text-muted">unit</small>
+                                            <br>
+                                            <small class="text-info">(+<?php echo e($restock->qty_restock); ?>)</small>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-person-check text-success me-1"></i>
+                                                <?php echo e($restock->user->nama ?? 'User Terhapus'); ?>
+
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted"><?php echo e($restock->keterangan ?? '-'); ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                            Belum ada riwayat restock barang
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- History Pagination -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <?php echo e($restockHistory->appends(request()->query())->links()); ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Added JavaScript for sorting functionality like in returns page -->

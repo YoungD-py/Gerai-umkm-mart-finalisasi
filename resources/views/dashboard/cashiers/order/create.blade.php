@@ -628,7 +628,7 @@
             const stock = product.stok || 0;
             
             if (qty > stock) {
-                showAlert('warning', `Barang yang dibeli melebihi stok produk yang tersedia. (Stok saat ini: ${stock})`);
+                showAlert('warning', `Barang yang dibeli melebihi stok produk yang tersedia, Mohon Dicek Kembali. (Stok saat ini: ${stock})`);
                 qtyInput.value = stock;
                 calculateSubtotal(); 
                 return;
