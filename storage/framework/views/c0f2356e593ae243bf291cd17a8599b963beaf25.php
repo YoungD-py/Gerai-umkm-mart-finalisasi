@@ -720,10 +720,18 @@
             const qty = parseInt(qtyInput.value) || 0;
             const stock = product.stok || 0;
             if (qty > stock) {
-                showAlert('warning', `⚠️ Jumlah melebihi stok (${stock})`);
-                qtyInput.value = stock;
-                return;
-            }
+                // [PERMINTAAN] Menampilkan alert ketika jumlah melebihi stok
+            showAlert('warning', `Barang yang dibeli melebihi stok produk yang tersedia. (Stok saat ini: ${stock})`);
+    
+                // Otomatis mengoreksi jumlah ke nilai stok maksimal yang tersedia
+            qtyInput.value = stock;
+    
+                    // Panggil ulang fungsi agar subtotal ikut terupdate dengan nilai yang benar
+            calculateSubtotal(); 
+            
+            // Hentikan eksekusi fungsi saat ini untuk menghindari kalkulasi ganda
+            return;
+        }
 
             let unitPrice = retailPrice;
             const isTebusMurahEligible = product.is_tebus_murah_active && currentTransactionTotal >= product.min_total_tebus_murah && product.harga_tebus_murah > 0;
