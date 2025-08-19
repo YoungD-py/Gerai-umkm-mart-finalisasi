@@ -51,10 +51,16 @@ class RestockController extends Controller
             }
         }
 
+        $restockHistory = Restock::with(['good.category', 'user'])
+            ->orderBy('tgl_restock', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'history_page');
+
         return view('dashboard.restock.index', [
             'active' => 'restock',
             'goods' => $query->paginate(10)->withQueryString(),
             'categories' => Category::all(), // Added categories for mitra filter dropdown
+            'restockHistory' => $restockHistory, // Added restock history data
         ]);
     }
 
@@ -78,6 +84,8 @@ class RestockController extends Controller
             'stok_tambahan' => 'required|integer|min:1',
             'keterangan' => 'nullable|string|max:255',
         ]);
+
+        $stokSebelum = $good->stok;
 
         // Add new stock to existing stock
         $stokBaru = $good->stok + $validatedData['stok_tambahan'];

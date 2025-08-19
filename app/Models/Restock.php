@@ -23,6 +23,17 @@ class Restock extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function getStokSebelumAttribute()
+    {
+        // Calculate stock before this restock by subtracting the restock quantity
+        return $this->good->stok - $this->qty_restock;
+    }
+
+    public function getStokSesudahAttribute()
+    {
+        return $this->good->stok;
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
