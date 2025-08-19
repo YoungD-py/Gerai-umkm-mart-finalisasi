@@ -498,6 +498,20 @@
                                                             <i class="bi bi-credit-card text-success"></i> Pembayaran
                                                         </a>
                                                     </li>
+                                                    <li style="display: none;">
+                                                        <form action="/dashboard/transactions/{{ $transaction->id }}"
+                                                            method="post" class="dropdown-item-form"
+                                                            id="deleteForm{{ $transaction->id }}">
+                                                            @method('delete')
+                                                            @csrf
+                                                            <input type="hidden" name="no_nota"
+                                                                value="{{ $transaction->no_nota }}">
+                                                            <button type="button" class="dropdown-item text-danger"
+                                                                onclick="showDeleteModal(this, '{{ $transaction->id }}', '{{ $transaction->no_nota }}')">
+                                                                <i class="bi bi-trash"></i> Hapus
+                                                            </button>
+                                                        </form>
+                                                    </li>   
                                                     <li>
                                                         <form action="/dashboard/orders" method="post"
                                                             class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
@@ -507,8 +521,10 @@
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
                                                             </button>
-                                                        </form>
+                                                        </form> 
                                                     </li>
+
+
                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>
