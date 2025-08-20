@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -212,13 +212,14 @@
         <p>Kelola stok barang di inventori GERAI UMKM MART</p>
     </div>
 
-    @if (session()->has('success'))
+    <?php if(session()->has('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill"></i>
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="row">
         <div class="col-12">
@@ -238,7 +239,7 @@
                                 <div class="col-md-6">
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Cari nama barang atau mitra..."
-                                               name="search" value="{{ request('search') }}">
+                                               name="search" value="<?php echo e(request('search')); ?>">
                                         <button class="btn btn-umkm" type="submit">
                                             <i class="bi bi-search"></i>
                                             <span class="d-none d-sm-inline ms-1">Cari</span>
@@ -249,27 +250,28 @@
                                     <!-- Added mitra filter dropdown -->
                                     <select name="mitra" class="form-select" onchange="this.form.submit()">
                                         <option value="">Semua Mitra</option>
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}" {{ request('mitra') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->nama }}
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($category->id); ?>" <?php echo e(request('mitra') == $category->id ? 'selected' : ''); ?>>
+                                                <?php echo e($category->nama); ?>
+
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
                             </div>
                             <!-- Hidden inputs to preserve sorting when searching -->
-                            @if(request('sort_stok'))
-                                <input type="hidden" name="sort_stok" value="{{ request('sort_stok') }}">
-                            @endif
-                            @if(request('sort_mitra'))
-                                <input type="hidden" name="sort_mitra" value="{{ request('sort_mitra') }}">
-                            @endif
-                            @if(request('sort_status'))
-                                <input type="hidden" name="sort_status" value="{{ request('sort_status') }}">
-                            @endif
-                            @if(request('filter_status'))
-                                <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
-                            @endif
+                            <?php if(request('sort_stok')): ?>
+                                <input type="hidden" name="sort_stok" value="<?php echo e(request('sort_stok')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('sort_mitra')): ?>
+                                <input type="hidden" name="sort_mitra" value="<?php echo e(request('sort_mitra')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('sort_status')): ?>
+                                <input type="hidden" name="sort_status" value="<?php echo e(request('sort_status')); ?>">
+                            <?php endif; ?>
+                            <?php if(request('filter_status')): ?>
+                                <input type="hidden" name="filter_status" value="<?php echo e(request('filter_status')); ?>">
+                            <?php endif; ?>
                         </form>
                     </div>
 
@@ -285,9 +287,9 @@
                                         Mitra
                                         <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                             data-sort-param="mitra"
-                                            data-sort-order="{{ request('sort_mitra', 'none') }}"
+                                            data-sort-order="<?php echo e(request('sort_mitra', 'none')); ?>"
                                             title="Urutkan berdasarkan mitra">
-                                            <i class="bi {{ request('sort_mitra') == 'asc' ? 'bi-sort-up' : (request('sort_mitra') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                            <i class="bi <?php echo e(request('sort_mitra') == 'asc' ? 'bi-sort-up' : (request('sort_mitra') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                         </button>
                                     </th>
                                     <!-- Updated sorting UI for Stok column to match returns page style -->
@@ -295,26 +297,26 @@
                                         Stok
                                         <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                             data-sort-param="stok"
-                                            data-sort-order="{{ request('sort_stok', 'none') }}"
+                                            data-sort-order="<?php echo e(request('sort_stok', 'none')); ?>"
                                             title="Urutkan berdasarkan stok">
-                                            <i class="bi {{ request('sort_stok') == 'asc' ? 'bi-sort-up' : (request('sort_stok') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
+                                            <i class="bi <?php echo e(request('sort_stok') == 'asc' ? 'bi-sort-up' : (request('sort_stok') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up')); ?>"></i>
                                         </button>
                                     </th>
                                     <th scope="col" class="d-none d-sm-table-cell">
                                         Status
                                         <!-- Updated status button to use filtering instead of sorting -->
                                         <button type="button" class="btn btn-sm btn-light ms-2 status-filter-toggle"
-                                            data-filter-status="{{ request('filter_status', 'none') }}"
+                                            data-filter-status="<?php echo e(request('filter_status', 'none')); ?>"
                                             title="Filter berdasarkan status stok">
-                                            @if(request('filter_status') == 'aman')
+                                            <?php if(request('filter_status') == 'aman'): ?>
                                                 <i class="bi bi-check-circle text-success"></i>
-                                            @elseif(request('filter_status') == 'sedang')
+                                            <?php elseif(request('filter_status') == 'sedang'): ?>
                                                 <i class="bi bi-exclamation-triangle text-warning"></i>
-                                            @elseif(request('filter_status') == 'rendah')
+                                            <?php elseif(request('filter_status') == 'rendah'): ?>
                                                 <i class="bi bi-x-circle text-danger"></i>
-                                            @else
+                                            <?php else: ?>
                                                 <i class="bi bi-funnel"></i>
-                                            @endif
+                                            <?php endif; ?>
                                         </button>
                                     </th>
                                     <th scope="col" class="d-none d-lg-table-cell">Harga</th>
@@ -322,8 +324,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($goods as $good)
-                                    @php
+                                <?php $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
                                         $stockClass = '';
                                         $stockBadge = '';
                                         $stockText = '';
@@ -341,63 +343,66 @@
                                             $stockBadge = 'badge-high';
                                             $stockText = 'Aman';
                                         }
-                                    @endphp
-                                    <tr class="{{ $stockClass }}">
-                                        <td>{{ ($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration }}</td>
+                                    ?>
+                                    <tr class="<?php echo e($stockClass); ?>">
+                                        <td><?php echo e(($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration); ?></td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div>
-                                                    <h6 class="mb-0">{{ $good->nama }}</h6>
-                                                    <small class="text-muted">{{ $good->type }}</small>
+                                                    <h6 class="mb-0"><?php echo e($good->nama); ?></h6>
+                                                    <small class="text-muted"><?php echo e($good->type); ?></small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="d-none d-md-table-cell">
                                             <span class="badge bg-success px-3 py-2">
                                                 <i class="bi bi-shop me-1"></i>
-                                                {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
+                                                <?php echo e($good->category ? $good->category->nama : 'Tidak ada mitra'); ?>
+
                                             </span>
                                         </td>
                                         <td>
                                             <div>
-                                                <span class="fw-bold fs-5">{{ $good->stok }}</span>
+                                                <span class="fw-bold fs-5"><?php echo e($good->stok); ?></span>
                                                 <small class="text-muted"> unit</small>
                                                 <br>
-                                                @php
+                                                <?php
                                                     $restockNeeded = 0;
                                                     if ($good->stok <= 5) {
                                                         $restockNeeded = 25 - $good->stok; // Target 25 for low stock
                                                     } elseif ($good->stok <= 20) {
                                                         $restockNeeded = 30 - $good->stok; // Target 30 for medium stock
                                                     }
-                                                @endphp
-                                                <!-- @if($restockNeeded > 0)
-                                                    <small class="text-success fw-bold">(+{{ $restockNeeded }})</small>
-                                                @endif -->
+                                                ?>
+                                                <!-- <?php if($restockNeeded > 0): ?>
+                                                    <small class="text-success fw-bold">(+<?php echo e($restockNeeded); ?>)</small>
+                                                <?php endif; ?> -->
                                             </div>
                                         </td>
                                         <td class="d-none d-sm-table-cell">
-                                            <span class="badge badge-stock {{ $stockBadge }}">
-                                                {{ $stockText }}
+                                            <span class="badge badge-stock <?php echo e($stockBadge); ?>">
+                                                <?php echo e($stockText); ?>
+
                                             </span>
                                         </td>
-                                        <td class="d-none d-lg-table-cell">Rp {{ number_format($good->harga, 0, ',', '.') }}</td>
+                                        <td class="d-none d-lg-table-cell">Rp <?php echo e(number_format($good->harga, 0, ',', '.')); ?></td>
                                         <td>
-                                            <a href="/dashboard/restock/{{ $good->id }}/edit"
+                                            <a href="/dashboard/restock/<?php echo e($good->id); ?>/edit"
                                                class="btn-umkm">
                                                 <i class="bi bi-plus-circle"></i>
                                                 <span class="d-none d-sm-inline ms-1">Restock</span>
                                             </a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $goods->links() }}
+                        <?php echo e($goods->links()); ?>
+
                     </div>
                 </div>
             </div>
@@ -431,45 +436,47 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($restockHistory as $restock)
+                                <?php $__empty_1 = true; $__currentLoopData = $restockHistory; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $restock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <tr>
-                                        <td>{{ ($restockHistory->currentPage() - 1) * $restockHistory->perPage() + $loop->iteration }}</td>
+                                        <td><?php echo e(($restockHistory->currentPage() - 1) * $restockHistory->perPage() + $loop->iteration); ?></td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div>
-                                                    <h6 class="mb-0">{{ $restock->good->nama ?? 'Barang Terhapus' }}</h6>
+                                                    <h6 class="mb-0"><?php echo e($restock->good->nama ?? 'Barang Terhapus'); ?></h6>
                                                     <!-- Removed mitra information from under product name -->
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="fw-bold">{{ \Carbon\Carbon::parse($restock->tgl_restock)->format('d/m/Y') }}</span>
+                                            <span class="fw-bold"><?php echo e(\Carbon\Carbon::parse($restock->tgl_restock)->format('d/m/Y')); ?></span>
                                             <br>
-                                            <small class="text-muted">{{ \Carbon\Carbon::parse($restock->created_at)->format('H:i') }}</small>
+                                            <small class="text-muted"><?php echo e(\Carbon\Carbon::parse($restock->created_at)->format('H:i')); ?></small>
                                         </td>
                                         <!-- restored mitra binaan information in the column -->
                                         <td class="d-none d-md-table-cell">
                                             <span class="badge bg-success px-3 py-2">
                                                 <i class="bi bi-shop me-1"></i>
-                                                {{ $restock->good->category->nama ?? 'Tidak ada mitra' }}
+                                                <?php echo e($restock->good->category->nama ?? 'Tidak ada mitra'); ?>
+
                                             </span>
                                         </td>
                                         <td class="d-none d-md-table-cell">
                                             <div>
-                                                <!-- <span class="text-success fw-bold">{{ $restock->good->stok }}</span> -->
+                                                <!-- <span class="text-success fw-bold"><?php echo e($restock->good->stok); ?></span> -->
                                                 <!-- <small class="text-muted"> unit</small> -->
                                                 <br>
-                                                <span class="restock-qty-large">(+{{ $restock->qty_restock }})</span> </div>
+                                                <span class="restock-qty-large">(+<?php echo e($restock->qty_restock); ?>)</span> </div>
                                             </div>
                                         </td>
                                         <td class="d-none d-lg-table-cell">
                                             <span class="badge bg-primary">
                                                 <i class="bi bi-person-check text-white me-1"></i>
-                                                {{ $restock->user->nama ?? 'User Terhapus' }}
+                                                <?php echo e($restock->user->nama ?? 'User Terhapus'); ?>
+
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="text-muted">{{ $restock->keterangan ?? '-' }}</span>
+                                            <span class="text-muted"><?php echo e($restock->keterangan ?? '-'); ?></span>
                                         </td>
                                         <td>
                                             <!-- enhanced dropdown styling to match green theme -->
@@ -480,14 +487,14 @@
                                                 <ul class="dropdown-menu shadow">
                                                     <li>
                                                         <!-- changed edit option color to yellow -->
-                                                        <a class="dropdown-item" href="/dashboard/restock/{{ $restock->id }}/edit-restock">
+                                                        <a class="dropdown-item" href="/dashboard/restock/<?php echo e($restock->id); ?>/edit-restock">
                                                             <i class="bi bi-pencil me-2 text-warning"></i>Edit
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <form action="/dashboard/restock/{{ $restock->id }}" method="post" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
-                                                            @method('delete')
-                                                            @csrf
+                                                        <form action="/dashboard/restock/<?php echo e($restock->id); ?>" method="post" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
+                                                            <?php echo method_field('delete'); ?>
+                                                            <?php echo csrf_field(); ?>
                                                             <!-- changed delete option color to black -->
                                                             <button type="submit" class="dropdown-item text-danger">
                                                                 <i class="bi bi-trash me-2"></i>Hapus
@@ -498,21 +505,22 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @empty
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
                                         <td colspan="8" class="text-center text-muted py-4">
                                             <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                             Belum ada riwayat restock barang
                                         </td>
                                     </tr>
-                                @endforelse
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- History Pagination -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $restockHistory->appends(request()->query())->links() }}
+                        <?php echo e($restockHistory->appends(request()->query())->links()); ?>
+
                     </div>
                 </div>
             </div>
@@ -547,3 +555,5 @@
         });
     });
 </script>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/restock/index.blade.php ENDPATH**/ ?>
