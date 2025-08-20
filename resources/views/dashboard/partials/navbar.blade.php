@@ -1,149 +1,159 @@
 <style>
     /* [DIUBAH TOTAL] Style baru yang terinspirasi dari Tabler UI */
-.header {
-    background-color: #f2f3f5 !important; /* Abu-abu muda untuk navbar */
-    border-bottom: 1px solid #f2f3f5;
-    padding: 0 1rem;
-    z-index: 1030; /* Menambahkan z-index agar selalu di atas konten lain */
-}
+    .header {
+        background-color: #f2f3f5 !important; /* Abu-abu muda untuk navbar */
+        border-bottom: 1px solid #f2f3f5;
+        padding: 0 1rem;
+        z-index: 1030; /* Menambahkan z-index agar selalu di atas konten lain */
+        /* Fixed navbar positioning to ensure it stays at top */
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
 
-.navbar-brand-image {
-    height: 2rem;
-}
+    /* Add body padding to prevent content from hiding behind fixed navbar */
+    body {
+        padding-top: 70px !important;
+    }
 
-.navbar-nav .nav-link {
-    color: #495567;
-    font-weight: 500;
-    padding: 0.75rem 1rem;
-    margin: 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.navbar-nav .nav-link:hover {
-    color: #1d273b;
-    background-color: #f2f3f5;
-}
-
-/* Nav-link aktif dengan garis bawah */
-.navbar-nav .nav-link.active {
-    background-color: transparent !important;
-    color: #f2f3f5;
-    border-bottom: 3px solid #f2f3f5;
-    border-radius: 0;
-}
-
-.navbar-nav .nav-link .nav-link-icon {
-    font-size: 1.1rem;
-}
-
-.dropdown-menu {
-    border-radius: 8px;
-    border: 1px solid #f2f3f5;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    padding: 0.5rem 0;
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-}
-
-.dropdown-item .icon {
-    width: 20px;
-    text-align: center;
-}
-
-.dropdown-item.active,
-.dropdown-item:active,
-.navbar-nav .dropdown-menu .dropdown-item.active,
-.navbar-nav .dropdown-menu .dropdown-item:active {
-    background-color: #206bc4 !important;
-    color: white !important;
-}
-
-.navbar-nav .dropdown-toggle::after {
-    margin-left: 0.5rem;
-}
-
-.navbar-nav .nav-item.dropdown .dropdown-menu {
-    margin-top: 0.5rem;
-}
-
-.navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Avatar admin dengan border dan shadow */
-.avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #206bc4;
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    border: 2px solid rgba(255,255,255,0.9); /* Border putih tipis */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Shadow lembut */
-    transition: all 0.3s ease; /* Animasi halus */
-}
-
-.avatar:hover {
-    transform: scale(1.05); /* Efek membesar saat hover */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
-.navbar-brand a {
-    color: white !important;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-}
-
-.navbar-brand svg {
-    color: white !important;
-    stroke: white !important;
-}
-
-/* RESPONSIVE */
-@media (max-width: 767.98px) {
-    .navbar-collapse {
-        padding: 1rem 0;
+    .navbar-brand-image {
+        height: 2rem;
     }
 
     .navbar-nav .nav-link {
-        padding: 0.75rem;
-        margin: 0.25rem 0;
+        color: #495567;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        margin: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
     }
 
-    /* Active style di mobile */
-    .navbar-nav .nav-link.active {
-        border-bottom: none;
-        border-radius: 8px;
-        background-color: #e9ecef !important;
+    .navbar-nav .nav-link:hover {
         color: #1d273b;
+        background-color: #f2f3f5;
+    }
+
+    /* Nav-link aktif dengan garis bawah */
+    .navbar-nav .nav-link.active {
+        background-color: transparent !important;
+        color: #f2f3f5;
+        border-bottom: 3px solid #f2f3f5;
+        border-radius: 0;
+    }
+
+    .navbar-nav .nav-link .nav-link-icon {
+        font-size: 1.1rem;
+    }
+
+    .dropdown-menu {
+        border-radius: 8px;
+        border: 1px solid #f2f3f5;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 0.5rem 0;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .dropdown-item .icon {
+        width: 20px;
+        text-align: center;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active,
+    .navbar-nav .dropdown-menu .dropdown-item.active,
+    .navbar-nav .dropdown-menu .dropdown-item:active {
+        background-color: #206bc4 !important;
+        color: white !important;
+    }
+
+    .navbar-nav .dropdown-toggle::after {
+        margin-left: 0.5rem;
     }
 
     .navbar-nav .nav-item.dropdown .dropdown-menu {
-        box-shadow: none;
-        border: none;
-        margin-top: 0;
-        padding-top: 0;
+        margin-top: 0.5rem;
     }
-}
 
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Avatar admin dengan border dan shadow */
+    .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #206bc4;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        border: 2px solid rgba(255,255,255,0.9); /* Border putih tipis */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Shadow lembut */
+        transition: all 0.3s ease; /* Animasi halus */
+    }
+
+    .avatar:hover {
+        transform: scale(1.05); /* Efek membesar saat hover */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .navbar-brand a {
+        color: white !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .navbar-brand svg {
+        color: white !important;
+        stroke: white !important;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 767.98px) {
+        .navbar-collapse {
+            padding: 1rem 0;
+        }
+
+        .navbar-nav .nav-link {
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+        }
+
+        /* Active style di mobile */
+        .navbar-nav .nav-link.active {
+            border-bottom: none;
+            border-radius: 8px;
+            background-color: #e9ecef !important;
+            color: #1d273b;
+        }
+
+        .navbar-nav .nav-item.dropdown .dropdown-menu {
+            box-shadow: none;
+            border: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+    }
 </style>
-    <header class="navbar navbar-expand-md navbar-light d-print-none header sticky-top">
+<header class="navbar navbar-expand-md navbar-light d-print-none header">
     <div class="container-fluid">
         {{-- [RESPONSIVE] Pindahkan toggler ke sini untuk alur yang lebih baik --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">

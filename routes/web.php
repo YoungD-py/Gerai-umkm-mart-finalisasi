@@ -93,6 +93,11 @@ Route::middleware('auth')->group(function () {
     // Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
     // Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
 
+    Route::get('/dashboard/restock/{restock}/edit-restock', [RestockController::class, 'editRestock']);
+    Route::put('/dashboard/restock/{restock}/update', [RestockController::class, 'updateRestock']);
+    Route::delete('/dashboard/restock/{restock}', [RestockController::class, 'destroy']);
+    Route::delete('/dashboard/restock/bulk-delete', [RestockController::class, 'bulkDelete'])->name('restock.bulkDelete');
+
     // KASIR ROUTES
     Route::get('/dashboard/cashier', [CashierController::class, 'index']);
     Route::get('/dashboard/cashier/create', [CashierController::class, 'createtransaction']);

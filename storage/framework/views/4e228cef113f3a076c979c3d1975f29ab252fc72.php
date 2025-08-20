@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
@@ -398,10 +396,12 @@
                                     <th scope="col">NO</th>
                                     <th scope="col">Nama Barang</th>
                                     <th scope="col">Tanggal Restock</th>
-                                    <th scope="col" class="d-none d-md-table-cell">Stok Sebelum</th>
+                                    <!-- replaced Stok Sebelum with Mitra Binaan -->
+                                    <th scope="col" class="d-none d-md-table-cell">Mitra Binaan</th>
                                     <th scope="col" class="d-none d-md-table-cell">Stok Sesudah</th>
                                     <th scope="col" class="d-none d-lg-table-cell">Administrasi</th>
                                     <th scope="col">Keterangan</th>
+                                    <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -421,9 +421,13 @@
                                             <br>
                                             <small class="text-muted"><?php echo e(\Carbon\Carbon::parse($restock->created_at)->format('H:i')); ?></small>
                                         </td>
+                                        <!-- replaced stok sebelum data with mitra binaan information -->
                                         <td class="d-none d-md-table-cell">
-                                            <span class="text-warning fw-bold"><?php echo e($restock->good->stok - $restock->qty_restock); ?></span>
-                                            <small class="text-muted">unit</small>
+                                            <span class="badge bg-info text-white">
+                                                <i class="bi bi-building me-1"></i>
+                                                <?php echo e($restock->good->category->nama ?? 'Tidak ada mitra'); ?>
+
+                                            </span>
                                         </td>
                                         <td class="d-none d-md-table-cell">
                                             <span class="text-success fw-bold"><?php echo e($restock->good->stok); ?></span>
@@ -441,10 +445,26 @@
                                         <td>
                                             <span class="text-muted"><?php echo e($restock->keterangan ?? '-'); ?></span>
                                         </td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <a href="/dashboard/restock/<?php echo e($restock->id); ?>/edit-restock"
+                                                   class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form action="/dashboard/restock/<?php echo e($restock->id); ?>" method="post"
+                                                      class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
+                                                    <?php echo method_field('delete'); ?>
+                                                    <?php echo csrf_field(); ?>
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">
+                                        <td colspan="8" class="text-center text-muted py-4">
                                             <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                             Belum ada riwayat restock barang
                                         </td>
@@ -469,79 +489,28 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT UNTUK SORTING ---
-        const sortToggles = document.querySelectorAll('.sort-toggle');
-        sortToggles.forEach(toggleButton => {
-            toggleButton.addEventListener('click', function() {
-                const sortParam = this.dataset.sortParam;
-                let currentSortOrder = this.dataset.sortOrder;
-                let newSortOrder;
-
-                // Cycle through: none -> asc -> desc -> none
-                if (currentSortOrder === 'none') {
-                    newSortOrder = 'asc';
-                } else if (currentSortOrder === 'asc') {
-                    newSortOrder = 'desc';
-                } else {
-                    newSortOrder = 'none';
-                }
-
-                // Build new URL with sort parameter
-                const url = new URL(window.location.href);
-
-                // Clear existing sort parameters
-                url.searchParams.delete('sort_stok');
-                url.searchParams.delete('sort_mitra');
-
-                // Set new sort parameter if not 'none'
-                if (newSortOrder !== 'none') {
-                    url.searchParams.set(`sort_${sortParam}`, newSortOrder);
-                }
-
-                // Remove page parameter to start from first page
-                url.searchParams.delete('page');
-
-                // Navigate to new URL
-                window.location.href = url.toString();
+        const sortButtons = document.querySelectorAll('.sort-toggle');
+        sortButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const sortParam = this.getAttribute('data-sort-param');
+                const currentOrder = this.getAttribute('data-sort-order');
+                const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set(sortParam, newOrder);
+                window.location.search = urlParams.toString();
             });
         });
 
-        // --- SCRIPT UNTUK STATUS FILTERING ---
-        const statusFilterToggle = document.querySelector('.status-filter-toggle');
-        if (statusFilterToggle) {
-            statusFilterToggle.addEventListener('click', function() {
-                let currentFilter = this.dataset.filterStatus;
-                let newFilter;
-
-                // Cycle through: none -> aman -> sedang -> rendah -> none
-                if (currentFilter === 'none') {
-                    newFilter = 'aman';
-                } else if (currentFilter === 'aman') {
-                    newFilter = 'sedang';
-                } else if (currentFilter === 'sedang') {
-                    newFilter = 'rendah';
-                } else {
-                    newFilter = 'none';
-                }
-
-                // Build new URL with filter parameter
-                const url = new URL(window.location.href);
-
-                // Set new filter parameter if not 'none'
-                if (newFilter !== 'none') {
-                    url.searchParams.set('filter_status', newFilter);
-                } else {
-                    url.searchParams.delete('filter_status');
-                }
-
-                // Remove page parameter to start from first page
-                url.searchParams.delete('page');
-
-                // Navigate to new URL
-                window.location.href = url.toString();
-            });
-        }
+        // --- SCRIPT UNTUK FILTERING STATUS ---
+        const statusFilterButton = document.querySelector('.status-filter-toggle');
+        statusFilterButton.addEventListener('click', function() {
+            const currentStatus = this.getAttribute('data-filter-status');
+            const newStatus = currentStatus === 'none' ? 'aman' : currentStatus === 'aman' ? 'sedang' : currentStatus === 'sedang' ? 'rendah' : 'none';
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('filter_status', newStatus);
+            window.location.search = urlParams.toString();
+        });
     });
 </script>
-<?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/dashboard/restock/index.blade.php ENDPATH**/ ?>
