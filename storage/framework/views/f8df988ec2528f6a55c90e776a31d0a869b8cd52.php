@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login Admin - GERAI UMKM MART</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title>Login Kasir - GERAI UMKM MART</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Style baru yang terinspirasi dari Tabler UI untuk Admin */
+        /* [DIUBAH TOTAL] Style baru yang terinspirasi dari Tabler UI */
         body {
-            background-color: #f8fafc;
+            background-color: #f8fafc; /* Latar belakang abu-abu muda */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -40,7 +40,7 @@
             width: 48px;
             height: 48px;
             margin-bottom: 1rem;
-            color: #28a745;
+            color: #206bc4;
         }
         .login-header h1 {
             font-size: 1.5rem;
@@ -60,8 +60,8 @@
             padding: 0.75rem 1rem;
         }
         .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.2rem rgba(179, 158, 158, 0.25);
+            border-color: #206bc4;
+            box-shadow: 0 0 0 0.2rem rgba(32, 107, 196, 0.25);
         }
         /* Added styles for password toggle functionality */
         .password-container {
@@ -81,22 +81,22 @@
             transition: color 0.2s ease;
         }
         .password-toggle:hover {
-            color: #28a745;
+            color: #206bc4;
         }
         .password-container .form-control {
             padding-right: 40px;
         }
         /* </CHANGE> */
-        .btn-danger {
-            background-color: #28a745;
-            border-color: #28a745;
+        .btn-primary {
+            background-color: #206bc4;
+            border-color: #206bc4;
             border-radius: 8px;
             font-weight: 600;
             padding: 0.75rem;
         }
-        .btn-danger:hover {
-            background-color: #28a745;
-            border-color: #28a745;
+        .btn-primary:hover {
+            background-color: #1c5ba1;
+            border-color: #1c5ba1;
         }
         .captcha-container {
             background: #f8fafc;
@@ -107,13 +107,11 @@
             margin-bottom: 1.5rem;
             position: relative;
         }
-        .captcha-code {
+        .captcha-question {
             font-family: 'Courier New', monospace;
             font-size: 1.5rem;
             font-weight: bold;
             color: #1d273b;
-            text-decoration: line-through;
-            letter-spacing: 3px;
         }
         .captcha-refresh {
             position: absolute;
@@ -150,73 +148,116 @@
 <body>
     <div class="login-page">
         <div class="login-header">
-            <svg xmlns="http://www.w3.org/2000/svg" class="logo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
-            <h1>Login Administrator</h1>
-            <p>Akses panel kontrol utama GERAI UMKM MART </p>
+            <svg xmlns="http://www.w3.org/2000/svg" class="logo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M5 21v-14l8 -4v18" /><path d="M19 21v-10l-6 -4" /><path d="M9 9l0 .01" /><path d="M9 12l0 .01" /><path d="M9 15l0 .01" /><path d="M9 18l0 .01" /></svg>
+            <h1>Login Kasir</h1>
+            <p>Selamat datang kembali di GERAI UMKM MART </p>
         </div>
 
         <div class="card">
             <div class="card-body">
-                @if(session()->has('loginError'))
+                <?php if(session()->has('loginError')): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        {{ session('loginError') }}
+                        <?php echo e(session('loginError')); ?>
+
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                <form action="/loginadmin" method="post">
-                    @csrf
+                <form action="/login" method="post">
+                    <?php echo csrf_field(); ?>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control @error('username') is-invalid @enderror"
-                               id="username" name="username" placeholder="Masukkan username" value="{{ old('username') }}" required>
-                        @error('username')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <input type="text" class="form-control <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                               id="username" name="username" placeholder="Masukkan username" value="<?php echo e(old('username')); ?>" required>
+                        <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Added password toggle functionality -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="password-container">
-                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                            <input type="password" class="form-control <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                    id="password" name="password" placeholder="Masukkan password" required>
                             <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                 <i class="bi bi-eye" id="password-icon"></i>
                             </button>
                         </div>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                     <!-- </CHANGE> -->
 
                     <div class="captcha-container">
-                        <button type="button" class="captcha-refresh" onclick="refreshCaptcha()">
+                        <button type="button" class="captcha-refresh" onclick="refreshMathCaptcha()">
                             <i class="bi bi-arrow-clockwise"></i>
                         </button>
-                        <div class="captcha-code" id="captcha-display"></div>
+                        <div class="captcha-question" id="math-question"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="captcha_code" class="form-label">Kode Verifikasi</label>
-                        <input type="text" class="form-control @error('captcha_code') is-invalid @enderror"
-                               id="captcha_code" name="captcha_code" placeholder="Masukkan kode di atas" required>
-                        @error('captcha_code')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <label for="captcha_answer" class="form-label">Jawaban Verifikasi</label>
+                        <input type="number" class="form-control <?php $__errorArgs = ['captcha_answer'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                               id="captcha_answer" name="captcha_answer" placeholder="Masukkan jawaban" required>
+                        <?php $__errorArgs = ['captcha_answer'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    <button type="submit" class="btn btn-danger w-100">
-                        Login Administrator
+                    <button type="submit" class="btn btn-primary w-100">
+                        Login Kasir
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="footer-link">
-            <a href="/"><i class="bi bi-arrow-left"></i> Kembali ke Login Kasir</a>
+            <a href="/loginadmin"><i class="bi bi-gear"></i> Login sebagai Administrator</a>
         </div>
     </div>
 
@@ -237,36 +278,51 @@
         // </CHANGE>
 
         // Fungsionalitas JavaScript asli tetap dipertahankan
-        let currentCaptcha = '';
+        let currentAnswer = 0;
 
-        function generateCaptcha() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let captcha = '';
-            for (let i = 0; i < 6; i++) {
-                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        function generateMathCaptcha() {
+            const operations = ['+', '-', '×'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            let num1, num2, answer;
+
+            if (operation === '+') {
+                num1 = Math.floor(Math.random() * 20) + 1;
+                num2 = Math.floor(Math.random() * 20) + 1;
+                answer = num1 + num2;
+            } else if (operation === '-') {
+                num1 = Math.floor(Math.random() * 20) + 10;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 - num2;
+            } else {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 * num2;
             }
-            return captcha;
+
+            return { question: `${num1} ${operation} ${num2} = ?`, answer: answer };
         }
 
-        function refreshCaptcha() {
-            currentCaptcha = generateCaptcha();
-            document.getElementById('captcha-display').textContent = currentCaptcha;
+        function refreshMathCaptcha() {
+            const captcha = generateMathCaptcha();
+            currentAnswer = captcha.answer;
+            document.getElementById('math-question').textContent = captcha.question;
 
-            // Store captcha in session via AJAX
-            fetch('/store-captcha', {
+            // Store answer in session via AJAX
+            fetch('/store-math-captcha', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ captcha: currentCaptcha })
+                body: JSON.stringify({ answer: currentAnswer })
             });
         }
 
         // Generate captcha on page load
         document.addEventListener('DOMContentLoaded', function() {
-            refreshCaptcha();
+            refreshMathCaptcha();
         });
     </script>
 </body>
 </html>
+<?php /**PATH D:\Repo_Git\Gerai-umkm-mart-finalisasi\resources\views/index.blade.php ENDPATH**/ ?>

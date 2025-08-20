@@ -63,6 +63,30 @@
             border-color: #206bc4;
             box-shadow: 0 0 0 0.2rem rgba(32, 107, 196, 0.25);
         }
+        /* Added styles for password toggle functionality */
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+        .password-toggle:hover {
+            color: #206bc4;
+        }
+        .password-container .form-control {
+            padding-right: 40px;
+        }
+        /* </CHANGE> */
         .btn-primary {
             background-color: #206bc4;
             border-color: #206bc4;
@@ -150,14 +174,21 @@
                         @enderror
                     </div>
 
+                    <!-- Added password toggle functionality -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror"
-                               id="password" name="password" placeholder="Masukkan password" required>
+                        <div class="password-container">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                   id="password" name="password" placeholder="Masukkan password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <i class="bi bi-eye" id="password-icon"></i>
+                            </button>
+                        </div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    <!-- </CHANGE> -->
 
                     <div class="captcha-container">
                         <button type="button" class="captcha-refresh" onclick="refreshMathCaptcha()">
@@ -189,6 +220,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(inputId + '-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.className = 'bi bi-eye';
+            }
+        }
+        // </CHANGE>
+
         // Fungsionalitas JavaScript asli tetap dipertahankan
         let currentAnswer = 0;
 
