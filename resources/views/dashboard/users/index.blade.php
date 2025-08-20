@@ -57,7 +57,7 @@
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #17a2b8, #17a2b8); /* Blue gradient */
+        background: linear-gradient(135deg, #206BC4, #4A90E2); /* Blue gradient */
         border: none;
         border-radius: 15px;
         padding: 12px 25px;

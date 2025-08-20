@@ -31,7 +31,7 @@
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #17a2b8, #17a2b8);
+        background: linear-gradient(135deg, #206BC4, #4A90E2);
         border: none;
         border-radius: 15px;
         padding: 8px 15px;
@@ -47,7 +47,7 @@
 
     .btn-umkm:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
         color: white;
         text-decoration: none;
     }
@@ -342,10 +342,29 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="d-none d-md-table-cell">{{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}</td>
+                                        <td class="d-none d-md-table-cell">
+                                            <span class="badge bg-success px-3 py-2">
+                                                <i class="bi bi-shop me-1"></i>
+                                                {{ $good->category ? $good->category->nama : 'Tidak ada mitra' }}
+                                            </span>
+                                        </td>
                                         <td>
-                                            <span class="fw-bold fs-5">{{ $good->stok }}</span>
-                                            <small class="text-muted">unit</small>
+                                            <div>
+                                                <span class="fw-bold fs-5">{{ $good->stok }}</span>
+                                                <small class="text-muted"> unit</small>
+                                                <br>
+                                                @php
+                                                    $restockNeeded = 0;
+                                                    if ($good->stok <= 5) {
+                                                        $restockNeeded = 25 - $good->stok; // Target 25 for low stock
+                                                    } elseif ($good->stok <= 20) {
+                                                        $restockNeeded = 30 - $good->stok; // Target 30 for medium stock
+                                                    }
+                                                @endphp
+                                                @if($restockNeeded > 0)
+                                                    <small class="text-success fw-bold">(+{{ $restockNeeded }})</small>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td class="d-none d-sm-table-cell">
                                             <span class="badge badge-stock {{ $stockBadge }}">
@@ -394,7 +413,7 @@
                                     <th scope="col">NO</th>
                                     <th scope="col">Nama Barang</th>
                                     <th scope="col">Tanggal Restock</th>
-                                    <!-- replaced Stok Sebelum with Mitra Binaan -->
+                                    <!-- restored Mitra Binaan column header -->
                                     <th scope="col" class="d-none d-md-table-cell">Mitra Binaan</th>
                                     <th scope="col" class="d-none d-md-table-cell">Stok Sesudah</th>
                                     <th scope="col" class="d-none d-lg-table-cell">Administrasi</th>
@@ -410,7 +429,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div>
                                                     <h6 class="mb-0">{{ $restock->good->nama ?? 'Barang Terhapus' }}</h6>
-                                                    <small class="text-muted">{{ $restock->good->category->nama ?? 'Tidak ada mitra' }}</small>
+                                                    <!-- Removed mitra information from under product name -->
                                                 </div>
                                             </div>
                                         </td>
@@ -419,22 +438,24 @@
                                             <br>
                                             <small class="text-muted">{{ \Carbon\Carbon::parse($restock->created_at)->format('H:i') }}</small>
                                         </td>
-                                        <!-- replaced stok sebelum data with mitra binaan information -->
+                                        <!-- restored mitra binaan information in the column -->
                                         <td class="d-none d-md-table-cell">
-                                            <span class="badge bg-info text-white">
-                                                <i class="bi bi-building me-1"></i>
+                                            <span class="badge bg-success px-3 py-2">
+                                                <i class="bi bi-shop me-1"></i>
                                                 {{ $restock->good->category->nama ?? 'Tidak ada mitra' }}
                                             </span>
                                         </td>
                                         <td class="d-none d-md-table-cell">
-                                            <span class="text-success fw-bold">{{ $restock->good->stok }}</span>
-                                            <small class="text-muted">unit</small>
-                                            <br>
-                                            <small class="text-info">(+{{ $restock->qty_restock }})</small>
+                                            <div>
+                                                <span class="text-success fw-bold">{{ $restock->good->stok }}</span>
+                                                <small class="text-muted"> unit</small>
+                                                <br>
+                                                <small class="text-success fw-bold">(+{{ $restock->qty_restock }})</small>
+                                            </div>
                                         </td>
                                         <td class="d-none d-lg-table-cell">
                                             <span class="badge bg-primary">
-                                                <i class="bi bi-person-check text-success me-1"></i>
+                                                <i class="bi bi-person-check text-white me-1"></i>
                                                 {{ $restock->user->nama ?? 'User Terhapus' }}
                                             </span>
                                         </td>
@@ -442,19 +463,29 @@
                                             <span class="text-muted">{{ $restock->keterangan ?? '-' }}</span>
                                         </td>
                                         <td>
-                                            <div class="d-flex gap-1">
-                                                <a href="/dashboard/restock/{{ $restock->id }}/edit-restock"
-                                                   class="btn btn-sm btn-warning" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form action="/dashboard/restock/{{ $restock->id }}" method="post"
-                                                      class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
-                                                    @method('delete')
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
+                                            <!-- enhanced dropdown styling to match green theme -->
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-black" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu shadow">
+                                                    <li>
+                                                        <!-- changed edit option color to yellow -->
+                                                        <a class="dropdown-item" href="/dashboard/restock/{{ $restock->id }}/edit-restock">
+                                                            <i class="bi bi-pencil me-2 text-warning"></i>Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <form action="/dashboard/restock/{{ $restock->id }}" method="post" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
+                                                            @method('delete')
+                                                            @csrf
+                                                            <!-- changed delete option color to black -->
+                                                            <button type="submit" class="dropdown-item text-danger">
+                                                                <i class="bi bi-trash me-2"></i>Hapus
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>

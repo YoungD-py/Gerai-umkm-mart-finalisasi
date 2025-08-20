@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-    /* --- [TETAP] Semua style yang sudah ada dipertahankan --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -49,7 +48,7 @@
         padding: 1rem;
     }
     .btn-umkm {
-        background: linear-gradient(135deg, #17a2b8, #17a2b8);
+        background: linear-gradient(135deg, #206BC4, #4A90E2);
         border: none;
         border-radius: 15px;
         padding: 12px 25px;

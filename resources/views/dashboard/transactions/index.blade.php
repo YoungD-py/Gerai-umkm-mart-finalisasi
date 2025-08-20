@@ -56,7 +56,7 @@
         }
 
         .btn-umkm {
-            background: linear-gradient(135deg, #17a2b8, #17a2b8);
+            background: linear-gradient(135deg, #206BC4, #4A90E2);
             border: none;
             border-radius: 15px;
             padding: 12px 25px;
@@ -511,7 +511,7 @@
                                                                 <i class="bi bi-trash"></i> Hapus
                                                             </button>
                                                         </form>
-                                                    </li>   
+                                                    </li>
                                                     <li>
                                                         <form action="/dashboard/orders" method="post"
                                                             class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
@@ -521,7 +521,7 @@
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
                                                             </button>
-                                                        </form> 
+                                                        </form>
                                                     </li>
 
 
