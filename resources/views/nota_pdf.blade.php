@@ -4,9 +4,6 @@
     <title>Nota Pembelian</title>
     <style>
         @page {
-            /* INI SATU-SATUNYA YANG DIUBAH.
-            Tinggi 'auto' diganti menjadi sangat panjang (contoh: 1000mm).
-            */
             size: 80mm 1000mm;
             margin: 3mm;
         }
@@ -61,6 +58,8 @@
         .text-right { text-align: right; }
         .font-bold { font-weight: bold; }
     </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
 </head>
 <body>
     <table class="main-table">
