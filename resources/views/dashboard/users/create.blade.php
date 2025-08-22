@@ -214,6 +214,7 @@
                                 <option value="">Pilih Role</option>
                                 <option value="ADMIN" {{ old('role') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
                                 <option value="KASIR" {{ old('role') == 'KASIR' ? 'selected' : '' }}>Kasir</option>
+                                <option value="MANAJER" {{ old('role') == 'MANAJER' ? 'selected' : '' }}>Manajer</option>
                             </select>
                             @error('role')
                                 <div class="invalid-feedback">

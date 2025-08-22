@@ -472,14 +472,12 @@
                                             <span class="text-muted">{{ $restock->keterangan ?? '-' }}</span>
                                         </td>
                                         <td>
-                                            <!-- enhanced dropdown styling to match green theme -->
                                             <div class="dropdown">
                                                 <button class="btn btn-sm btn-outline-black" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="bi bi-three-dots-vertical"></i>
                                                 </button>
                                                 <ul class="dropdown-menu shadow">
                                                     <li>
-                                                        <!-- changed edit option color to yellow -->
                                                         <a class="dropdown-item" href="/dashboard/restock/{{ $restock->id }}/edit-restock">
                                                             <i class="bi bi-pencil me-2 text-warning"></i>Edit
                                                         </a>
@@ -488,7 +486,6 @@
                                                         <form action="/dashboard/restock/{{ $restock->id }}" method="post" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data restock ini? Stok akan dikembalikan.')">
                                                             @method('delete')
                                                             @csrf
-                                                            <!-- changed delete option color to black -->
                                                             <button type="submit" class="dropdown-item text-danger">
                                                                 <i class="bi bi-trash me-2"></i>Hapus
                                                             </button>
