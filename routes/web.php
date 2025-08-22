@@ -36,17 +36,22 @@ Route::post('/store-captcha', [LoginController::class, 'storeCaptcha']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 Route::get('/dashboard/cashier/quick-transaction', [CashierController::class, 'quickTransaction'])->middleware('auth');
 
-// ADMIN ONLY ROUTES
-Route::middleware(['auth', 'admin'])->group(function () {
-    // Users
+Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
+    // Categories - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::delete('/dashboard/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
+    Route::resource('/dashboard/categories', CategoryController::class);
+});
+
+Route::middleware(['auth', 'admin-or-manager'])->group(function () {
+    // Users - ADMIN dan MANAJER bisa akses
     Route::delete('/dashboard/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
     Route::resource('/dashboard/users', UserController::class);
 
-    // Transactions
+    // Transactions - ADMIN dan MANAJER bisa akses
     Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
 
-    // ORDER BY NOTA - HANYA ADMIN
+    // ORDER BY NOTA - ADMIN dan MANAJER bisa akses
     Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
     Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
@@ -54,51 +59,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
 });
 
-// ROUTES YANG BISA DIAKSES ADMIN DAN KASIR
-Route::middleware('auth')->group(function () {
-    // Biaya Operasional
-    Route::delete('/dashboard/biayaoperasional/bulk-delete', [BiayaOperasionalController::class, 'bulkDelete'])->name('biayaoperasional.bulkDelete');
-    Route::resource('/dashboard/biayaoperasional', BiayaOperasionalController::class);
-
-    // Categories
-    Route::delete('/dashboard/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
-    Route::resource('/dashboard/categories', CategoryController::class);
-
-    // Goods
-    Route::get('/dashboard/goods/cetakbarcode', [GoodController::class, 'showPrintMultipleBarcodesForm'])->name('goods.cetakbarcode.form');
-    Route::post('/dashboard/goods/cetakbarcode', [GoodController::class, 'generateMultipleBarcodesPdf'])->name('goods.cetakbarcode.pdf');
-    Route::delete('/dashboard/goods/bulk-delete', [GoodController::class, 'bulkDelete'])->name('goods.bulkDelete');
-    Route::resource('/dashboard/goods', GoodController::class);
-    Route::post('/dashboard/goods/{good}/generate-barcode', [GoodController::class, 'generateBarcode']);
-    Route::get('/dashboard/goods/{good}/download-barcode', [GoodController::class, 'downloadBarcode']);
-    Route::get('/dashboard/goods/{good}/print-barcode', [GoodController::class, 'printBarcode']);
-
-    // Customers
-    Route::resource('/dashboard/customers', CustomerController::class);
-
-    // Returns
-    Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
-    Route::get('/dashboard/returns/search-goods', [ReturnController::class, 'searchGoods'])->name('returns.searchGoods');
-    Route::resource('/dashboard/returns', ReturnController::class);
-
-    // RESTOCK ROUTES
-    Route::get('/dashboard/restock', [RestockController::class, 'index']);
-    Route::get('/dashboard/restock/{good}/edit', [RestockController::class, 'edit']);
-    Route::put('/dashboard/restock/{good}', [RestockController::class, 'update']);
-
-    // // ORDER BY NOTA
-    // Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
-    // Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
-    // Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
-    // Route::post('/dashboard/transactions/checkout', [OrderController::class, 'checkout']);
-    // Route::delete('/dashboard/orders/{order}', [OrderController::class, 'destroy']);
-
-    Route::get('/dashboard/restock/{restock}/edit-restock', [RestockController::class, 'editRestock']);
-    Route::put('/dashboard/restock/{restock}/update', [RestockController::class, 'updateRestock']);
-    Route::delete('/dashboard/restock/{restock}', [RestockController::class, 'destroy']);
-    Route::delete('/dashboard/restock/bulk-delete', [RestockController::class, 'bulkDelete'])->name('restock.bulkDelete');
-
-    // KASIR ROUTES
+// KASIR ROUTES - Hanya untuk KASIR dan ADMIN (MANAJER tidak bisa akses)
+Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
     Route::get('/dashboard/cashier', [CashierController::class, 'index']);
     Route::get('/dashboard/cashier/create', [CashierController::class, 'createtransaction']);
     Route::post('/dashboard/cashier/create', [CashierController::class, 'storetransaction']);
@@ -110,21 +72,56 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/cashier/deleteorder/{order}', [CashierController::class, 'deleteorder'])->name('cashier.deleteOrder');
     Route::post('/dashboard/cashiers/checkout', [CashierController::class, 'checkout']);
     Route::post('/dashboard/cashiers/finishing', [CashierController::class, 'finishing']);
+    Route::get('/dashboard/cashier/search-goods', [CashierController::class, 'searchGoods'])->name('cashier.searchGoods');
+});
+
+Route::middleware(['auth', 'pdf'])->group(function () {
     Route::post('/dashboard/cashiers/nota', [CashierController::class, 'nota']);
     Route::get('/dashboard/cashiers/print-nota', [CashierController::class, 'printNota'])->name('cashier.printNota');
+});
 
-    // New route for product search
-    Route::get('/dashboard/cashier/search-goods', [CashierController::class, 'searchGoods'])->name('cashier.searchGoods');
+Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
+    // Biaya Operasional - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::delete('/dashboard/biayaoperasional/bulk-delete', [BiayaOperasionalController::class, 'bulkDelete'])->name('biayaoperasional.bulkDelete');
+    Route::resource('/dashboard/biayaoperasional', BiayaOperasionalController::class);
 
-    // REKAPITULASI
+    // Goods - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::get('/dashboard/goods/cetakbarcode', [GoodController::class, 'showPrintMultipleBarcodesForm'])->name('goods.cetakbarcode.form');
+    Route::post('/dashboard/goods/cetakbarcode', [GoodController::class, 'generateMultipleBarcodesPdf'])->name('goods.cetakbarcode.pdf');
+    Route::delete('/dashboard/goods/bulk-delete', [GoodController::class, 'bulkDelete'])->name('goods.bulkDelete');
+    Route::resource('/dashboard/goods', GoodController::class);
+    Route::post('/dashboard/goods/{good}/generate-barcode', [GoodController::class, 'generateBarcode']);
+    Route::get('/dashboard/goods/{good}/download-barcode', [GoodController::class, 'downloadBarcode']);
+    Route::get('/dashboard/goods/{good}/print-barcode', [GoodController::class, 'printBarcode']);
+
+    // Customers - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::resource('/dashboard/customers', CustomerController::class);
+
+    // Returns - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
+    Route::get('/dashboard/returns/search-goods', [ReturnController::class, 'searchGoods'])->name('returns.searchGoods');
+    Route::resource('/dashboard/returns', ReturnController::class);
+
+    // RESTOCK ROUTES - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::get('/dashboard/restock', [RestockController::class, 'index']);
+    Route::get('/dashboard/restock/{good}/edit', [RestockController::class, 'edit']);
+    Route::put('/dashboard/restock/{good}', [RestockController::class, 'update']);
+    Route::get('/dashboard/restock/{restock}/edit-restock', [RestockController::class, 'editRestock']);
+    Route::put('/dashboard/restock/{restock}/update', [RestockController::class, 'updateRestock']);
+    Route::delete('/dashboard/restock/{restock}', [RestockController::class, 'destroy']);
+    Route::delete('/dashboard/restock/bulk-delete', [RestockController::class, 'bulkDelete'])->name('restock.bulkDelete');
+
+    // PRINT ROUTES - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
+    Route::get('/dashboard/goods/print-all', [GoodController::class, 'printAll']);
+    Route::get('/dashboard/returns/print-all', [ReturnController::class, 'printAll']);
+});
+
+Route::middleware('auth')->group(function () {
+    // REKAPITULASI - Semua role bisa akses
     Route::get('/dashboard/rekapitulasi', [ReportController::class, 'index']);
     Route::post('/dashboard/rekapitulasi/cetak-transaksi', [ReportController::class, 'cetakTransaksi']);
     Route::post('/dashboard/rekapitulasi/cetak-barang', [ReportController::class, 'cetakBarang']);
     Route::post('/dashboard/rekapitulasi/cetak-restock-return', [ReportController::class, 'cetakRestockReturn']);
     Route::post('/dashboard/rekapitulasi/cetak-biaya-operasional', [ReportController::class, 'cetakBiayaOperasional'])->name('reports.cetakBiayaOperasional');
     Route::post('/dashboard/rekapitulasi/cetak-laporan-keuangan', [ReportController::class, 'cetakLaporanKeuangan'])->name('reports.cetakLaporanKeuangan');
-
-    // PRINT ROUTES
-    Route::get('/dashboard/goods/print-all', [GoodController::class, 'printAll']);
-    Route::get('/dashboard/returns/print-all', [ReturnController::class, 'printAll']);
 });
