@@ -183,9 +183,9 @@
         <div class="navbar-nav flex-row order-md-last">
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                    <span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    <span class="avatar">{{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}</span>
                     <div class="d-none d-md-block ps-2">
-                        <div>{{ auth()->user()->name }}</div>
+                        <div>{{ auth()->user()->nama }}</div>
                         <div class="mt-1 small text-muted">{{ auth()->user()->role }}</div>
                     </div>
                 </a>
@@ -209,42 +209,46 @@
                             <span class="nav-link-title">Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::is('dashboard/cashier*') ? 'active' : '' }}"
-                           href="/dashboard/cashier">
-                            <span class="nav-link-icon"><i class="bi bi-calculator"></i></span>
-                            <span class="nav-link-title">Kasir</span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ Request::is('dashboard/goods*') || Request::is('dashboard/categories*') || Request::is('dashboard/returns*') || Request::is('dashboard/restock*') || Request::is('dashboard/biayaoperasional*') ? 'active' : '' }}"
-                           href="#" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                            <span class="nav-link-icon"><i class="bi bi-box-seam"></i></span>
-                            <span class="nav-link-title">Data Manajemen</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {{ Request::is('dashboard/goods*') ? 'active' : '' }}"
-                                   href="/dashboard/goods"><i class="bi bi-box icon"></i> Barang</a></li>
-                            <li><a class="dropdown-item {{ Request::is('dashboard/categories*') ? 'active' : '' }}"
-                                   href="/dashboard/categories"><i class="bi bi-building icon"></i> Mitra Binaan</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item {{ Request::is('dashboard/returns*') ? 'active' : '' }}"
-                                   href="/dashboard/returns"><i class="bi bi-arrow-return-left icon"></i> Return
-                                    Barang</a></li>
-                            <li><a class="dropdown-item {{ Request::is('dashboard/restock*') ? 'active' : '' }}"
-                                   href="/dashboard/restock"><i class="bi bi-arrow-up-circle icon"></i> Restock
-                                    Barang</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item {{ Request::is('dashboard/biayaoperasional*') ? 'active' : '' }}"
-                                   href="/dashboard/biayaoperasional"><i class="bi bi-wallet2 icon"></i> Biaya
-                                    Operasional</a></li>
-                        </ul>
-                    </li>
+                    @if(auth()->check() && (auth()->user()->isKasir() || auth()->user()->isAdmin()))
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('dashboard/cashier*') ? 'active' : '' }}"
+                               href="/dashboard/cashier">
+                                <span class="nav-link-icon"><i class="bi bi-calculator"></i></span>
+                                <span class="nav-link-title">Kasir</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if(auth()->check() && (auth()->user()->isKasir() || auth()->user()->isAdmin()))
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ Request::is('dashboard/goods*') || Request::is('dashboard/categories*') || Request::is('dashboard/returns*') || Request::is('dashboard/restock*') || Request::is('dashboard/biayaoperasional*') ? 'active' : '' }}"
+                               href="#" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                                <span class="nav-link-icon"><i class="bi bi-box-seam"></i></span>
+                                <span class="nav-link-title">Data Manajemen</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item {{ Request::is('dashboard/goods*') ? 'active' : '' }}"
+                                       href="/dashboard/goods"><i class="bi bi-box icon"></i> Barang</a></li>
+                                <li><a class="dropdown-item {{ Request::is('dashboard/categories*') ? 'active' : '' }}"
+                                       href="/dashboard/categories"><i class="bi bi-building icon"></i> Mitra Binaan</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item {{ Request::is('dashboard/returns*') ? 'active' : '' }}"
+                                       href="/dashboard/returns"><i class="bi bi-arrow-return-left icon"></i> Return
+                                        Barang</a></li>
+                                <li><a class="dropdown-item {{ Request::is('dashboard/restock*') ? 'active' : '' }}"
+                                       href="/dashboard/restock"><i class="bi bi-arrow-up-circle icon"></i> Restock
+                                        Barang</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item {{ Request::is('dashboard/biayaoperasional*') ? 'active' : '' }}"
+                                       href="/dashboard/biayaoperasional"><i class="bi bi-wallet2 icon"></i> Biaya
+                                        Operasional</a></li>
+                            </ul>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('dashboard/rekapitulasi*') ? 'active' : '' }}"
                            href="/dashboard/rekapitulasi">
@@ -252,19 +256,25 @@
                             <span class="nav-link-title">Rekapitulasi</span>
                         </a>
                     </li>
-                    @if(auth()->check() && auth()->user()->isAdmin())
+                    @if(auth()->check() && auth()->user()->isAdminOrManajer())
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ Request::is('dashboard/users*') || Request::is('dashboard/transactions*') ? 'active' : '' }}"
                                href="#" data-bs-toggle="dropdown" role="button" aria-expanded="false">
                                 <span class="nav-link-icon"><i class="bi bi-gear"></i></span>
-                                <span class="nav-link-title">Admin</span>
+                                <span class="nav-link-title">
+                                    @if(auth()->user()->isAdmin())
+                                        Admin
+                                    @else
+                                        Manajer
+                                    @endif
+                                </span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item {{ Request::is('dashboard/transactions*') ? 'active' : '' }}"
                                        href="/dashboard/transactions"><i class="bi bi-receipt icon"></i> Data Transaksi</a>
                                 </li>
                                 <li><a class="dropdown-item {{ Request::is('dashboard/users*') ? 'active' : '' }}"
-                                        href="/dashboard/users" class="dropdown-item"><span class="icon">👤</span> Data Pengguna</a>
+                                        href="/dashboard/users" class="dropdown-item"><i class="bi bi-people icon"></i> Data Pengguna</a>
                                 </li>
                             </ul>
                         </li>
