@@ -107,9 +107,8 @@ class LoginController extends Controller
             return back()->with('loginError', 'Captcha salah, coba lagi!');
         }
 
-        // Check if user exists and is admin
         $user = User::where('username', $credentials['username'])->first();
-        if (!$user || !$user->isAdmin()) {
+        if (!$user || !$user->isAdminOrManajer()) {
             return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
         }
 
@@ -117,9 +116,11 @@ class LoginController extends Controller
             $request->session()->regenerate();
             $request->session()->forget('admin_captcha'); // Clear captcha from session
 
+            $welcomeMessage = $user->isAdmin() ? 'Selamat Datang di Dashboard Admin' : 'Selamat Datang di Dashboard Manajer';
+            
             return redirect()
                 ->intended('/dashboard')
-                ->with('success', 'Selamat Datang di Dashboard Admin');
+                ->with('success', $welcomeMessage);
         }
         return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
     }
