@@ -50,7 +50,7 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|max:255',
             'username' => 'required|unique:users|min:3|max:255',
-            'role' => 'required|in:ADMIN,KASIR',
+            'role' => 'required|in:ADMIN,KASIR,MANAJER', // Added MANAJER to role validation
             'password' => 'required|min:6',
         ]);
 
@@ -95,7 +95,7 @@ class UserController extends Controller
     {
         $rules = [
             'nama' => 'required|max:255',
-            'role' => 'required|in:ADMIN,KASIR',
+            'role' => 'required|in:ADMIN,KASIR,MANAJER', // Added MANAJER to role validation
         ];
 
         if($request->username != $user->username) {
