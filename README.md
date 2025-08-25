@@ -1,121 +1,163 @@
-Gerai UMKM Mart - Sistem Manajemen Kasir & Inventaris
-Gerai UMKM Mart adalah sistem manajemen kasir (Point of Sale) dan inventaris berbasis web yang dibangun menggunakan Framework Laravel 8. Sistem ini dirancang khusus untuk memenuhi kebutuhan UMKM, terutama dalam mengelola penjualan produk yang berasal dari berbagai mitra binaan.
+# 🏪 Gerai UMKM Mart - Sistem Manajemen Kasir & Inventaris
+
+Gerai UMKM Mart adalah sistem manajemen kasir (Point of Sale) dan inventaris berbasis web yang dibangun menggunakan **Laravel 8**. Sistem ini dirancang khusus untuk memenuhi kebutuhan UMKM, terutama dalam mengelola penjualan produk yang berasal dari berbagai mitra binaan.
 
 Tujuan utama dari sistem ini adalah untuk memodernisasi dan mempermudah proses pencatatan transaksi, manajemen stok, serta menyediakan analisis data penjualan yang akurat untuk mendukung pengambilan keputusan bisnis.
 
-Fitur Utama
-Sistem ini dilengkapi dengan berbagai fitur untuk mendukung operasional bisnis UMKM secara menyeluruh:
+## ✨ Fitur Utama
 
-Dashboard Analitik: Tampilan utama yang menyajikan ringkasan performa bisnis secara visual, termasuk pendapatan, laba kotor & bersih, produk terlaris, dan status inventaris kritis (stok menipis & barang akan expired).
+### 📊 Dashboard Analitik
+- Tampilan ringkasan performa bisnis secara visual
+- Monitoring pendapatan, laba kotor & bersih
+- Analisis produk terlaris
+- Status inventaris kritis (stok menipis & barang akan expired)
+- Dashboard khusus untuk setiap role pengguna
 
-Manajemen Produk:
+### 📦 Manajemen Produk
+- **CRUD** lengkap data barang
+- Pengelolaan stok, harga modal, dan harga jual
+- Dukungan skema harga dinamis (harga grosir, tebus murah)
+- Pencatatan tanggal masuk dan tanggal kedaluwarsa
+- Kategori produk untuk organisasi yang lebih baik
 
-CRUD (Create, Read, Update, Delete) data barang.
+### 🤝 Manajemen Mitra
+- Pengelolaan data mitra (supplier) 
+- Tracking produk berdasarkan mitra
+- Riwayat kerjasama dengan mitra
 
-Pengelolaan stok, harga asli (modal), dan harga jual.
+### 💰 Sistem Kasir (Point of Sale)
+- Antarmuka kasir yang intuitif dan responsif
+- Pencatatan transaksi penjualan cepat dan akurat
+- Dukungan multiple payment methods
+- Cetak nota otomatis
 
-Dukungan skema harga dinamis seperti harga grosir dan tebus murah.
+### 📋 Manajemen Transaksi
+- Riwayat transaksi lengkap
+- Cetak ulang nota transaksi
+- Manajemen status pembayaran
+- Filter dan pencarian transaksi
 
-Pencatatan tanggal masuk dan tanggal kedaluwarsa.
+### 📈 Manajemen Inventaris
+- **Restock**: Pencatatan penambahan stok barang
+- **Return**: Pengelolaan pengembalian barang
+- Monitoring stok real-time
+- Alert untuk stok menipis
 
-Manajemen Mitra: Pengelolaan data mitra (supplier) yang memasok produk ke gerai.
+### 💼 Laporan Keuangan
+- Pencatatan biaya operasional
+- Perhitungan laba bersih otomatis
+- Export laporan ke format PDF
+- Rekapitulasi penjualan harian/bulanan
 
-Sistem Kasir (Point of Sale): Antarmuka kasir yang intuitif untuk mencatat transaksi penjualan dengan cepat dan akurat.
+### 👥 Manajemen Pengguna
+Sistem mendukung 3 level akses pengguna:
+- **Admin**: Akses penuh ke seluruh sistem
+- **Kasir**: Fokus pada transaksi penjualan dan operasional harian
+- **Manajer**: Akses ke laporan, analisis, dan monitoring tanpa akses operasional
 
-Manajemen Transaksi: Melihat riwayat transaksi, mencetak ulang nota, dan mengelola status pembayaran.
+## 🛠️ Teknologi yang Digunakan
 
-Manajemen Inventaris:
+- **Backend**: Laravel 8
+- **Frontend**: Bootstrap 5, ApexCharts.js
+- **Database**: MySQL
+- **Features**:
+  - Eloquent ORM untuk interaksi database
+  - Sistem autentikasi Laravel dengan role-based access
+  - Pencarian data dan paginasi
+  - Logika kasir otomatis
+  - Pembuatan nota transaksi otomatis
 
-Fitur Restock untuk mencatat penambahan stok barang.
+## 🚀 Instalasi & Setup
 
-Fitur Return untuk mengelola pengembalian barang.
+### Prasyarat
+- PHP >= 7.4
+- Composer
+- MySQL
+- Node.js & NPM (opsional)
 
-Laporan Keuangan:
+### Langkah Instalasi
 
-Pencatatan Biaya Operasional untuk perhitungan laba bersih.
+1. **Clone repository**
+   \`\`\`bash
+   git clone https://github.com/badfellas/Gerai-umkm-mart-finalisasi
+   cd Gerai-umkm-mart-finalisasi
+   \`\`\`
 
-Ekspor laporan penjualan dan data lainnya ke format PDF.
+2. **Install dependencies**
+   \`\`\`bash
+   composer install
+   \`\`\`
 
-Manajemen Pengguna: Pengelolaan akun untuk admin dan kasir dengan level akses yang berbeda.
+3. **Setup environment**
+   \`\`\`bash
+   cp .env.example .env
+   \`\`\`
+   Kemudian edit file `.env` dan sesuaikan konfigurasi database:
+   \`\`\`
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database_anda
+   DB_USERNAME=username_database
+   DB_PASSWORD=password_database
+   \`\`\`
 
-Tampilan Aplikasi
-Berikut adalah beberapa tampilan dari aplikasi Gerai UMKM Mart:
+4. **Generate application key**
+   \`\`\`bash
+   php artisan key:generate
+   \`\`\`
 
-Halaman Login Admin
-<img width="1918" height="878" alt="Image" src="https://github.com/user-attachments/assets/07a1f26e-a8f9-45b0-a0bd-98dbec7b720d" />
+5. **Create symbolic link untuk storage**
+   \`\`\`bash
+   php artisan storage:link
+   \`\`\`
 
-Halaman Login Kasir
-<img width="1916" height="885" alt="Image" src="https://github.com/user-attachments/assets/6e656933-9def-460e-a64f-0743210c8744" />
+6. **Jalankan migrasi database**
+   \`\`\`bash
+   php artisan migrate
+   \`\`\`
 
-Halaman Dashboard Utama
-<img width="1918" height="888" alt="Image" src="https://github.com/user-attachments/assets/d566e251-7076-45eb-8b13-01f04821e482" />
+7. **Seed data awal (opsional)**
+   \`\`\`bash
+   php artisan db:seed
+   \`\`\`
 
-Teknologi yang Digunakan
-Backend: Laravel 8
+8. **Jalankan server development**
+   \`\`\`bash
+   php artisan serve
+   \`\`\`
 
-Frontend: Bootstrap 5, ApexCharts.js
+9. **Akses aplikasi**
+   Buka browser dan akses: `http://127.0.0.1:8000`
 
-Database: MySQL
+## 👤 Default Login
 
-Fitur Lainnya:
+Setelah menjalankan seeder, Anda dapat login dengan akun default:
 
-Eloquent ORM untuk interaksi database.
+| Role | Username | Password |
+|------|----------|----------|
+| **Admin** | `admin` | `admin123` |
+| **Kasir** | `kasir` | `kasir123` |
+| **Manajer** | `manajer` | `manajer123` |
 
-Sistem otentikasi bawaan Laravel.
+> **⚠️ Penting**: Segera ubah password default setelah instalasi untuk keamanan sistem!
 
-Pencarian data, paginasi, dan logika kasir otomatis.
+## 📱 Screenshot Aplikasi
 
-Pembuatan nota transaksi otomatis.
+### 🔐 Halaman Login
+![Login Page](screenshots/login.png)
 
-Instalasi & Menjalankan Proyek Secara Lokal
-Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah berikut:
+### 📊 Dashboard 
+![Dashboard](screenshots/dashboard.png)
+(screenshots/dashboard1.png)
 
-Clone proyek dari repositori GitHub:
-
-git clone https://github.com/badfellas/Gerai-umkm-mart-finalisasi
-
-
-Masuk ke direktori proyek:
-
-cd Gerai-umkm-mart-finalisasi
-
-
-Install semua dependency yang dibutuhkan:
-
-composer install
-
-
-Salin file .env.example menjadi .env dan konfigurasikan koneksi database Anda:
-
-cp .env.example .env
-
-
-Generate kunci aplikasi Laravel:
-
-php artisan key:generate
-
-
-Buat symbolic link untuk storage:
-
-php artisan storage:link
-
-
-Jalankan migrasi database untuk membuat semua tabel yang dibutuhkan:
-
-php artisan migrate
-
-
-(Opsional) Jalankan seeder untuk mengisi data awal ke database:
-
-php artisan db:seed
-
-
-Jalankan server pengembangan:
-
-php artisan serve
+### 🛒 Sistem Kasir
+![Cashier System](screenshots/kasir.png)
 
 
-Aplikasi sekarang dapat diakses di http://127.0.0.1:8000.
+## 📞 Kontak
+📧 **Email**: deruanggoro26@gmail.com
 
-Kontak
-Untuk saran dan masukan terkait pengembangan sistem ini, silakan kirim email ke: deruanggoro26@gmail.com
+---
+
+**© 2025 Gerai UMKM Mart. Dikembangkan dengan Semangat Juang Pemuda Indonesia.**
