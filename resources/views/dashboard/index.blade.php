@@ -165,34 +165,38 @@
 
 </style>
 
-<div class="container-fluid py-4">
-    <!-- BARIS 1: HEADER & SALAM -->
-    <div class="page-header">
-        <div>
-            <h2 class="page-title">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
-            <p class="text-muted mb-0" id="live-clock"></p>
-        </div>
-            {{-- [RESPONSIVE] Tombol full-width di mobile, auto di desktop --}}
-            <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
-                @if(!auth()->user()->isManajer())
-                    <a href="/dashboard/goods/create" 
-                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
-                    <i class="bi bi-plus-circle me-2"></i>Tambah Barang
-                    </a>
-                    <a href="/dashboard/cashier/quick-transaction" 
-                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
-                    <i class="bi bi-calculator me-2"></i>Tambah Transaksi
-                    </a>
-                @else
-                    <a href="/dashboard/transactions" 
-                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
-                    <i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi
-                    </a>
-                @endif
+        <div class="container-fluid py-4">
+            <!-- CARD HEADER + AKSI -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <!-- Salam -->
+                    <div class="mb-3">
+                        <h2 class="page-title mb-1">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
+                        <p class="text-muted mb-0" id="live-clock"></p>
+                    </div>
+
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        @if(!auth()->user()->isManajer())
+                            <a href="/dashboard/goods/create" 
+                            class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                            <i class="bi bi-plus-circle me-2"></i>Tambah Barang
+                            </a>
+                            <a href="/dashboard/cashier/quick-transaction" 
+                            class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                            <i class="bi bi-calculator me-2"></i>Tambah Transaksi
+                            </a>
+                        @else
+                            <a href="/dashboard/transactions" 
+                            class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                            <i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi
+                            </a>
+                        @endif
+                    </div>
+                </div>
             </div>
+        </div>
 
-
-    </div>
 
     <!-- BARIS 2: FILTER TANGGAL -->
     {{-- [RESPONSIVE] Layout untuk mobile --}}
