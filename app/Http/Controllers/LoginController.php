@@ -15,7 +15,7 @@ class LoginController extends Controller
 
     public function adminLogin()
     {
-        return view('admin-login');
+        return redirect('/')->with('info', 'Silakan gunakan halaman login utama untuk semua role.');
     }
 
     public function errorUnauthorized()
@@ -41,7 +41,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle an authentication attempt for kasir.
+     * Handle an authentication attempt for all roles.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -53,7 +53,6 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        // Math captcha validation for kasir
         $captcha_answer = $request->input('captcha_answer');
         $session_answer = $request->session()->get('math_captcha_answer');
         
@@ -65,9 +64,8 @@ class LoginController extends Controller
             return back()->with('loginError', 'Jawaban matematika salah!');
         }
 
-        // Check if user exists and is kasir
         $user = User::where('username', $credentials['username'])->first();
-        if (!$user || $user->isAdmin()) {
+        if (!$user) {
             return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
         }
 
@@ -75,54 +73,29 @@ class LoginController extends Controller
             $request->session()->regenerate();
             $request->session()->forget('math_captcha_answer'); // Clear captcha from session
 
+            $welcomeMessage = 'Selamat Datang di Dashboard KasirKu';
+            if ($user->isAdmin()) {
+                $welcomeMessage = 'Selamat Datang di Dashboard Admin';
+            } elseif ($user->isManajer()) {
+                $welcomeMessage = 'Selamat Datang di Dashboard Manajer';
+            }
+
             return redirect()
                 ->intended('/dashboard')
-                ->with('success', 'Selamat Datang di Dashboard KasirKu');
+                ->with('success', $welcomeMessage);
         }
         return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
     }
 
     /**
-     * Handle an authentication attempt for admin.
+     * Handle an authentication attempt for admin (deprecated - redirects to main login).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function authenticateAdmin(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => ['required'],
-            'password' => ['required'],
-        ]);
-
-        // Standard captcha validation for admin
-        $captcha_code = $request->input('captcha_code');
-        $session_captcha = $request->session()->get('admin_captcha');
-        
-        if (empty($captcha_code)) {
-            return back()->with('loginError', 'Captcha harus diisi!');
-        }
-        
-        if (strtoupper($captcha_code) !== strtoupper($session_captcha)) {
-            return back()->with('loginError', 'Captcha salah, coba lagi!');
-        }
-
-        $user = User::where('username', $credentials['username'])->first();
-        if (!$user || !$user->isAdminOrManajer()) {
-            return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
-        }
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $request->session()->forget('admin_captcha'); // Clear captcha from session
-
-            $welcomeMessage = $user->isAdmin() ? 'Selamat Datang di Dashboard Admin' : 'Selamat Datang di Dashboard Manajer';
-            
-            return redirect()
-                ->intended('/dashboard')
-                ->with('success', $welcomeMessage);
-        }
-        return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
+        return redirect('/')->with('info', 'Silakan gunakan halaman login utama untuk semua role.');
     }
 
     /**
