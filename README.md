@@ -140,7 +140,7 @@ Setelah menjalankan seeder, Anda dapat login dengan akun default:
 | **Kasir** | `kasir` | `kasir123` |
 | **Manajer** | `manajer` | `manajer123` |
 
-> **⚠️ Penting**: Segera ubah password default setelah instalasi untuk keamanan sistem!
+> **⚠️ Segera ubah password default setelah instalasi untuk keamanan sistem!**
 
 ## 📱 Screenshot Aplikasi
 
