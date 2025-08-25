@@ -149,7 +149,7 @@ Setelah menjalankan seeder, Anda dapat login dengan akun default:
 
 ### 📊 Dashboard 
 ![Dashboard](screenshots/dashboard.png)
-(screenshots/dashboard1.png)
+![Dashboard Grafik](screenshots/dashboard1.png)
 
 ### 🛒 Sistem Kasir
 ![Cashier System](screenshots/kasir.png)
