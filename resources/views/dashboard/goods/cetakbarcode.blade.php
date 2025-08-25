@@ -30,7 +30,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .btn-umkm {
@@ -46,7 +46,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
     }
 
@@ -79,7 +79,7 @@
     }
 
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
+        font-size: 2rem; /* [RESPONSIVE] */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -154,7 +154,6 @@
         <div class="umkm-card-body">
             <form action="{{ route('goods.cetakbarcode.pdf') }}" method="POST" id="barcodePrintForm" onsubmit="handleFormSubmit(this)">
                 @csrf
-                {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
                 <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center mb-4 gap-3">
                     <div class="form-text fw-bold">
                         <span id="selectedCount">Terpilih: 0</span> barang
@@ -249,19 +248,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const printButton = document.getElementById('printButton');
     const searchInput = document.getElementById('searchInput');
     const tableBody = document.querySelector('.table-umkm tbody');
-    // const maxSelection = 12; // Dihapus atau dikomentari untuk menghilangkan batasan
 
     function updateSelectionCount() {
         const checkedCount = document.querySelectorAll('.good-checkbox:checked').length;
         selectedCountSpan.textContent = `Terpilih: ${checkedCount}`;
 
-        // Logika untuk mengaktifkan/menonaktifkan tombol cetak
         if (checkedCount === 0) {
             printButton.disabled = true;
-            selectedCountSpan.classList.remove('text-danger'); // Pastikan tidak ada warna merah jika 0
+            selectedCountSpan.classList.remove('text-danger'); 
         } else {
             printButton.disabled = false;
-            selectedCountSpan.classList.remove('text-danger'); // Pastikan tidak ada warna merah jika valid
+            selectedCountSpan.classList.remove('text-danger'); 
         }
         updateSelectAllState();
     }
@@ -282,10 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const itemsToSelect = Array.from(checkboxes).filter(cb => !cb.disabled && cb.closest('tr').style.display !== 'none');
 
         if (isCheckingAll) {
-            // Pilih semua item yang terlihat dan tidak disabled
             itemsToSelect.forEach(cb => cb.checked = true);
         } else {
-            // Batalkan pilihan semua item
             itemsToSelect.forEach(cb => cb.checked = false);
         }
 
@@ -294,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
-            // Tidak ada lagi batasan jumlah item yang bisa dipilih
             updateSelectionCount();
         });
     });

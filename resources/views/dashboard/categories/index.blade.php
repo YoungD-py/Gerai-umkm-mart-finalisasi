@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-   /* --- CSS Styles copied from other dashboards for consistency --- */
    .umkm-card {
        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
        backdrop-filter: blur(10px);
@@ -52,7 +51,7 @@
    }
 
    .umkm-card-body {
-       padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+       padding: 1.5rem; /* [RESPONSIVE] */
        overflow: hidden;
    }
 
@@ -69,7 +68,7 @@
        text-decoration: none;
        display: inline-flex;
        align-items: center;
-       justify-content: center; /* [RESPONSIVE] Center content inside button */
+       justify-content: center; /* [RESPONSIVE] */
        gap: 8px;
    }
 
@@ -138,7 +137,7 @@
    }
 
   .page-title h1 {
-   font-size: 3rem; /* sebelumnya 2rem */
+   font-size: 3rem; 
    font-weight: 900;
    margin-bottom: 15px;
    color: #ffffff;
@@ -146,7 +145,7 @@
    }
 
    .page-title p {
-   font-size: 1.5rem; /* sebelumnya 1.1rem */
+   font-size: 1.5rem;
    font-weight: 600;
    color: #ffffff;
    opacity: 1;
@@ -235,7 +234,7 @@
        color: #c82333 !important;
    }
 
-    /* Pagination yang lebih jelas */
+    /* Pagination */
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -244,7 +243,7 @@
     .pagination-wrapper .page-link {
         border: none;
         padding: 12px 16px;
-        color: #28a745; /* Hijau tegas */
+        color: #28a745; 
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
@@ -315,14 +314,13 @@
 
    <div class="umkm-card">
        <div class="umkm-card-header">
-           {{-- [REVISI] Menggunakan layout responsif yang sama dengan halaman Data Barang --}}
            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                <h3 class="umkm-card-title mb-2 mb-md-0">
                    <i class="bi bi-building"></i>
                    Data Mitra Binaan
                </h3>
                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                   {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
+                   {{-- Debugging form bulk delete agar tidak bersarang --}}
                    <form id="bulk-delete-form" action="{{ route('categories.bulkDelete') }}" method="POST" style="display: inline;">
                        @csrf
                        @method('DELETE')
@@ -364,7 +362,7 @@
                </form>
            </div>
 
-           {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
+           {{-- Debugging Hapus form bulk-delete-form yang membungkus tabel --}}
            <div class="table-responsive">
                <table class="table table-umkm">
                    <thead>
@@ -421,7 +419,7 @@
                                            </a>
                                        </li>
                                        <li>
-                                           {{-- Form delete satuan, sekarang tidak bersarang --}}
+                                           {{-- Form delete satuan, agar tidak bersarang --}}
                                            <form action="/dashboard/categories/{{ $category->id }}" method="post" class="dropdown-item-form">
                                                @method('delete')
                                                @csrf
@@ -484,7 +482,7 @@
 </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<!-- Modal Konfirmasi Hapus BANYAK -->
 <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered">
   <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -528,7 +526,7 @@
             }
         });
 
-        // --- SCRIPT UNTUK BULK DELETE (DIPERBAIKI) ---
+        // --- SCRIPT UNTUK BULK DELETE  ---
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -573,10 +571,8 @@
 
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
-                // Hapus input tersembunyi sebelumnya jika ada
                 bulkDeleteForm.querySelectorAll('input[name="selected_ids[]"]').forEach(input => input.remove());
 
-                // Tambahkan input tersembunyi untuk setiap checkbox yang dipilih
                 itemCheckboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         const hiddenInput = document.createElement('input');

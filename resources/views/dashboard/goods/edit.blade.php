@@ -293,7 +293,6 @@
                         @csrf
                         <input type="hidden" name="id" value="{{ $good->id }}">
 
-                        <!-- Basic Information -->
                         <div class="form-section">
                             <div class="section-title">
                                 <i class="bi bi-info-circle"></i>
@@ -334,7 +333,6 @@
                             </div>
                         </div>
 
-                        <!-- Product Type & Expiry -->
                         <div class="form-section">
                             <div class="section-title">
                                 <i class="bi bi-tags"></i>
@@ -366,7 +364,6 @@
                             </div>
                         </div>
 
-                        <!-- Price & Stock -->
                         <div class="form-section">
                             <div class="section-title">
                                 <i class="bi bi-currency-dollar"></i>
@@ -402,7 +399,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- [BARU] Input Markup Percentage --}}
                             <div class="mb-3">
                                 <label for="markup_percentage" class="form-label">
                                     <i class="bi bi-percent text-warning"></i>
@@ -438,7 +434,6 @@
                             </div>
                         </div>
 
-                        <!-- Wholesale Section -->
                         <div class="wholesale-section">
                             <div class="section-title" style="color: #ff5722;"><i class="bi bi-tags-fill"></i> Pengaturan Grosir</div>
                             <div class="wholesale-toggle">
@@ -472,7 +467,6 @@
                             </div>
                         </div>
 
-                        <!-- Tebus Murah Section -->
                         <div class="tebus-murah-section">
                             <div class="section-title" style="color: #dc3545;"><i class="bi bi-tag-fill"></i> Pengaturan Tebus Murah</div>
                             <div class="tebus-murah-toggle">
@@ -506,7 +500,6 @@
                             </div>
                         </div>
 
-                        <!-- Barcode Section -->
                         @if($good->barcode)
                         <div class="barcode-section">
                             <div class="section-title" style="color: #28a745;"><i class="bi bi-qr-code"></i> Informasi Barcode</div>
@@ -534,7 +527,6 @@
                         </div>
                         @endif
 
-                        <!-- Action Buttons -->
                         <div class="d-grid d-sm-flex justify-content-sm-between gap-2 pt-3 mt-3">
                             <a href="/dashboard/goods" class="btn btn-secondary-umkm"><i class="bi bi-arrow-left"></i> Kembali</a>
                             <button type="submit" class="btn btn-warning-umkm"><i class="bi bi-save"></i> Update Barang</button>
@@ -564,14 +556,13 @@ function toggleExpiredField() {
 function calculateSellingPrice() {
     const hargaAsli = parseFloat(document.getElementById('harga_asli').value) || 0;
     const typeSelect = document.getElementById('type');
-    const markupPercentageInput = document.getElementById('markup_percentage'); // [BARU]
+    const markupPercentageInput = document.getElementById('markup_percentage'); 
     const priceInfo = document.getElementById('price-info');
 
     if (hargaAsli > 0 && typeSelect.value) {
         let markup;
         let markupDisplay;
 
-        // [PERUBAHAN LOGIKA] Menggunakan markup_percentage dari input jika ada
         if (markupPercentageInput.value !== '' && !isNaN(parseFloat(markupPercentageInput.value))) {
             markup = parseFloat(markupPercentageInput.value) / 100;
             markupDisplay = parseFloat(markupPercentageInput.value).toFixed(0) + '% (Manual)';
@@ -581,7 +572,7 @@ function calculateSellingPrice() {
         }
 
         const hargaJual = hargaAsli + (hargaAsli * markup);
-        const selisih = hargaJual - hargaAsli; // [UBAH] profit menjadi selisih
+        const selisih = hargaJual - hargaAsli; 
 
         document.getElementById('display-harga-asli').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(hargaAsli);
         document.getElementById('markup-percent').textContent = markupDisplay;

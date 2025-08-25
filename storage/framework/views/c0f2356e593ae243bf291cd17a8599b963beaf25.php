@@ -101,7 +101,6 @@
             font-size: 14px;
         }
 
-        /* Tebus Murah Cart Styles */
         .tebus-murah-item {
             transition: all 0.3s ease;
             border-left: 4px solid #dc3545;
@@ -162,11 +161,6 @@
         <div class="row g-4">
             
             <div class="col-12 col-lg-8 mb-4 mb-lg-0">
-                
-                
-                
-                
-
                 <div class="card shadow-sm border-0 mb-4" style="background: white;">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-upc-scan" style="font-size: 3rem; color: #198754;"></i>
@@ -207,10 +201,6 @@
                         </div>
                     </div>
                 </div>
-
-                
-                
-                
 
 
                 <div class="card shadow-sm border-0" style="background: white;">
@@ -477,9 +467,6 @@
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-    
-    
-    
     <script>
         let currentProduct = null;
         let currentTransactionTotal = <?php echo e($orders->sum('subtotal')); ?>;
@@ -488,8 +475,6 @@
         let isScanning = false;
         let isMobileDevice = false;
 
-        // FUNGSI INI SUDAH TIDAK DIPERLUKAN LAGI KARENA SCANNER AKAN MEMANGGIL processBarcode
-        // function addBarcodeToCart(barcode) { ... }
 
         function detectMobileDevice() {
             const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
@@ -890,7 +875,6 @@
                         e.preventDefault();
                         const activeElement = document.activeElement.tagName;
                         if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
-                            // Mengganti addBarcodeToCart dengan processBarcode
                             processBarcode(barcodeBuffer);
                         }
                     }
@@ -902,7 +886,6 @@
                 }
                 lastInputTime = currentTime;
             });
-            // --- AKHIR DARI LISTENER SCANNER ---
         });
 
         function deleteOrderItem(orderId, productName) {

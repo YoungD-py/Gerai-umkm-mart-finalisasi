@@ -17,7 +17,6 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
             margin: 20px 0;
-            /* [RESPONSIVE] Dihapus agar diatur oleh grid Bootstrap */
             /* max-width: 800px;
             margin-left: auto;
             margin-right: auto; */
@@ -40,7 +39,7 @@
         }
 
         .form-section {
-            padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+            padding: 1.5rem; /* [RESPONSIVE] */
         }
 
         .form-group {
@@ -164,7 +163,6 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Style for password toggle button */
         .input-group-text {
             background-color: #f8f9fa;
             border: 2px solid #e3f2fd;
@@ -194,7 +192,6 @@
         </div>
 
         <div class="row justify-content-center">
-            {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
             <div class="col-xl-8 col-lg-10 col-md-12">
                 @if (session()->has('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -294,7 +291,6 @@
                                 <div class="form-text">Kosongkan jika tidak ingin mengubah password</div>
                             </div>
 
-                            {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                             <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                                 <a href="/dashboard/users" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left"></i> Kembali
@@ -317,11 +313,9 @@
             const togglePasswordIcon = document.getElementById('togglePasswordIcon');
 
             togglePassword.addEventListener('click', function (e) {
-                // toggle the type attribute
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
 
-                // toggle the eye icon
                 if (type === 'password') {
                     togglePasswordIcon.classList.remove('bi-eye-slash');
                     togglePasswordIcon.classList.add('bi-eye');

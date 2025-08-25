@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            font-size: 10px; /* Slightly smaller font for more columns */
+            font-size: 10px; 
             line-height: 1.4;
         }
 
@@ -111,7 +111,7 @@
             border: 1px solid #ccc;
             padding: 6px;
             text-align: left;
-            font-size: 9px; /* Adjusted font size for table cells */
+            font-size: 9px; 
         }
 
         th {
@@ -150,7 +150,6 @@
             padding-top: 8px;
         }
 
-        /* Column Widths for 10 columns */
         .col-no { width: 3%; }
         .col-date { width: 8%; }
         .col-name { width: 15%; }

@@ -1,10 +1,9 @@
 <style>
-    /* [DIUBAH TOTAL] Style baru yang terinspirasi dari Tabler UI */
     .header {
-        background-color: #f2f3f5 !important; /* Abu-abu muda untuk navbar */
+        background-color: #f2f3f5 !important; 
         border-bottom: 1px solid #f2f3f5;
         padding: 0 1rem;
-        z-index: 1030; /* Menambahkan z-index agar selalu di atas konten lain */
+        z-index: 1030; 
         /* Fixed navbar positioning to ensure it stays at top */
         position: fixed !important;
         top: 0 !important;
@@ -13,7 +12,6 @@
         width: 100% !important;
     }
 
-    /* Add body padding to prevent content from hiding behind fixed navbar */
     body {
         padding-top: 70px !important;
     }
@@ -39,7 +37,6 @@
         background-color: #f2f3f5;
     }
 
-    /* Nav-link aktif dengan garis bawah */
     .navbar-nav .nav-link.active {
         background-color: transparent !important;
         color: #f2f3f5;
@@ -92,7 +89,6 @@
         gap: 1rem;
     }
 
-    /* Avatar admin dengan border dan shadow */
     .avatar {
         width: 32px;
         height: 32px;
@@ -103,13 +99,13 @@
         align-items: center;
         justify-content: center;
         font-weight: 600;
-        border: 2px solid rgba(255,255,255,0.9); /* Border putih tipis */
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Shadow lembut */
-        transition: all 0.3s ease; /* Animasi halus */
+        border: 2px solid rgba(255,255,255,0.9); 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15); 
+        transition: all 0.3s ease; 
     }
 
     .avatar:hover {
-        transform: scale(1.05); /* Efek membesar saat hover */
+        transform: scale(1.05); 
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 
@@ -137,7 +133,6 @@
             margin: 0.25rem 0;
         }
 
-        /* Active style di mobile */
         .navbar-nav .nav-link.active {
             border-bottom: none;
             border-radius: 8px;
@@ -155,12 +150,10 @@
 </style>
 <header class="navbar navbar-expand-md navbar-light d-print-none header">
     <div class="container-fluid">
-        {{-- [RESPONSIVE] Pindahkan toggler ke sini untuk alur yang lebih baik --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        {{-- [RESPONSIVE] Ubah class agar brand selalu terlihat --}}
         <h1 class="navbar-brand navbar-brand-autodark pe-0 pe-md-3">
             <a href="/dashboard">
                 <svg xmlns="http://www.w3.org/2000/svg" class="navbar-brand-image" width="24" height="24"
@@ -175,7 +168,6 @@
                     <path d="M9 15l0 .01" />
                     <path d="M9 18l0 .01" />
                 </svg>
-                {{-- [RESPONSIVE] Sembunyikan teks brand di layar sangat kecil untuk hemat ruang --}}.
                 <span class="ms-2 d-none d-sm-inline-block"> GERAI UMKM MART </span>
             </a>
         </h1>

@@ -20,7 +20,7 @@
 
         .barcode-cell {
             width: 25%;
-            height: 20mm; /* Tinggi setiap sel barcode */
+            height: 20mm; 
             text-align: center;
             padding: 1mm;
             vertical-align: top;
@@ -70,7 +70,6 @@
 </head>
 <body>
     @php
-        // Mengubah jumlah barcode per halaman menjadi 52 (13 baris * 4 kolom)
         $chunkedBarcodes = array_chunk($barcodesData, 52);
     @endphp
 

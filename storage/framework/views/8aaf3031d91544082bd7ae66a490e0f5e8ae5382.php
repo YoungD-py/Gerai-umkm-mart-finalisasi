@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
     <style>
         .cashier-card {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
@@ -234,13 +234,14 @@
             <p>Lakukan transaksi penjualan dan lihat riwayat transaksi</p>
         </div>
 
-        @if (session()->has('success'))
+        <?php if(session()->has('success')): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert"
                 style="border-radius: 15px; border: none;">
-                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        @endif
+        <?php endif; ?>
 
         <div class="cashier-card">
             <div class="cashier-card-header">
@@ -272,37 +273,39 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($transactions as $key => $transaction)
+                            <?php $__empty_1 = true; $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr>
-                                    <td><strong>{{ ($transactions->currentPage() - 1) * $transactions->perPage() + $loop->iteration }}</strong>
+                                    <td><strong><?php echo e(($transactions->currentPage() - 1) * $transactions->perPage() + $loop->iteration); ?></strong>
                                     </td>
                                     <td>
                                         <i class="bi bi-hash text-success"></i>
-                                        {{ $transaction->no_nota }}
+                                        <?php echo e($transaction->no_nota); ?>
+
                                     </td>
                                     <td style="white-space:nowrap;">
                                         <i class="bi bi-clock text-muted me-1"></i>
-                                        {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s') }}
+                                        <?php echo e(\Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i:s')); ?>
+
                                     </td>
-                                    <td class="d-none d-lg-table-cell">{{ $transaction->user->nama }}</td>
-                                    <td class="d-none d-md-table-cell">{{ $transaction->metode_pembayaran }}</td>
+                                    <td class="d-none d-lg-table-cell"><?php echo e($transaction->user->nama); ?></td>
+                                    <td class="d-none d-md-table-cell"><?php echo e($transaction->metode_pembayaran); ?></td>
                                     <td>
-                                        @if(strtolower(trim($transaction->status)) == 'lunas')
-                                            <span class="badge bg-success">{{ $transaction->status }}</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
-                                        @endif
+                                        <?php if(strtolower(trim($transaction->status)) == 'lunas'): ?>
+                                            <span class="badge bg-success"><?php echo e($transaction->status); ?></span>
+                                        <?php else: ?>
+                                            <span class="badge bg-warning text-dark"><?php echo e($transaction->status); ?></span>
+                                        <?php endif; ?>
                                     </td>
-                                    <td><strong>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</strong></td>
+                                    <td><strong>Rp <?php echo e(number_format($transaction->total_harga, 0, ',', '.')); ?></strong></td>
                                     <td class="text-center">
-                                        <a href="/dashboard/cashiers/print-nota?no_nota={{ $transaction->no_nota }}"
+                                        <a href="/dashboard/cashiers/print-nota?no_nota=<?php echo e($transaction->no_nota); ?>"
                                             class="btn btn-print" target="_blank" title="Cetak Nota">
                                             <i class="bi bi-printer"></i>
                                             <span class="d-none d-md-inline">Cetak Nota</span>
                                         </a>
                                     </td>
                                 </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
                                     <td colspan="8" class="text-center py-5">
                                         <div class="text-muted">
@@ -316,19 +319,20 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
-                {{-- Link pagination --}}
-                @if($transactions->hasPages())
+                
+                <?php if($transactions->hasPages()): ?>
                     <div class="d-flex justify-content-center mt-4">
                         <div class="pagination-wrapper">
-                            {{ $transactions->links() }}
+                            <?php echo e($transactions->links()); ?>
+
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -352,4 +356,6 @@
             }
         }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/cashiers/index.blade.php ENDPATH**/ ?>

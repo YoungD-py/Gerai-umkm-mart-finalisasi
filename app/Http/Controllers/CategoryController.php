@@ -101,21 +101,17 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        // [DIUBAH TOTAL] Logika update disederhanakan dan diperbaiki
         $validatedData = $request->validate([
             'nama' => [
                 'required',
                 'string',
                 'max:255',
-                // Rule ini akan memeriksa apakah 'nama' sudah ada,
-                // TAPI mengabaikan data dengan ID yang sedang kita edit.
                 Rule::unique('categories', 'nama')->ignore($category->id),
             ],
             'nomor_penanggung_jawab' => 'nullable|string|max:20',
             'alamat' => 'nullable|string|max:500',
         ]);
 
-        // Menggunakan metode update pada objek $category yang sudah ada
         $category->update($validatedData);
 
         return redirect('/dashboard/categories')->with('success', 'Mitra Binaan telah diubah.');
@@ -129,7 +125,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        // [PERBAIKAN] Tambahkan pengecekan apakah mitra masih punya barang
+        // Cek apakah kategori memiliki produk terkait
         if ($category->goods()->count() > 0) {
             return redirect('/dashboard/categories')->with('error', 'Gagal menghapus! Mitra "' . $category->nama . '" masih memiliki produk terdaftar.');
         }
@@ -140,7 +136,6 @@ class CategoryController extends Controller
     }
 
     /**
-     * [BARU] Menghapus beberapa mitra binaan sekaligus.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

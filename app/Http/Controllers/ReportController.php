@@ -84,7 +84,7 @@ class ReportController extends Controller
             $namaBarangList = [];
             $barcodeList = [];
             $categoryListForTransaction = [];
-            $transactionRevenue = 0; // Untuk menghitung total pendapatan per transaksi dari order
+            $transactionRevenue = 0; 
 
             foreach ($transaction->orders as $order) {
                 $totalQtyBarang += $order->qty;
@@ -94,7 +94,6 @@ class ReportController extends Controller
                     if ($order->good->category) {
                         $categoryListForTransaction[] = $order->good->category->nama;
                     }
-                    // Tambahkan harga barang ke pendapatan transaksi
                     $transactionRevenue += ($order->qty * $order->good->harga);
                 }
             }
@@ -112,7 +111,7 @@ class ReportController extends Controller
 
             // Hanya tambahkan ke grandTotal jika status transaksi adalah 'LUNAS'
             if ($transaction->status == 'LUNAS') {
-                $grandTotal += $transactionRevenue; // Gunakan pendapatan dari order
+                $grandTotal += $transactionRevenue; 
             }
         }
 

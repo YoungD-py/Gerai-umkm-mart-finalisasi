@@ -9,9 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* [DIUBAH TOTAL] Style baru yang terinspirasi dari Tabler UI */
         body {
-            background-color: #f8fafc; /* Latar belakang abu-abu muda */
+            background-color: #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -63,7 +62,6 @@
             border-color: #206bc4;
             box-shadow: 0 0 0 0.2rem rgba(32, 107, 196, 0.25);
         }
-        /* Added styles for password toggle functionality */
         .password-container {
             position: relative;
         }
@@ -86,7 +84,6 @@
         .password-container .form-control {
             padding-right: 40px;
         }
-        /* </CHANGE> */
         .btn-primary {
             background-color: #206bc4;
             border-color: #206bc4;
@@ -149,7 +146,6 @@
     <div class="login-page">
         <div class="login-header">
             <svg xmlns="http://www.w3.org/2000/svg" class="logo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M5 21v-14l8 -4v18" /><path d="M19 21v-10l-6 -4" /><path d="M9 9l0 .01" /><path d="M9 12l0 .01" /><path d="M9 15l0 .01" /><path d="M9 18l0 .01" /></svg>
-            <!-- Updated title and description for unified login -->
             <h1>Login Sistem</h1>
             <p>Selamat datang kembali di GERAI UMKM MART</p>
         </div>
@@ -164,7 +160,6 @@
                     </div>
                 @endif
 
-                <!-- Added info alert for redirected users -->
                 @if(session()->has('info'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="bi bi-info-circle-fill"></i>
@@ -184,7 +179,6 @@
                         @enderror
                     </div>
 
-                    <!-- Added password toggle functionality -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="password-container">
@@ -198,7 +192,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <!-- </CHANGE> -->
 
                     <div class="captcha-container">
                         <button type="button" class="captcha-refresh" onclick="refreshMathCaptcha()">
@@ -216,7 +209,6 @@
                         @enderror
                     </div>
 
-                    <!-- Updated button text for unified login -->
                     <button type="submit" class="btn btn-primary w-100">
                         Login Sistem
                     </button>
@@ -224,7 +216,6 @@
             </div>
         </div>
 
-        <!-- Removed admin login link since it's now unified -->
         <div class="footer-link">
             <small class="text-muted">
                 <i class="bi bi-shield-check"></i> 
@@ -247,9 +238,7 @@
                 passwordIcon.className = 'bi bi-eye';
             }
         }
-        // </CHANGE>
 
-        // Fungsionalitas JavaScript asli tetap dipertahankan
         let currentAnswer = 0;
 
         function generateMathCaptcha() {
@@ -279,7 +268,6 @@
             currentAnswer = captcha.answer;
             document.getElementById('math-question').textContent = captcha.question;
 
-            // Store answer in session via AJAX
             fetch('/store-math-captcha', {
                 method: 'POST',
                 headers: {
@@ -290,7 +278,6 @@
             });
         }
 
-        // Generate captcha on page load
         document.addEventListener('DOMContentLoaded', function() {
             refreshMathCaptcha();
         });

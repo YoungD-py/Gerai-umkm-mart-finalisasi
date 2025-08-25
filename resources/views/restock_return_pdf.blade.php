@@ -39,7 +39,7 @@
         }
         .summary-section {
             background: white;
-            border: 2px solid #6f42c1; /* Purple border */
+            border: 2px solid #6f42c1; 
             border-radius: 10px;
             padding: 25px;
             margin: 20px 0;
@@ -47,7 +47,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .summary-title {
-            color: #6f42c1; /* Purple color */
+            color: #6f42c1; 
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -127,10 +127,10 @@
             color: white;
         }
         .type-return {
-            background-color: #dc3545; /* Red */
+            background-color: #dc3545; 
         }
         .type-restock {
-            background-color: #28a745; /* Green */
+            background-color: #28a745; 
         }
     </style>
 </head>

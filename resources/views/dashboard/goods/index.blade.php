@@ -157,7 +157,6 @@
         font-weight: 600;
         margin-left: 5px;
     }
-        /* Pagination yang lebih jelas */
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -166,7 +165,7 @@
     .pagination-wrapper .page-link {
         border: none;
         padding: 12px 16px;
-        color: #28a745; /* Hijau tegas */
+        color: #28a745; 
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
@@ -232,7 +231,6 @@
                     Data Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    {{-- [PERBAIKAN] Form untuk bulk delete sekarang terpisah --}}
                     <form id="bulk-delete-form" action="{{ route('goods.bulkDelete') }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
@@ -254,7 +252,6 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                {{-- [DIKEMBALIKAN] Form untuk search dan filter --}}
                 <form action="/dashboard/goods" method="GET" id="search-form">
                     <div class="row align-items-end">
                         <div class="col-12 col-md-5 mb-3 mb-md-0">
@@ -291,7 +288,6 @@
                 </form>
             </div>
 
-            {{-- [PERBAIKAN] Form bulk-delete tidak lagi membungkus tabel --}}
             <div class="table-responsive">
                 <table class="table table-umkm">
                     <thead>
@@ -301,7 +297,6 @@
                             </th>
                             <th style="width: 5%;">NO</th>
                             <th style="width: 10%;">
-                                {{-- [DIKEMBALIKAN] Tombol sort tgl masuk --}}
                                 Tgl Masuk
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="tgl_masuk"
@@ -313,7 +308,6 @@
                             <th style="width: 24%;">Nama Barang</th>
                             <th style="width: 13%;">Jenis</th>
                             <th style="width: 14%;">
-                                {{-- [DIKEMBALIKAN] Tombol sort expired --}}
                                 Expired
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="expired"
@@ -324,7 +318,6 @@
                             </th>
                             <th style="width: 13%;">Mitra Binaan</th>
                             <th style="width: 7%;">
-                                {{-- [DIKEMBALIKAN] Tombol sort stok --}}
                                 Stok
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="stok"
@@ -334,7 +327,6 @@
                                 </button>
                             </th>
                             <th style="width: 9%;">
-                                {{-- [DIKEMBALIKAN] Tombol sort harga --}}
                                 Harga
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="harga"
@@ -350,7 +342,6 @@
                         @forelse ($goods as $key => $good)
                         <tr>
                             <td class="text-center">
-                                {{-- [PERBAIKAN] Atribut name dihapus dari checkbox --}}
                                 <input class="form-check-input item-checkbox" type="checkbox" value="{{ $good->id }}">
                             </td>
                             <td><strong>{{ $goods->firstItem() + $key }}</strong></td>
@@ -432,11 +423,9 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="/dashboard/goods/{{ $good->id }}/edit"><i class="bi bi-pencil-square text-warning"></i> Edit</a></li>
                                         <li>
-                                            {{-- [PERBAIKAN] Form hapus satuan sekarang tidak lagi bersarang --}}
                                             <form action="/dashboard/goods/{{ $good->id }}" method="post" class="dropdown-item-form">
                                                 @method('delete')
                                                 @csrf
-                                                {{-- [PERBAIKAN] onclick diubah untuk mengirim referensi form langsung --}}
                                                 <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $good->nama }}')"><i class="bi bi-trash"></i> Hapus</button>
                                             </form>
                                         </li>
@@ -469,7 +458,6 @@
     </div>
 </div>
 
-{{-- Modal --}}
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -505,10 +493,8 @@
     </div>
 </div>
 
-{{-- [PERBAIKAN] Script lengkap dengan semua fitur --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- SCRIPT HAPUS SATUAN (SUDAH BENAR) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -528,7 +514,6 @@
             }
         });
 
-        // --- SCRIPT HAPUS MASSAL (SUDAH BENAR) ---
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -592,7 +577,6 @@
 
         updateBulkDeleteButtonState();
 
-        // --- [DIKEMBALIKAN] SCRIPT UNTUK FILTER & SORTING ---
         const sortToggles = document.querySelectorAll('.sort-toggle');
         sortToggles.forEach(toggleButton => {
             toggleButton.addEventListener('click', function() {

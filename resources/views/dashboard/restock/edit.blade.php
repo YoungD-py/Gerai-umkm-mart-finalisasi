@@ -31,7 +31,7 @@
 }
 
 .card-body {
-    padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+    padding: 1.5rem; /* [RESPONSIVE] */
 }
 
 .form-label {
@@ -53,14 +53,14 @@
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #28a745; /* Warna Hijau */
+    border-color: #28a745; 
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
     background: white;
     transform: translateY(-1px);
 }
 
 .input-group-text {
-    background: linear-gradient(135deg, #28a745, #20c997); /* Warna Hijau */
+    background: linear-gradient(135deg, #28a745, #20c997); 
     color: white;
     border: none;
     border-radius: 15px 0 0 15px;
@@ -80,11 +80,10 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    justify-content: center; /* [RESPONSIVE] Center content inside button */
+    justify-content: center; /* [RESPONSIVE]  */
     gap: 8px;
 }
 
-/* Tombol utama */
 .btn-umkm {
     background: linear-gradient(135deg, #28a745, #20c997);
     border: none;
@@ -93,14 +92,12 @@
     letter-spacing: 0.5px;
 }
 
-/* Hover hanya aktif jika tidak disabled */
 .btn-umkm:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
     color: white;
 }
 
-/* Tombol jika disabled tetap terlihat hijau */
 .btn-umkm:disabled,
 .btn-umkm[disabled] {
     background: linear-gradient(135deg, #28a745, #20c997) !important;
@@ -204,7 +201,6 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -226,7 +222,6 @@
                         </div>
                     @endif
 
-                    <!-- Info Barang -->
                     <div class="info-section">
                         <h5 class="text-success mb-3">
                             <i class="bi bi-info-circle"></i>
@@ -313,7 +308,6 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 mt-4 border-top gap-2">
                             <a href="/dashboard/restock" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i>

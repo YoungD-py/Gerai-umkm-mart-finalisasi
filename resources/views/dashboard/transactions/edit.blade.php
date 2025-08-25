@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-    /* --- CSS Styles adapted for Edit Transaction page --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -44,7 +43,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .form-label {
@@ -82,7 +81,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
     }
 
@@ -166,7 +165,6 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px;">
@@ -232,13 +230,11 @@
                             <select class="form-select" id="user_id" disabled>
                                 <option value="">-- Pilih Administrator --</option>
                                 @foreach ($users as $user)
-                                    {{-- Added null check for user nama property --}}
                                     <option value="{{ $user->id }}" {{ (old('user_id', $transaction->user_id) == $user->id) ? 'selected' : '' }}>
                                         {{ $user->nama ?? 'Nama tidak tersedia' }}
                                     </option>
                                 @endforeach
                             </select>
-                            {{-- Show current user info with null check --}}
                             <small class="text-muted d-block mt-1">
                                 <i class="bi bi-info-circle-fill"></i> Administrator saat ini: {{ $transaction->user->nama ?? 'User tidak ditemukan' }}
                             </small>

@@ -101,7 +101,6 @@
             font-size: 14px;
         }
 
-        /* Tebus Murah Cart Styles */
         .tebus-murah-item {
             transition: all 0.3s ease;
             border-left: 4px solid #dc3545;
@@ -131,7 +130,7 @@
         }
     </style>
 
-    {{-- [RESPONSIVE] Menggunakan container-fluid agar padding konsisten --}}
+    {{-- [RESPONSIVE] --}}
     <div class="container-fluid py-3">
         <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-3 px-3 mb-3 border-bottom"
             style="background: linear-gradient(90deg, #4e54c8, #8f94fb); border-radius: 10px;">
@@ -160,11 +159,6 @@
         <div class="row g-4">
             {{-- [RESPONSIVE] Menambahkan col-12 dan margin-bottom untuk stacking di mobile --}}
             <div class="col-12 col-lg-8 mb-4 mb-lg-0">
-                
-                {{-- ====================================================================== --}}
-                {{-- =================== AWAL BAGIAN HTML YANG DIUBAH =================== --}}
-                {{-- ====================================================================== --}}
-
                 <div class="card shadow-sm border-0 mb-4" style="background: white;">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-upc-scan" style="font-size: 3rem; color: #198754;"></i>
@@ -205,10 +199,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- ====================================================================== --}}
-                {{-- =================== AKHIR BAGIAN HTML YANG DIUBAH =================== --}}
-                {{-- ====================================================================== --}}
 
 
                 <div class="card shadow-sm border-0" style="background: white;">
@@ -470,9 +460,6 @@
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-    {{-- ====================================================================== --}}
-    {{-- =================== AWAL BLOK SCRIPT YANG DIUBAH =================== --}}
-    {{-- ====================================================================== --}}
     <script>
         let currentProduct = null;
         let currentTransactionTotal = {{ $orders->sum('subtotal') }};
@@ -481,8 +468,6 @@
         let isScanning = false;
         let isMobileDevice = false;
 
-        // FUNGSI INI SUDAH TIDAK DIPERLUKAN LAGI KARENA SCANNER AKAN MEMANGGIL processBarcode
-        // function addBarcodeToCart(barcode) { ... }
 
         function detectMobileDevice() {
             const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
@@ -883,7 +868,6 @@
                         e.preventDefault();
                         const activeElement = document.activeElement.tagName;
                         if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
-                            // Mengganti addBarcodeToCart dengan processBarcode
                             processBarcode(barcodeBuffer);
                         }
                     }
@@ -895,7 +879,6 @@
                 }
                 lastInputTime = currentTime;
             });
-            // --- AKHIR DARI LISTENER SCANNER ---
         });
 
         function deleteOrderItem(orderId, productName) {

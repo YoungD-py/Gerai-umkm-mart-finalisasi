@@ -71,9 +71,9 @@ class StoreGoodRequest extends FormRequest
             'harga_asli.required' => 'Harga asli barang wajib diisi.',
             'harga_asli.numeric' => 'Harga asli barang harus berupa angka.',
             'harga_asli.min' => 'Harga asli barang tidak boleh kurang dari 0.',
-            'markup_percentage.numeric' => 'Persentase markup harus berupa angka.', // [BARU]
-            'markup_percentage.min' => 'Persentase markup tidak boleh kurang dari 0.', // [BARU]
-            'markup_percentage.max' => 'Persentase markup tidak boleh lebih dari 100.', // [BARU]
+            'markup_percentage.numeric' => 'Persentase markup harus berupa angka.', 
+            'markup_percentage.min' => 'Persentase markup tidak boleh kurang dari 0.', 
+            'markup_percentage.max' => 'Persentase markup tidak boleh lebih dari 100.', 
         ];
     }
 }

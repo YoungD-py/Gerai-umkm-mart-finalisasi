@@ -34,7 +34,7 @@
         }
 
         .return-card-body {
-            padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+            padding: 1.5rem; /* [RESPONSIVE]  */
         }
 
         .form-section {
@@ -76,7 +76,7 @@
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            justify-content: center; /* [RESPONSIVE] Center content inside button */
+            justify-content: center; /* [RESPONSIVE]*/
             gap: 8px;
             text-decoration: none;
         }
@@ -172,7 +172,6 @@
         @endif
 
         <div class="row justify-content-center">
-            {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
             <div class="col-xl-8 col-lg-10 col-md-12">
                 <div class="return-card">
                     <div class="return-card-header">
@@ -274,7 +273,6 @@
                                 </div>
                             </div>
 
-                            {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                             <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                                 <a href="/dashboard/returns" class="btn btn-secondary-return">
                                     <i class="bi bi-arrow-left"></i> Kembali

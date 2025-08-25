@@ -157,7 +157,6 @@
         font-weight: 600;
         margin-left: 5px;
     }
-        /* Pagination yang lebih jelas */
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -166,7 +165,7 @@
     .pagination-wrapper .page-link {
         border: none;
         padding: 12px 16px;
-        color: #28a745; /* Hijau tegas */
+        color: #28a745; 
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
@@ -234,7 +233,6 @@
                     Data Barang
                 </h3>
                 <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                    
                     <form id="bulk-delete-form" action="<?php echo e(route('goods.bulkDelete')); ?>" method="POST" style="display: inline;">
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('DELETE'); ?>
@@ -256,7 +254,6 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                
                 <form action="/dashboard/goods" method="GET" id="search-form">
                     <div class="row align-items-end">
                         <div class="col-12 col-md-5 mb-3 mb-md-0">
@@ -294,7 +291,6 @@
                 </form>
             </div>
 
-            
             <div class="table-responsive">
                 <table class="table table-umkm">
                     <thead>
@@ -304,7 +300,6 @@
                             </th>
                             <th style="width: 5%;">NO</th>
                             <th style="width: 10%;">
-                                
                                 Tgl Masuk
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="tgl_masuk"
@@ -316,7 +311,6 @@
                             <th style="width: 24%;">Nama Barang</th>
                             <th style="width: 13%;">Jenis</th>
                             <th style="width: 14%;">
-                                
                                 Expired
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="expired"
@@ -327,7 +321,6 @@
                             </th>
                             <th style="width: 13%;">Mitra Binaan</th>
                             <th style="width: 7%;">
-                                
                                 Stok
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="stok"
@@ -337,7 +330,6 @@
                                 </button>
                             </th>
                             <th style="width: 9%;">
-                                
                                 Harga
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="harga"
@@ -353,7 +345,6 @@
                         <?php $__empty_1 = true; $__currentLoopData = $goods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $good): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td class="text-center">
-                                
                                 <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($good->id); ?>">
                             </td>
                             <td><strong><?php echo e($goods->firstItem() + $key); ?></strong></td>
@@ -438,11 +429,9 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="/dashboard/goods/<?php echo e($good->id); ?>/edit"><i class="bi bi-pencil-square text-warning"></i> Edit</a></li>
                                         <li>
-                                            
                                             <form action="/dashboard/goods/<?php echo e($good->id); ?>" method="post" class="dropdown-item-form">
                                                 <?php echo method_field('delete'); ?>
                                                 <?php echo csrf_field(); ?>
-                                                
                                                 <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($good->nama); ?>')"><i class="bi bi-trash"></i> Hapus</button>
                                             </form>
                                         </li>
@@ -475,7 +464,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -512,10 +500,8 @@
     </div>
 </div>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- SCRIPT HAPUS SATUAN (SUDAH BENAR) ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
         const deleteModal = new bootstrap.Modal(deleteModalElement);
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -535,7 +521,6 @@
             }
         });
 
-        // --- SCRIPT HAPUS MASSAL (SUDAH BENAR) ---
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -599,7 +584,6 @@
 
         updateBulkDeleteButtonState();
 
-        // --- [DIKEMBALIKAN] SCRIPT UNTUK FILTER & SORTING ---
         const sortToggles = document.querySelectorAll('.sort-toggle');
         sortToggles.forEach(toggleButton => {
             toggleButton.addEventListener('click', function() {

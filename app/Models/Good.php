@@ -21,7 +21,7 @@ class Good extends Model
         'stok',
         'harga_asli',
         'harga',
-        'markup_percentage', // [BARU]
+        'markup_percentage', 
         'min_qty_grosir',
         'harga_grosir',
         'is_grosir_active',
@@ -38,8 +38,7 @@ class Good extends Model
         'is_tebus_murah_active' => 'boolean'
     ];
 
-    // Tambahkan atribut 'harga_p_eats' ke daftar atribut yang akan di-append
-    // Ini memastikan atribut ini selalu tersedia saat model di-serialize atau diakses
+
     protected $appends = ['harga_p_eats'];
 
     public function category()
@@ -83,8 +82,7 @@ class Good extends Model
         if (!$this->harga_asli) {
             return 0;
         }
-
-        // [PERUBAHAN LOGIKA] Menggunakan markup_percentage jika ada, jika tidak, gunakan default
+        // Jika markup_percentage diset, gunakan itu; jika tidak, gunakan default berdasarkan type
         $markup = $this->markup_percentage !== null ? ($this->markup_percentage / 100) : ($this->type === 'makanan' ? 0.02 : 0.05);
         return $this->harga_asli + ($this->harga_asli * $markup);
     }
@@ -122,7 +120,7 @@ class Good extends Model
                 $typeInitial = 'F';
                 break;
             default:
-                $typeInitial = 'L'; // Lainnya
+                $typeInitial = 'L'; 
                 break;
         }
 
@@ -130,7 +128,7 @@ class Good extends Model
         $sanitizedName = preg_replace('/[^a-zA-Z0-9]/', '', $name); // Remove non-alphanumeric
         $namePart = strtoupper(substr($sanitizedName, 0, 3));
         if (empty($namePart)) {
-            $namePart = 'XXX'; // Fallback if name is too short or empty after sanitization
+            $namePart = 'XXX'; 
         }
 
         do {

@@ -61,7 +61,6 @@
 <body>
     <div class="header">
         <h2>Laporan Biaya Operasional</h2>
-        {{-- PERBAIKAN: Langsung format dari objek Carbon, tidak perlu parse lagi --}}
         <p>Periode: {{ $startDate->format('d M Y') }} - {{ $endDate->format('d M Y') }}</p>
     </div>
 
@@ -93,7 +92,6 @@
         <tfoot>
             <tr class="total-row">
                 <td colspan="4" class="text-right"><strong>Total Biaya Operasional:</strong></td>
-                {{-- PERBAIKAN: Menggunakan variabel $totalBiaya dari controller --}}
                 <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
             </tr>
         </tfoot>

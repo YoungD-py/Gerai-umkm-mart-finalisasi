@@ -86,7 +86,7 @@
         }
 
         .main-content {
-            min-height: calc(100vh - 76px);
+            /* min-height: calc(100vh - 76px); */
             padding: 0;
         }
 
@@ -108,7 +108,6 @@
             background: #20c997;
         }
 
-        /* Modal FIX */
         .modal-backdrop {
             background-color: rgba(0, 0, 0, 0.3) !important;
             backdrop-filter: none !important;
@@ -130,12 +129,10 @@
     </div>
 
     <script>
-        // Auto hide alerts after 5 seconds
         setTimeout(function () {
             $('.alert').fadeOut('slow');
         }, 5000);
 
-        // Add loading animation to buttons
         $('form').on('submit', function () {
             $(this).find('button[type="submit"]').html('<i class="bi bi-hourglass-split"></i> Loading...');
         });

@@ -43,7 +43,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .form-label {
@@ -160,7 +160,7 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-6 menjadi lebih fleksibel --}}
+        {{-- [RESPONSIVE] Mengubah col-lg-6 fleksibel --}}
         <div class="col-xl-6 col-lg-8 col-md-10">
             <div class="umkm-card">
                 <div class="umkm-card-header">

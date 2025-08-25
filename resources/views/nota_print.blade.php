@@ -88,7 +88,6 @@
             font-weight: bold; 
         }
 
-        /* Print Button */
         .print-button {
             position: fixed;
             top: 20px;
@@ -109,7 +108,6 @@
             background: #0056b3;
         }
 
-        /* Print Styles */
         @media print {
             .print-button {
                 display: none;
@@ -152,7 +150,6 @@
             }
         }
 
-        /* Screen Display */
         @media screen {
             body {
                 padding: 20px;
@@ -164,7 +161,6 @@
     </style>
 </head>
 <body>
-    <!-- Tombol Print -->
     <button class="print-button" onclick="window.print()">
         🖨️ Cetak Nota
     </button>
@@ -267,7 +263,6 @@
         //     window.print();
         // }
         
-        // Close window setelah print (opsional)
         window.onafterprint = function() {
             // window.close();
         }

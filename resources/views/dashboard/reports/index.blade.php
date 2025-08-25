@@ -13,7 +13,6 @@
           border-radius: 20px;
           box-shadow: 0 20px 40px rgba(0,0,0,0.1);
           overflow: hidden;
-          /* [DIUBAH] Menghapus margin atas/bawah agar diatur oleh grid */
           margin-bottom: 1.5rem;
       }
 
@@ -176,7 +175,6 @@
           margin-bottom: 15px;
       }
 
-      /* [DIHAPUS] .report-grid tidak digunakan lagi */
 
       @media (max-width: 768px) {
           .main-card {
@@ -227,7 +225,6 @@
                   </p>
               </div>
 
-              <!-- Statistics Cards -->
               <div class="stats-grid">
                   <div class="stat-card">
                       <div class="stat-icon">
@@ -278,10 +275,8 @@
                   </div>
               </div>
 
-              <!-- [PERBAIKAN UI] Menggunakan Bootstrap Grid (row & col) untuk tata letak 2x2 -->
               <div class="row mt-5">
                   <div class="col-lg-6 mb-4">
-                      <!-- Laporan Transaksi -->
                       <div class="main-card">
                           <div class="card-header-custom">
                               <h5 class="mb-0">
@@ -330,7 +325,6 @@
                   </div>
 
                   <div class="col-lg-6 mb-4">
-                      <!-- Laporan Data Barang -->
                       <div class="main-card">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #17a2b8, #138496);">
                               <h5 class="mb-0">
@@ -378,7 +372,6 @@
                   </div>
 
                   <div class="col-lg-6 mb-4">
-                      <!-- Laporan Restock dan Return Barang -->
                       <div class="main-card">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #6f42c1, #8a2be2);">
                               <h5 class="mb-0">
@@ -426,7 +419,6 @@
                   </div>
 
                   <div class="col-lg-6 mb-4">
-                      <!-- Laporan Biaya Operasional -->
                       <div class="main-card">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #dc3545, #c82333);">
                               <h5 class="mb-0">
@@ -466,7 +458,6 @@
                   </div>
 
                   <div class="col-lg-6 mb-4">
-                      <!-- Laporan Keuangan -->
                       <div class="main-card">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
                               <h5 class="mb-0">
@@ -493,7 +484,6 @@
                                       <input type="date" class="form-control" name="tgl_akhir"
                                           value="{{ date('Y-m-d') }}" required>
                                   </div>
-                                  {{-- Hidden dummy select to maintain consistent layout with other forms --}}
                                   <div class="form-group" style="visibility: hidden;">
                                       <label class="form-label">&nbsp;</label>
                                       <select class="form-control"><option></option></select>

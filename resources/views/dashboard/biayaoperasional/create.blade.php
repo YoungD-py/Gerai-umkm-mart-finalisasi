@@ -43,7 +43,7 @@
     }
     
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
     
     .form-label {
@@ -92,7 +92,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
     }
 
@@ -130,7 +130,7 @@
     }
     
     .page-title h1 {
-        font-size: 2rem; /* [RESPONSIVE] Menyesuaikan ukuran font */
+        font-size: 2rem; /* [RESPONSIVE] */
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -161,7 +161,6 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">

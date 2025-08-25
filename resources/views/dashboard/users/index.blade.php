@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-    /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -52,12 +51,12 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
         overflow: hidden;
     }
 
     .btn-umkm {
-        background: linear-gradient(135deg, #206BC4, #4A90E2); /* Blue gradient */
+        background: linear-gradient(135deg, #206BC4, #4A90E2); 
         border: none;
         border-radius: 15px;
         padding: 12px 25px;
@@ -290,14 +289,12 @@
 
    <div class="umkm-card">
        <div class="umkm-card-header">
-           {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                <h3 class="umkm-card-title mb-2 mb-md-0">
                    <i class="bi bi-people-fill"></i>
                    Data Admin & Kasir
                </h3>
                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                   {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
                    <form id="bulk-delete-form" action="{{ route('users.bulkDelete') }}" method="POST" style="display: inline;">
                        @csrf
                        @method('DELETE')
@@ -314,7 +311,6 @@
        </div>
 
        <div class="umkm-card-body">
-           <!-- Search Section -->
            <div class="search-section">
                <form action="/dashboard/users" method="GET">
                    <div class="row align-items-center">
@@ -339,7 +335,6 @@
                </form>
            </div>
 
-           {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
            <div class="table-responsive">
                <table class="table table-umkm">
                    <thead>
@@ -448,7 +443,6 @@
    </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus SATUAN -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered">
    <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -467,7 +461,6 @@
  </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus BANYAK -->
 <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered">
    <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -488,7 +481,6 @@
 
 <script>
    document.addEventListener('DOMContentLoaded', function() {
-       // --- SCRIPT UNTUK HAPUS SATUAN ---
        const deleteModalElement = document.getElementById('deleteConfirmationModal');
        const deleteModal = new bootstrap.Modal(deleteModalElement);
        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -511,7 +503,6 @@
            }
        });
 
-       // --- SCRIPT UNTUK BULK DELETE (DIPERBAIKI) ---
        const selectAllCheckbox = document.getElementById('select-all-checkbox');
        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
        const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -556,10 +547,8 @@
 
        if(confirmBulkDeleteButton) {
            confirmBulkDeleteButton.addEventListener('click', function() {
-               // Hapus input tersembunyi sebelumnya jika ada
                bulkDeleteForm.querySelectorAll('input[name="selected_ids[]"]').forEach(input => input.remove());
 
-               // Tambahkan input tersembunyi untuk setiap checkbox yang dipilih
                itemCheckboxes.forEach(checkbox => {
                    if (checkbox.checked) {
                        const hiddenInput = document.createElement('input');

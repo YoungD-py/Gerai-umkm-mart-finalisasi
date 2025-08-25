@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-    /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -43,7 +42,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .btn-umkm {
@@ -59,7 +58,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
     }
 
@@ -185,7 +184,6 @@
 
     <div class="umkm-card">
         <div class="umkm-card-header">
-            {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                 <h3 class="umkm-card-title mb-2 mb-md-0">
                     <i class="bi bi-cart3"></i>
@@ -203,7 +201,6 @@
         </div>
 
         <div class="umkm-card-body">
-            <!-- Table -->
             <div class="table-responsive">
                 <table class="table table-umkm" id="table">
                     <thead>
@@ -220,7 +217,6 @@
                         @forelse ($orders as $order)
                             <tr>
                                 <td><strong>{{ $loop->iteration }}</strong></td>
-                                {{-- Menambahkan pengecekan null untuk barang yang sudah dihapus --}}
                                 <td>{{ $order->good ? $order->good->nama : 'Barang sudah tidak ada' }}</td>
                                 <td>Rp {{ number_format($order->price, 0, ',', '.') }}</td>
                                 <td>{{ $order->qty }}</td>
@@ -251,15 +247,13 @@
                 </table>
             </div>
 
-            <!-- Checkout Section -->
             @if($orders->count() > 0)
             <div class="checkout-section">
                 <form method="post" action="/dashboard/transactions/checkout">
                     @csrf
                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
-                    <input type="hidden" name="nama_pembeli" value="CASH"> <!-- Default payment method -->
+                    <input type="hidden" name="nama_pembeli" value="CASH"> 
 
-                    {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
                     <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-3">
                         <div class="text-center text-sm-start">
                             <span class="text-muted">Total Harga</span>

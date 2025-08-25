@@ -59,8 +59,8 @@ class RestockController extends Controller
         return view('dashboard.restock.index', [
             'active' => 'restock',
             'goods' => $query->paginate(10)->withQueryString(),
-            'categories' => Category::all(), // Added categories for mitra filter dropdown
-            'restockHistory' => $restockHistory, // Added restock history data
+            'categories' => Category::all(), 
+            'restockHistory' => $restockHistory, 
         ]);
     }
 
@@ -199,7 +199,7 @@ class RestockController extends Controller
         foreach ($restocks as $restock) {
             $good = $restock->good;
             if (!$good) {
-                continue; // Skip if good doesn't exist
+                continue; 
             }
 
             $qtyToRestore = $restock->qty_restock;

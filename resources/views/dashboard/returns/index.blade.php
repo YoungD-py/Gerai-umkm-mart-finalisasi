@@ -186,7 +186,6 @@
     color: #c82333 !important;
 }
 
-/* Pagination yang lebih jelas dan responsif */
 .pagination-wrapper .pagination {
     border-radius: 15px;
     overflow: hidden;
@@ -195,7 +194,7 @@
 .pagination-wrapper .page-link {
     border: none;
     padding: 12px 16px;
-    color: #28a745; /* Hijau tegas */
+    color: #28a745; 
     font-weight: 700;
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -289,7 +288,6 @@
 
         <div class="umkm-card-body">
             <div class="search-section">
-                {{-- Enhanced search form with mitra filter --}}
                 <form action="{{ route('returns.index') }}" method="GET" id="search-form">
                     <div class="row align-items-end">
                         <div class="col-12 col-md-4 mb-3 mb-md-0">
@@ -335,7 +333,6 @@
                             </th>
                             <th style="width: 5%;">NO</th>
                             <th style="width: 10%;">
-                                {{-- Added sortable date column similar to goods --}}
                                 Tgl Return
                                 <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                     data-sort-param="tgl_return"
@@ -496,7 +493,6 @@
             }
         });
 
-        // --- SCRIPT UNTUK BULK DELETE ---
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -543,10 +539,8 @@
 
         if(confirmBulkDeleteButton) {
             confirmBulkDeleteButton.addEventListener('click', function() {
-                // Hapus input tersembunyi sebelumnya jika ada
                 bulkDeleteForm.querySelectorAll('input[name="selected_ids[]"]').forEach(input => input.remove());
 
-                // Tambahkan input tersembunyi untuk setiap checkbox yang dipilih
                 itemCheckboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         const hiddenInput = document.createElement('input');
@@ -561,10 +555,8 @@
             });
         }
 
-        // Panggil fungsi sekali di awal untuk inisialisasi
         updateBulkDeleteButtonState();
 
-        // --- SCRIPT UNTUK DATE SORTING ---
         const sortToggles = document.querySelectorAll('.sort-toggle');
         sortToggles.forEach(toggleButton => {
             toggleButton.addEventListener('click', function() {
@@ -572,7 +564,6 @@
                 let currentSortOrder = this.dataset.sortOrder;
                 let newSortOrder;
 
-                // Cycle through: none -> asc -> desc -> none
                 if (currentSortOrder === 'none') {
                     newSortOrder = 'asc';
                 } else if (currentSortOrder === 'asc') {
@@ -581,26 +572,20 @@
                     newSortOrder = 'none';
                 }
 
-                // Build new URL with sort parameter
                 const url = new URL(window.location.href);
 
-                // Clear existing sort parameters
                 url.searchParams.delete('sort_tgl_return');
 
-                // Set new sort parameter if not 'none'
                 if (newSortOrder !== 'none') {
                     url.searchParams.set(`sort_${sortParam}`, newSortOrder);
                 }
 
-                // Remove page parameter to start from first page
                 url.searchParams.delete('page');
 
-                // Navigate to new URL
                 window.location.href = url.toString();
             });
         });
 
-        // --- SCRIPT UNTUK CATEGORY FILTER ---
         const categoryFilterSelect = document.getElementById('category-filter');
         if (categoryFilterSelect) {
             categoryFilterSelect.addEventListener('change', function() {

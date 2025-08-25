@@ -1,10 +1,8 @@
 @extends('dashboard.layouts.main')
 
 @section('container')
-{{-- CDN for Select2 --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-    /* --- CSS Styles copied from other dashboards for consistency --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -46,7 +44,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .form-label {
@@ -84,7 +82,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
     }
 
@@ -135,7 +133,6 @@
         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* Select2 Customization */
     .select2-container--default .select2-selection--single {
         height: calc(2.25rem + 20px);
         padding: 12px 20px;
@@ -182,7 +179,6 @@
     @endif
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -200,7 +196,6 @@
                             <input type="text" class="form-control" name="no_nota" required value="{{ $no_nota }}" readonly>
                         </div>
 
-                        <!-- Penambahan search produk -->
                         <div class="mb-3">
                             <label for="goods" class="form-label">Pilih Barang</label>
                             <select class="form-select" id="goods" name="good_id" onchange="Subtotal()">
@@ -238,12 +233,10 @@
                                 <label for="subtotal" class="form-label">Subtotal</label>
                                 <input type="text" class="form-control" id="subtotal_display" readonly placeholder="Rp 0">
                                 <input type="hidden" id="subtotal" name="subtotal" required>
-                                <!-- Menambahkan info harga yang digunakan -->
                                 <small id="price_info" class="text-muted"></small>
                             </div>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-4 gap-2">
                             <a href="/dashboard/orders?no_nota={{ $no_nota }}" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i> Kembali
@@ -259,7 +252,6 @@
     </div>
 </div>
 
-{{-- jQuery and Select2 JS --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
@@ -296,13 +288,11 @@
         var priceType = 'Normal';
         var penghematan = 0;
         
-        // Cek tebus murah terlebih dahulu (prioritas lebih tinggi)
         if (isTebusMurahActive && currentTotal >= minTotalTebusMurah && hargaTebusMurah > 0) {
             unitPrice = hargaTebusMurah;
             priceType = 'Tebus Murah';
             penghematan = (hargaNormal - unitPrice) * qty;
         }
-        // Kemudian cek harga grosir
         else if (isGrosirActive && qty >= minQtyGrosir && hargaGrosir > 0) {
             unitPrice = hargaGrosir;
             priceType = 'Grosir';
@@ -314,7 +304,6 @@
         document.getElementById("subtotal").value = hasil;
         document.getElementById("subtotal_display").value = 'Rp ' + new Intl.NumberFormat('id-ID').format(hasil);
         
-        // Update info harga
         var priceInfo = '';
         if (priceType === 'Tebus Murah') {
             priceInfo = '<span class="badge bg-danger">TEBUS MURAH</span> Penghematan: Rp ' + new Intl.NumberFormat('id-ID').format(penghematan);

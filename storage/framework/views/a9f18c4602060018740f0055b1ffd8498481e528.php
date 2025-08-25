@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -149,29 +149,30 @@
 <div class="container-fluid py-4">
     <div class="page-title">
         <h1>💳 CHECKOUT PEMBAYARAN</h1>
-        <p>Selesaikan transaksi untuk nota nomor <strong>{{ $no_nota }}</strong></p>
+        <p>Selesaikan transaksi untuk nota nomor <strong><?php echo e($no_nota); ?></strong></p>
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 fleksibel --}}
+        
         <div class="col-xl-8 col-lg-10 col-md-12">
-            @if (session()->has('success'))
+            <?php if(session()->has('success')): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px;">
-                    {{ session('success') }}
+                    <?php echo e(session('success')); ?>
+
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            @endif
-             @if ($errors->any())
+            <?php endif; ?>
+             <?php if($errors->any()): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px;">
                     <strong>Terjadi Kesalahan!</strong>
                     <ul class="mb-0 mt-2">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            @endif
+            <?php endif; ?>
 
             <div class="umkm-card">
                 <div class="umkm-card-header">
@@ -183,18 +184,18 @@
 
                 <div class="umkm-card-body">
                     <form method="post" action="/dashboard/cashiers/finishing">
-                        @csrf
-                        <input type="hidden" name="id" value="{{ $transaction->id }}">
-                        <input type="hidden" name="no_nota" value="{{ $no_nota }}">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="id" value="<?php echo e($transaction->id); ?>">
+                        <input type="hidden" name="no_nota" value="<?php echo e($no_nota); ?>">
 
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="tgl_transaksi" class="form-label">Tanggal Transaksi</label>
-                                <input type="text" class="form-control" id="tgl_transaksi" value="{{ $transaction->tgl_transaksi }}" readonly>
+                                <input type="text" class="form-control" id="tgl_transaksi" value="<?php echo e($transaction->tgl_transaksi); ?>" readonly>
                             </div>
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="admin_name" class="form-label">Administrator</label>
-                                <input type="text" class="form-control" id="admin_name" value="{{ $transaction->user->nama }}" readonly>
+                                <input type="text" class="form-control" id="admin_name" value="<?php echo e($transaction->user->nama); ?>" readonly>
                             </div>
                         </div>
 
@@ -218,7 +219,7 @@
                                 <label for="total_harga_display" class="form-label">Total Harga</label>
                                 <input type="text" class="form-control" id="total_harga_display" readonly>
                                 <input type="hidden" name="total_harga" id="total_harga">
-                                <input type="hidden" id="original_total" value="{{ $total_harga }}">
+                                <input type="hidden" id="original_total" value="<?php echo e($total_harga); ?>">
                             </div>
                            <div class="col-12 col-md-6 mb-3">
                                 <label for="status" class="form-label">Status</label>
@@ -329,4 +330,6 @@
         calculateTotal();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/cashiers/checkout.blade.php ENDPATH**/ ?>

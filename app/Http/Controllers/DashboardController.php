@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Good;
 use App\Models\Transaction;
-use App\Models\Category; // Ini adalah model Mitra
+use App\Models\Category; 
 use App\Models\User;
 use App\Models\BiayaOperasional;
-use App\Models\Order; // Model Order digunakan untuk detail transaksi
+use App\Models\Order; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -103,7 +103,7 @@ class DashboardController extends Controller
             'totalProfit' => $totalProfit,
             'totalTransactions' => $totalTransactions,
             'netProfit' => $netProfit,
-            'totalExpenses' => $totalExpenses, // Menambahkan totalExpenses ke view
+            'totalExpenses' => $totalExpenses, 
             'revenueComparison' => $revenueComparison,
             'profitComparison' => $profitComparison,
             'transactionComparison' => $transactionComparison,
@@ -111,7 +111,7 @@ class DashboardController extends Controller
             'mainChartRevenue' => json_encode($chartData['revenues']),
             'mainChartProfit' => json_encode($chartData['profits']),
 
-            // [DIUBAH] Mengirim data untuk grafik, bukan koleksi
+            // Mengirim data untuk grafik, bukan koleksi
             'topProductsLabels' => json_encode($topProductsLabels),
             'topProductsSeries' => json_encode($topProductsSeries),
             'topMitraLabels' => json_encode($topMitraLabels),

@@ -9,7 +9,7 @@ use App\Http\Requests\UpdateGoodRequest;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Picqer\Barcode\BarcodeGeneratorSVG;
-use Carbon\Carbon; // Import Carbon
+use Carbon\Carbon; 
 
 class GoodController extends Controller
 {
@@ -20,7 +20,7 @@ class GoodController extends Controller
    */
   public function index()
   {
-      $query = Good::query()->with('category'); // Mulai dengan query() untuk kontrol pengurutan yang lebih baik dan eager load category
+      $query = Good::query()->with('category'); 
 
       // Filter by search term (nama or barcode)
       if (request('search')) {
@@ -30,7 +30,7 @@ class GoodController extends Controller
           });
       }
 
-      // [BARU] Filter by category_id (Mitra Binaan)
+      // Filter by category_id (Mitra Binaan)
       if (request('category_id') && request('category_id') !== 'all') {
           $query->where('category_id', request('category_id'));
       }
@@ -48,7 +48,7 @@ class GoodController extends Controller
           $sortApplied = true;
       }
 
-      // [BARU] Sorting by tgl_masuk
+      // Sorting by tgl_masuk
       $sortTglMasuk = request('sort_tgl_masuk');
       if ($sortTglMasuk === 'asc') {
           $query->orderBy('tgl_masuk', 'asc');
@@ -58,7 +58,7 @@ class GoodController extends Controller
           $sortApplied = true;
       }
 
-      // [BARU] Sorting by stok
+      // Sorting by stok
       $sortStok = request('sort_stok');
       if ($sortStok === 'asc') {
           $query->orderBy('stok', 'asc');
@@ -68,7 +68,7 @@ class GoodController extends Controller
           $sortApplied = true;
       }
 
-      // [BARU] Sorting by harga
+      // Sorting by harga
       $sortHarga = request('sort_harga');
       if ($sortHarga === 'asc') {
           $query->orderBy('harga', 'asc');
@@ -80,13 +80,13 @@ class GoodController extends Controller
 
       // Default sorting if no specific sort is applied
       if (!$sortApplied) {
-          $query->latest(); // Urutkan berdasarkan created_at DESC
+          $query->latest(); 
       }
 
       return view('dashboard.goods.index', [
           'active' => 'goods',
           'goods' => $query->paginate(7)->withQueryString(),
-          'categories' => Category::all(), // [BARU] Pass categories for the filter
+          'categories' => Category::all(), 
       ]);
   }
 
@@ -129,7 +129,7 @@ class GoodController extends Controller
           'expired_date' => 'nullable|date|after:today',
           'stok' => 'required|integer|min:0',
           'harga_asli' => 'required|numeric|min:0',
-          'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU] Validasi markup percentage
+          'markup_percentage' => 'nullable|numeric|min:0|max:100', 
           'is_grosir_active' => 'boolean',
           'min_qty_grosir' => 'nullable|integer|min:2',
           'harga_grosir' => 'nullable|numeric|min:0',
@@ -146,7 +146,7 @@ class GoodController extends Controller
           $validatedData['expired_date'] = null;
       }
 
-      // [PERUBAHAN LOGIKA] Perhitungan harga jual berdasarkan markup_percentage atau default
+      // Perhitungan harga jual berdasarkan markup_percentage atau default
       if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
           $markup = $validatedData['markup_percentage'] / 100;
       } else {
@@ -159,7 +159,7 @@ class GoodController extends Controller
               return back()->withErrors(['min_qty_grosir' => 'Minimal Qty & Harga grosir wajib diisi.'])->withInput();
           }
 
-          // [PERBAIKAN LOGIKA] Harga grosir tidak boleh lebih rendah dari harga asli (modal)
+          // Harga grosir tidak boleh lebih rendah dari harga asli (modal)
           if ($validatedData['harga_grosir'] < $validatedData['harga_asli']) {
               return back()->withErrors(['harga_grosir' => 'Harga grosir tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
           }
@@ -180,7 +180,7 @@ class GoodController extends Controller
               return back()->withErrors(['min_total_tebus_murah' => 'Minimal Total & Harga tebus murah wajib diisi.'])->withInput();
           }
 
-          // [PERBAIKAN LOGIKA] Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
+          // Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
           if ($validatedData['harga_tebus_murah'] < $validatedData['harga_asli']) {
               return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
           }
@@ -255,7 +255,7 @@ class GoodController extends Controller
           'type' => 'required|in:makanan,non_makanan,lainnya,handycraft,fashion',
           'expired_date' => 'nullable|date|after:today',
           'harga_asli' => 'required|numeric|min:0',
-          'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU] Validasi markup percentage
+          'markup_percentage' => 'nullable|numeric|min:0|max:100', 
           'is_grosir_active' => 'boolean',
           'min_qty_grosir' => 'nullable|integer|min:2',
           'harga_grosir' => 'nullable|numeric|min:0',
@@ -274,7 +274,7 @@ class GoodController extends Controller
           $validatedData['expired_date'] = null;
       }
 
-      // [PERUBAHAN LOGIKA] Perhitungan harga jual berdasarkan markup_percentage atau default
+      // Perhitungan harga jual berdasarkan markup_percentage atau default
       if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
           $markup = $validatedData['markup_percentage'] / 100;
       } else {
@@ -287,7 +287,7 @@ class GoodController extends Controller
               return back()->withErrors(['min_qty_grosir' => 'Minimal pembelian grosir wajib diisi jika grosir diaktifkan.'])->withInput();
           }
 
-          // [PERBAIKAN LOGIKA] Harga grosir tidak boleh lebih rendah dari harga asli (modal)
+          // Harga grosir tidak boleh lebih rendah dari harga asli (modal)
           if ($validatedData['harga_grosir'] < $validatedData['harga_asli']) {
               return back()->withErrors(['harga_grosir' => 'Harga grosir tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
           }
@@ -308,7 +308,7 @@ class GoodController extends Controller
               return back()->withErrors(['min_total_tebus_murah' => 'Minimal pembelian tebus murah wajib diisi jika tebus murah diaktifkan.'])->withInput();
           }
 
-          // [PERBAIKAN LOGIKA] Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
+          // Harga tebus murah tidak boleh lebih rendah dari harga asli (modal)
           if ($validatedData['harga_tebus_murah'] < $validatedData['harga_asli']) {
               return back()->withErrors(['harga_tebus_murah' => 'Harga tebus murah tidak boleh lebih rendah dari harga asli (modal).'])->withInput();
           }
@@ -347,7 +347,6 @@ class GoodController extends Controller
   }
 
   /**
-   * [BARU] Menghapus beberapa barang sekaligus.
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response

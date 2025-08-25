@@ -9,9 +9,9 @@ class BiayaOperasional extends Model
 {
     use HasFactory;
 
-    protected $table = 'biaya_operasional'; // Ini sudah benar, menunjuk ke nama tabel singular
+    protected $table = 'biaya_operasional'; 
 
-    protected $fillable = [ // Ini adalah definisi $fillable yang asli dari file ZIP Anda
+    protected $fillable = [
         'uraian',
         'nominal',
         'tanggal',
@@ -24,7 +24,4 @@ class BiayaOperasional extends Model
         'nominal' => 'decimal:2',
     ];
 
-    // Pastikan tidak ada baris 'use Illuminate\Database\Eloquent\SoftDeletes;' di sini.
-    // Juga, pastikan tidak ada 'protected $dates = ['deleted_at'];' di sini.
-    // Jika ada, hapuslah untuk memastikan penghapusan permanen.
 }

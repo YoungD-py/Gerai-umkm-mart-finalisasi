@@ -38,7 +38,7 @@ class OrderController extends Controller
             'active' => 'data',
             'goods' => Good::all(),
             'no_nota' => $request->no_nota,
-            'currentTotal' => $currentTotal, // Kirim total saat ini ke view
+            'currentTotal' => $currentTotal, 
         ]);
     }
 
@@ -66,7 +66,7 @@ class OrderController extends Controller
             $unitPrice = $barang->harga_tebus_murah;
             $priceType = 'tebus_murah';
         }
-        // Kemudian cek harga grosir
+        // cek harga grosir
         elseif ($barang->is_grosir_active && 
                 $qty >= $barang->min_qty_grosir && 
                 $barang->harga_grosir > 0) {
@@ -113,8 +113,8 @@ class OrderController extends Controller
     {
         $transaction = Transaction::where('no_nota', $request->no_nota)->first();
         
-        // [PERBAIKAN] Logika kembalian dibalik agar benar
-        // Rumus yang benar: Uang Bayar - Total Harga
+        // Logika kembalian dibalik agar benar
+        // Rumus : Uang Bayar - Total Harga
         $kembalian = $transaction['bayar'] - $request->total_harga;
 
         $rules = [
@@ -170,7 +170,6 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        // [PERBAIKAN] LOGIKA UNTUK MENGHAPUS ITEM DAN MENGEMBALIKAN STOK
         
         // 1. Ambil informasi penting SEBELUM data order dihapus.
         $no_nota = $order->no_nota;
@@ -182,7 +181,7 @@ class OrderController extends Controller
         // 3. Hapus item order dari database.
         $order->delete();
         
-        // 4. [PERBAIKAN FINAL] Redirect ke route 'orders.index' dengan metode GET
+        // 4. Redirect ke route 'orders.index' dengan metode GET
         //    dan membawa parameter no_nota di URL.
         return redirect()->route('orders.index', ['no_nota' => $no_nota])
                          ->with('success', 'Item telah dihapus dari keranjang!');

@@ -186,7 +186,7 @@
                 <th>Jumlah Qty Barang</th>
                 <th>Nama Barang</th>
                 <th>Barcode Barang</th>
-                <th>Mitra Binaan</th> <!-- New Column Header -->
+                <th>Mitra Binaan</th> 
                 <th>Total</th>
             </tr>
         </thead>
@@ -200,7 +200,7 @@
                 <td>{{ $transaction->total_qty_barang }}</td>
                 <td>{{ $transaction->nama_barang_list }}</td>
                 <td>{{ $transaction->barcode_list }}</td>
-                <td>{{ $transaction->category_list }}</td> <!-- New Column Data -->
+                <td>{{ $transaction->category_list }}</td>
                 <td class="currency">Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</td>
             </tr>
             @empty

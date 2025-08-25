@@ -163,7 +163,6 @@ class ReturnController extends Controller
     {
         $request->validate([
             'selected_ids' => 'required|array',
-            // [PERBAIKAN] Menggunakan nama tabel 'returns' yang benar
             'selected_ids.*' => 'exists:returns,id',
         ]);
 

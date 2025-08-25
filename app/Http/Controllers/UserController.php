@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth; // [BARU] Import Auth
+use Illuminate\Support\Facades\Auth; 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 
@@ -50,7 +50,7 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|max:255',
             'username' => 'required|unique:users|min:3|max:255',
-            'role' => 'required|in:ADMIN,KASIR,MANAJER', // Added MANAJER to role validation
+            'role' => 'required|in:ADMIN,KASIR,MANAJER', 
             'password' => 'required|min:6',
         ]);
 
@@ -67,7 +67,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Biasanya tidak digunakan untuk resource controller seperti ini
+
     }
 
     /**
@@ -95,7 +95,7 @@ class UserController extends Controller
     {
         $rules = [
             'nama' => 'required|max:255',
-            'role' => 'required|in:ADMIN,KASIR,MANAJER', // Added MANAJER to role validation
+            'role' => 'required|in:ADMIN,KASIR,MANAJER', 
         ];
 
         if($request->username != $user->username) {
@@ -125,7 +125,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // [PENTING] Mencegah user menghapus akunnya sendiri
+        // Mencegah user menghapus akunnya sendiri
         if ($user->id === Auth::id()) {
             return redirect('/dashboard/users')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
@@ -140,7 +140,6 @@ class UserController extends Controller
     }
 
     /**
-     * [BARU] Menghapus beberapa pengguna sekaligus.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -154,7 +153,7 @@ class UserController extends Controller
 
         $selectedIds = $request->input('selected_ids');
         
-        // [PENTING] Pastikan user yang sedang login tidak ada di dalam daftar yang akan dihapus
+        // Pastikan user yang sedang login tidak ada di dalam daftar yang akan dihapus
         if (in_array(Auth::id(), $selectedIds)) {
             return redirect('/dashboard/users')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri dari daftar hapus massal.');
         }
@@ -166,10 +165,8 @@ class UserController extends Controller
         DB::transaction(function () use ($selectedIds) {
             $users = User::whereIn('id', $selectedIds)->get();
             foreach ($users as $user) {
-                // Hapus data terkait
                 $user->returns()->delete();
                 $user->transactions()->delete();
-                // Hapus pengguna
                 $user->delete();
             }
         });

@@ -231,7 +231,6 @@
                 </div>
 
                 <div class="card-body p-3 p-md-4">
-                    <!-- Search Box -->
                     <div class="search-box">
                         <form action="/dashboard/restock" id="search-form">
                             <div class="row g-2">
@@ -246,7 +245,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <!-- Added mitra filter dropdown -->
                                     <select name="mitra" class="form-select" onchange="this.form.submit()">
                                         <option value="">Semua Mitra</option>
                                         @foreach($categories as $category)
@@ -257,7 +255,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <!-- Hidden inputs to preserve sorting when searching -->
                             @if(request('sort_stok'))
                                 <input type="hidden" name="sort_stok" value="{{ request('sort_stok') }}">
                             @endif
@@ -273,14 +270,12 @@
                         </form>
                     </div>
 
-                    <!-- Table -->
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col">NO</th>
                                     <th scope="col">Nama Barang</th>
-                                    <!-- Updated sorting UI for Mitra column to match returns page style -->
                                     <th scope="col" class="d-none d-md-table-cell">
                                         Mitra
                                         <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
@@ -290,7 +285,6 @@
                                             <i class="bi {{ request('sort_mitra') == 'asc' ? 'bi-sort-up' : (request('sort_mitra') == 'desc' ? 'bi-sort-down' : 'bi-arrow-down-up') }}"></i>
                                         </button>
                                     </th>
-                                    <!-- Updated sorting UI for Stok column to match returns page style -->
                                     <th scope="col">
                                         Stok
                                         <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
@@ -302,7 +296,6 @@
                                     </th>
                                     <th scope="col" class="d-none d-sm-table-cell">
                                         Status
-                                        <!-- Updated status button to use filtering instead of sorting -->
                                         <button type="button" class="btn btn-sm btn-light ms-2 status-filter-toggle"
                                             data-filter-status="{{ request('filter_status', 'none') }}"
                                             title="Filter berdasarkan status stok">
@@ -366,9 +359,9 @@
                                                 @php
                                                     $restockNeeded = 0;
                                                     if ($good->stok <= 5) {
-                                                        $restockNeeded = 25 - $good->stok; // Target 25 for low stock
+                                                        $restockNeeded = 25 - $good->stok; 
                                                     } elseif ($good->stok <= 20) {
-                                                        $restockNeeded = 30 - $good->stok; // Target 30 for medium stock
+                                                        $restockNeeded = 30 - $good->stok; 
                                                     }
                                                 @endphp
                                                 <!-- @if($restockNeeded > 0)
@@ -395,7 +388,6 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
                         {{ $goods->links() }}
                     </div>
@@ -404,7 +396,6 @@
         </div>
     </div>
 
-    <!-- Added Restock History Section -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="umkm-card">
@@ -438,7 +429,6 @@
                                             <div class="d-flex align-items-center">
                                                 <div>
                                                     <h6 class="mb-0">{{ $restock->good->nama ?? 'Barang Terhapus' }}</h6>
-                                                    <!-- Removed mitra information from under product name -->
                                                 </div>
                                             </div>
                                         </td>
@@ -447,7 +437,6 @@
                                             <br>
                                             <small class="text-muted">{{ \Carbon\Carbon::parse($restock->created_at)->format('H:i') }}</small>
                                         </td>
-                                        <!-- restored mitra binaan information in the column -->
                                         <td class="d-none d-md-table-cell">
                                             <span class="badge bg-success px-3 py-2">
                                                 <i class="bi bi-shop me-1"></i>
@@ -520,7 +509,6 @@
 <!-- Added JavaScript for sorting functionality like in returns page -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- SCRIPT UNTUK SORTING ---
         const sortButtons = document.querySelectorAll('.sort-toggle');
         sortButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -533,7 +521,6 @@
             });
         });
 
-        // --- SCRIPT UNTUK FILTERING STATUS ---
         const statusFilterButton = document.querySelector('.status-filter-toggle');
         statusFilterButton.addEventListener('click', function() {
             const currentStatus = this.getAttribute('data-filter-status');

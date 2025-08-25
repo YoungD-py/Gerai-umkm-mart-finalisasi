@@ -9,7 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Style baru yang terinspirasi dari Tabler UI untuk Admin */
         body {
             background-color: #f8fafc;
             display: flex;
@@ -63,7 +62,6 @@
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(179, 158, 158, 0.25);
         }
-        /* Added styles for password toggle functionality */
         .password-container {
             position: relative;
         }
@@ -86,7 +84,6 @@
         .password-container .form-control {
             padding-right: 40px;
         }
-        /* </CHANGE> */
         .btn-danger {
             background-color: #28a745;
             border-color: #28a745;
@@ -176,7 +173,6 @@
                         @enderror
                     </div>
 
-                    <!-- Added password toggle functionality -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="password-container">
@@ -190,7 +186,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <!-- </CHANGE> -->
 
                     <div class="captcha-container">
                         <button type="button" class="captcha-refresh" onclick="refreshCaptcha()">
@@ -234,9 +229,7 @@
                 passwordIcon.className = 'bi bi-eye';
             }
         }
-        // </CHANGE>
 
-        // Fungsionalitas JavaScript asli tetap dipertahankan
         let currentCaptcha = '';
 
         function generateCaptcha() {
@@ -252,7 +245,6 @@
             currentCaptcha = generateCaptcha();
             document.getElementById('captcha-display').textContent = currentCaptcha;
 
-            // Store captcha in session via AJAX
             fetch('/store-captcha', {
                 method: 'POST',
                 headers: {
@@ -263,7 +255,6 @@
             });
         }
 
-        // Generate captcha on page load
         document.addEventListener('DOMContentLoaded', function() {
             refreshCaptcha();
         });

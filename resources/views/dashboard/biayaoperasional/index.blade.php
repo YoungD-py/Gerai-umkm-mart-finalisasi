@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-  /* --- CSS dari contoh Anda untuk konsistensi --- */
   .umkm-card {
       background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
       backdrop-filter: blur(10px);
@@ -52,7 +51,7 @@
   }
 
   .umkm-card-body {
-      padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+      padding: 1.5rem; /* [RESPONSIVE] */
       overflow: hidden;
   }
 
@@ -69,7 +68,7 @@
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      justify-content: center; /* [RESPONSIVE] Center content inside button */
+      justify-content: center; /* [RESPONSIVE] */
       gap: 8px;
   }
 
@@ -294,14 +293,12 @@
 
   <div class="umkm-card">
       <div class="umkm-card-header">
-          {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
           <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
               <h3 class="umkm-card-title mb-2 mb-md-0">
                   <i class="bi bi-card-list"></i>
                   Data Biaya Operasional
               </h3>
               <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                  {{-- [PERBAIKAN] Pindahkan form bulk delete agar tidak bersarang --}}
                   <form id="bulk-delete-form" action="{{ route('biayaoperasional.bulkDelete') }}" method="POST" style="display: inline;">
                       @csrf
                       @method('DELETE')
@@ -342,7 +339,6 @@
               </form>
           </div>
 
-          {{-- [PERBAIKAN] Hapus form bulk-delete-form yang membungkus tabel --}}
           <div class="table-responsive">
               <table class="table table-umkm">
                   <thead>
@@ -400,7 +396,6 @@
                                           </a>
                                       </li>
                                       <li>
-                                          {{-- Form delete satuan, sekarang tidak bersarang --}}
                                           <form action="{{ route('biayaoperasional.destroy', $biaya->id) }}" method="post" class="dropdown-item-form">
                                               @method('delete')
                                               @csrf
@@ -462,7 +457,7 @@
 </div>
 </div>
 
-<!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
+<!-- Modal Konfirmasi Hapus BANYAK -->
 <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered">
   <div class="modal-content" style="border-radius: 15px; border: none;">
@@ -506,7 +501,7 @@
           }
       });
 
-      // --- SCRIPT UNTUK BULK DELETE (DIPERBAIKI) ---
+      // --- SCRIPT UNTUK BULK DELETE  ---
       const selectAllCheckbox = document.getElementById('select-all-checkbox');
       const itemCheckboxes = document.querySelectorAll('.item-checkbox');
       const bulkDeleteButton = document.getElementById('bulk-delete-button');

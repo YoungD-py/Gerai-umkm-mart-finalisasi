@@ -28,7 +28,7 @@
     }
 
     .return-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE] */
     }
 
     .form-section {
@@ -68,7 +68,7 @@
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE] */
         gap: 8px;
         text-decoration: none;
     }
@@ -120,7 +120,6 @@
         color: red;
     }
 
-    /* Live Search Styles */
     .search-container {
         position: relative;
     }
@@ -310,7 +309,6 @@
                             </div>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/returns" class="btn btn-secondary-return">
                                 <i class="bi bi-arrow-left"></i> Kembali
@@ -335,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set initial value if editing
     if (selectedGoodId.value) {
-        // Find the good name from the old goods data if available
         @if(old('good_id'))
             @foreach($goods as $good)
                 @if($good->id == old('good_id'))
@@ -396,7 +393,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             searchResults.innerHTML = html;
 
-            // Add click event to search items
             document.querySelectorAll('.search-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -416,14 +412,12 @@ document.addEventListener('DOMContentLoaded', function() {
         searchResults.style.display = 'none';
     }
 
-    // Hide results when clicking outside
     document.addEventListener('click', function(e) {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             hideResults();
         }
     });
 
-    // Show results when focusing on input if there's content
     searchInput.addEventListener('focus', function() {
         if (this.value.length >= 2) {
             searchResults.style.display = 'block';

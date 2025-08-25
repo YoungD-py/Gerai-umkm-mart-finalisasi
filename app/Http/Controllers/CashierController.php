@@ -21,7 +21,6 @@ class CashierController extends Controller
     {
         return view('dashboard.cashiers.index', [
             'active' => 'cashier',
-            // [PERUBAHAN] Mengubah get() menjadi paginate() untuk membuat penomoran halaman
             'transactions' => Transaction::latest()->paginate(10), 
         ]);
     }
@@ -33,13 +32,13 @@ class CashierController extends Controller
      */
     public function quickTransaction()
     {
-        // Generate nomor nota yang lebih rapi
-        $tanggal = date('Ymd'); // Format: 20250109
-        $waktu = date('His');   // Format: 085511
+        // Generate nomor nota 
+        $tanggal = date('Ymd'); 
+        $waktu = date('His');   
         $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT); // 001-999
         $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random; // 20250109-085511-001
 
-        // Pastikan nomor nota unik
+        // Generate nomor nota unik
         while (Transaction::where('no_nota', $no_nota_baru)->exists()) {
             $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
             $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random;
@@ -49,8 +48,8 @@ class CashierController extends Controller
         $transactionData = [
             'no_nota' => $no_nota_baru,
             'tgl_transaksi' => date('Y-m-d'),
-            'user_id' => auth()->user()->id, // Otomatis dari user yang login
-            'metode_pembayaran' => 'CASH', // Default metode pembayaran
+            'user_id' => auth()->user()->id, 
+            'metode_pembayaran' => 'CASH', 
             'status' => 'gagal',
             'total_harga' => 0,
             'bayar' => 0,
@@ -114,13 +113,13 @@ class CashierController extends Controller
      */
     public function storetransaction(Request $request)
     {
-        // Generate nomor nota yang lebih rapi
-        $tanggal = date('Ymd'); // Format: 20250109
-        $waktu = date('His');   // Format: 085511
-        $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT); // 001-999
-        $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random; // 20250109-085511-001
+        // Generate nomor nota 
+        $tanggal = date('Ymd'); 
+        $waktu = date('His');   
+        $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT); 
+        $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random; 
 
-        // Pastikan nomor nota unik
+        // Generate nomor nota unik
         while (Transaction::where('no_nota', $no_nota_baru)->exists()) {
             $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
             $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random;
@@ -191,14 +190,13 @@ class CashierController extends Controller
                 Log::info('Current transaction total:', ['total' => $currentTotal]);
 
                 // Determine price based on quantity and transaction total
-                $unitPrice = $barang->harga; // Default to retail price
+                $unitPrice = $barang->harga;
 
-                // PERBAIKAN: Cek apakah ini request dari tebus murah cart
                 $isFromTebusMusahCart = $request->has('is_tebus_murah') && $request->is_tebus_murah == 'true';
                 Log::info('Is from tebus murah cart:', ['is_tebus_murah' => $isFromTebusMusahCart]);
                 
                 if ($isFromTebusMusahCart) {
-                    // Validasi apakah memang memenuhi syarat tebus murah
+                    // Validasi syarat tebus murah
                     if ($barang->is_tebus_murah_active && 
                         $currentTotal >= $barang->min_total_tebus_murah && 
                         $barang->harga_tebus_murah > 0) {
@@ -209,7 +207,6 @@ class CashierController extends Controller
                         return redirect()->back()->with('error', 'Produk tidak memenuhi syarat tebus murah!');
                     }
                 } else {
-                    // Logic normal untuk penentuan harga
                     // Check tebus murah first (higher priority)
                     if ($barang->is_tebus_murah_active && 
                         $currentTotal >= $barang->min_total_tebus_murah && 
@@ -259,14 +256,13 @@ class CashierController extends Controller
 
                 // Determine price based on quantity and transaction total
                 $qty = $request->qty;
-                $unitPrice = $barang->harga; // Default to retail price
+                $unitPrice = $barang->harga;
 
-                // PERBAIKAN: Cek apakah ini request dari tebus murah cart
                 $isFromTebusMusahCart = $request->has('is_tebus_murah') && $request->is_tebus_murah == 'true';
                 Log::info('Is from tebus murah cart (new order):', ['is_tebus_murah' => $isFromTebusMusahCart]);
                 
                 if ($isFromTebusMusahCart) {
-                    // Validasi apakah memang memenuhi syarat tebus murah
+                    // Validasi syarat tebus murah
                     if ($barang->is_tebus_murah_active && 
                         $currentTotal >= $barang->min_total_tebus_murah && 
                         $barang->harga_tebus_murah > 0) {
@@ -277,7 +273,6 @@ class CashierController extends Controller
                         return redirect()->back()->with('error', 'Produk tidak memenuhi syarat tebus murah!');
                     }
                 } else {
-                    // Logic normal untuk penentuan harga
                     // Check tebus murah first (higher priority)
                     if ($barang->is_tebus_murah_active && 
                         $currentTotal >= $barang->min_total_tebus_murah && 
@@ -391,7 +386,7 @@ class CashierController extends Controller
                 $currentTotal = $currentOrders->sum('subtotal');
 
                 // Determine price based on quantity and transaction total
-                $unitPrice = $barang->harga; // Default to retail price
+                $unitPrice = $barang->harga; 
 
                 // Check tebus murah first (higher priority)
                 if ($barang->is_tebus_murah_active && 
@@ -440,7 +435,7 @@ class CashierController extends Controller
                 $currentTotal = $currentOrders->sum('subtotal');
 
                 // Determine price based on quantity and transaction total
-                $unitPrice = $barang->harga; // Default to retail price
+                $unitPrice = $barang->harga; 
 
                 // Check tebus murah first (higher priority)
                 if ($barang->is_tebus_murah_active && 
@@ -585,7 +580,7 @@ class CashierController extends Controller
                                $q->where('nama', 'LIKE', '%' . $query . '%')
                                  ->orWhere('barcode', 'LIKE', '%' . $query . '%');
                            })
-                           ->limit(10) // Limit results for performance
+                           ->limit(10)
                            ->get();
 
         return response()->json($goods);
@@ -605,7 +600,7 @@ class CashierController extends Controller
             'total_harga' => $request->total_harga,
             'bayar' => $request->bayar,
             'kembalian' => $request->kembalian,
-            'metode_pembayaran' => $request->nama_pembeli, // nama_pembeli dari form checkout
+            'metode_pembayaran' => $request->nama_pembeli,
         ];
 
         $transaction = Transaction::find($request->id);
@@ -633,7 +628,7 @@ class CashierController extends Controller
                     $oldStock = $good->stok;
                     $newStock = $oldStock - $order->qty;
                     
-                    // Update stok menggunakan raw query untuk memastikan
+                    // Update stok menggunakan raw query
                     \DB::table('goods')
                        ->where('id', $good->id)
                        ->update(['stok' => $newStock]);
@@ -677,14 +672,14 @@ class CashierController extends Controller
                 return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
             }
             
-            // Get orders data - PERBAIKAN: Jangan filter berdasarkan status transaksi
+            // Get orders data with related goods
             $orders = Order::where('no_nota', $no_nota)->with('good')->get();
             
-            // PERBAIKAN: Jika tidak ada orders, buat dummy order untuk transaksi gagal
+            // Handle case where no orders exist
             if ($orders->isEmpty()) {
                 Log::warning('No orders found for transaction: ' . $no_nota . '. Creating dummy order for failed transaction.');
                 
-                // Buat dummy order untuk transaksi gagal
+                // Create a dummy order to indicate failed transaction
                 $orders = collect([
                     (object) [
                         'good' => (object) [

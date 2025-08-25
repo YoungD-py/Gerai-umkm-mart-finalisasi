@@ -55,7 +55,6 @@
         gap: 8px;
     }
 
-    /* Ubah warna ikon di label menjadi hijau */
     .form-label i,
     .form-label svg {
         color: #28a745;
@@ -139,13 +138,13 @@
         font-size: 2rem;
         font-weight: 800;
         margin-bottom: 10px;
-        color: white; /* Ubah jadi putih */
+        color: white; 
     }
 
     .page-title p {
         font-size: 1.1rem;
         opacity: 0.9;
-        color: white; /* Ubah jadi putih */
+        color: white; 
     }
 
     .required {
@@ -169,7 +168,6 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-8 menjadi lebih fleksibel --}}
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="umkm-card">
                 <div class="umkm-card-header">

@@ -2,7 +2,6 @@
 
 @section('container')
 <style>
-    /* --- CSS Styles adapted for Create User page --- */
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
         backdrop-filter: blur(10px);
@@ -32,7 +31,7 @@
     }
 
     .umkm-card-body {
-        padding: 1.5rem; /* [RESPONSIVE] Mengurangi padding di layar kecil */
+        padding: 1.5rem; /* [RESPONSIVE]  */
     }
 
     .form-label {
@@ -69,7 +68,7 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        justify-content: center; /* [RESPONSIVE] Center content inside button */
+        justify-content: center; /* [RESPONSIVE]  */
         gap: 8px;
     }
 
@@ -124,7 +123,6 @@
         color: #dc3545;
     }
 
-    /* Style for password toggle button */
     .input-group-text {
         background-color: #f8f9fa;
         border: 2px solid #e9ecef;
@@ -154,7 +152,6 @@
     </div>
 
     <div class="row justify-content-center">
-        {{-- [RESPONSIVE] Mengubah col-lg-6 menjadi lebih fleksibel --}}
         <div class="col-xl-6 col-lg-8 col-md-10">
             @if (session()->has('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px;">
@@ -238,7 +235,6 @@
                             </div>
                         </div>
 
-                        {{-- [RESPONSIVE] Membuat tombol full-width di mobile dan stack --}}
                         <div class="d-grid d-sm-flex justify-content-sm-between pt-3 gap-2">
                             <a href="/dashboard/users" class="btn btn-secondary-umkm">
                                 <i class="bi bi-arrow-left"></i> Kembali
@@ -261,11 +257,9 @@
         const togglePasswordIcon = document.getElementById('togglePasswordIcon');
 
         togglePassword.addEventListener('click', function (e) {
-            // toggle the type attribute
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
 
-            // toggle the eye icon
             if (type === 'password') {
                 togglePasswordIcon.classList.remove('bi-eye-slash');
                 togglePasswordIcon.classList.add('bi-eye');

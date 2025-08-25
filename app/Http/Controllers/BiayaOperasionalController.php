@@ -116,7 +116,6 @@ class BiayaOperasionalController extends Controller
     }
 
     /**
-     * [BARU] Menghapus beberapa biaya operasional sekaligus.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -136,14 +135,12 @@ class BiayaOperasionalController extends Controller
 
         $biayaItems = BiayaOperasional::whereIn('id', $selectedIds)->get();
 
-        // Hapus file bukti/resi dari storage
         foreach ($biayaItems as $item) {
             if ($item->bukti_resi) {
                 Storage::disk('public')->delete($item->bukti_resi);
             }
         }
         
-        // Hapus data dari database
         $deletedCount = BiayaOperasional::destroy($selectedIds);
 
         if ($deletedCount > 0) {

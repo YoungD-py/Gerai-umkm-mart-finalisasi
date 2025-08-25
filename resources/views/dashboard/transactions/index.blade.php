@@ -240,7 +240,6 @@
             color: #c82333 !important;
         }
 
-        /* Pagination yang lebih jelas dan responsif */
         .pagination-wrapper .pagination {
             border-radius: 15px;
             overflow: hidden;
@@ -251,7 +250,6 @@
             border: none;
             padding: 12px 16px;
             color: #28a745;
-            /* Hijau tegas */
             font-weight: 700;
             font-size: 1rem;
             transition: all 0.3s ease;
@@ -282,7 +280,6 @@
             background: transparent;
         }
 
-        /* Responsif di layar kecil */
         @media (max-width: 576px) {
             .pagination-wrapper .page-link {
                 padding: 8px 12px;
@@ -327,7 +324,6 @@
 
         <div class="umkm-card">
             <div class="umkm-card-header">
-                {{-- [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel --}}
                 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
                     <h3 class="umkm-card-title mb-2 mb-md-0">
                         <i class="bi bi-receipt"></i>
@@ -341,11 +337,9 @@
             </div>
 
             <div class="umkm-card-body">
-                <!-- Search Section -->
                 <div class="search-section">
                     <form action="/dashboard/transactions" method="GET">
                         <div class="row align-items-end">
-                            <!-- Enhanced search form with date inputs and reset button -->
                             <div class="col-12 col-lg-4 mb-3">
                                 <label class="form-label text-white fw-bold">
                                     <i class="bi bi-search me-2"></i>Cari Berdasarkan Nomor Nota
@@ -368,13 +362,11 @@
                             </div>
                             <div class="col-12 col-lg-2 mb-3">
                                 <div class="d-flex gap-2 flex-column flex-sm-row">
-                                    <!-- Reduced button padding and font size to match input fields -->
                                     <button class="btn btn-umkm flex-fill" type="submit"
                                         style="padding: 12px 16px; font-size: 0.9rem;">
                                         <i class="bi bi-search"></i>
                                         <span class="d-none d-sm-inline">CARI</span>
                                     </button>
-                                    <!-- Reduced reset button padding and font size to match input fields -->
                                     <a href="/dashboard/transactions" class="btn btn-secondary text-white flex-fill"
                                         style="border-radius: 15px; padding: 12px 16px; font-weight: 600; font-size: 0.9rem;">
                                         <i class="bi bi-arrow-clockwise"></i>
@@ -414,11 +406,9 @@
                     </form>
                 </div>
 
-                <!-- Form untuk bulk delete -->
                 <form id="bulk-delete-form" action="{{ route('transactions.bulkDelete') }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <!-- Table -->
                     <div class="table-responsive">
                         <table class="table table-umkm">
                             <thead>
@@ -432,7 +422,6 @@
                                     <th>Petugas</th>
                                     <th>Metode Bayar</th>
                                     <th>
-                                        {{-- Updated status sorting to use toggle button like goods page --}}
                                         Status
                                         <button type="button" class="btn btn-sm btn-light ms-2 sort-toggle"
                                             data-sort-param="status" data-sort-order="{{ request('sort_status', 'none') }}"
@@ -485,8 +474,6 @@
                                                 <ul class="dropdown-menu dropdown-menu-end"
                                                     aria-labelledby="dropdownMenuButton-{{$transaction->id}}">
                                                     <li>
-                                                        {{-- [PERBAIKAN] Menggunakan <a> tag untuk semua baris agar konsisten
-                                                            --}}
                                                             <a href="#" class="dropdown-item download-nota-btn"
                                                                 data-no-nota="{{ $transaction->no_nota }}">
                                                                 <i class="bi bi-download text-primary"></i> Unduh Nota
@@ -562,7 +549,6 @@
                     </div>
                 </form>
 
-                <!-- Pagination -->
                 @if($transactions->hasPages())
                     <div class="d-flex justify-content-center mt-4">
                         <div class="pagination-wrapper">
@@ -574,7 +560,6 @@
         </div>
     </div>
 
-    <!-- Modal Konfirmasi Hapus SATUAN -->
     <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -600,7 +585,6 @@
         </div>
     </div>
 
-    <!-- [BARU] Modal Konfirmasi Hapus BANYAK -->
     <div class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -628,7 +612,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- SCRIPT LAMA UNTUK HAPUS SATUAN (TIDAK DIUBAH) ---
             const deleteModalElement = document.getElementById('deleteConfirmationModal');
             const deleteModal = new bootstrap.Modal(deleteModalElement);
             const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -655,7 +638,6 @@
                 }
             });
 
-            // --- SCRIPT UNTUK BULK DELETE ---
             const selectAllCheckbox = document.getElementById('select-all-checkbox');
             const itemCheckboxes = document.querySelectorAll('.item-checkbox');
             const bulkDeleteButton = document.getElementById('bulk-delete-button');
@@ -737,26 +719,22 @@
                 });
             });
 
-            // --- [PERBAIKAN UTAMA] Script tunggal untuk menangani semua tombol Unduh Nota ---
             const downloadNotaButtons = document.querySelectorAll('.download-nota-btn');
             downloadNotaButtons.forEach(button => {
                 button.addEventListener('click', function (e) {
-                    e.preventDefault(); // Mencegah aksi default dari link
+                    e.preventDefault(); 
 
                     const buttonElement = this;
                     const originalHTML = buttonElement.innerHTML;
                     const noNota = buttonElement.getAttribute('data-no-nota');
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                    // 1. Ubah tombol menjadi status loading
                     buttonElement.innerHTML = `
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 Loading...
             `;
-                    // Menonaktifkan pointer agar tidak bisa di-klik ganda
                     buttonElement.style.pointerEvents = 'none';
 
-                    // 2. Gunakan Fetch API untuk mengirim request dan mengunduh file
                     fetch('/dashboard/cashiers/nota', {
                         method: 'POST',
                         headers: {
@@ -769,10 +747,8 @@
                     })
                         .then(response => {
                             if (!response.ok) {
-                                // Jika server mengembalikan error (misal: 404, 500)
                                 throw new Error('Gagal mengunduh nota. Respon server tidak valid.');
                             }
-                            // Mendapatkan nama file dari header, jika ada
                             const disposition = response.headers.get('content-disposition');
                             let filename = `nota-${noNota}.pdf`; // Nama file default
                             if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -784,7 +760,6 @@
                             return response.blob().then(blob => ({ blob, filename }));
                         })
                         .then(({ blob, filename }) => {
-                            // 3. Membuat link sementara untuk men-trigger download di browser
                             const url = window.URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.style.display = 'none';
@@ -796,13 +771,10 @@
                             document.body.removeChild(a);
                         })
                         .catch(error => {
-                            // Jika terjadi error pada jaringan atau proses fetch
                             console.error('Error saat mengunduh nota:', error);
-                            // Anda bisa menampilkan notifikasi error di sini (misal: menggunakan alert atau SweetAlert)
                             alert('Terjadi kesalahan saat mencoba mengunduh nota. Silakan coba lagi.');
                         })
                         .finally(() => {
-                            // 4. Kembalikan tombol ke keadaan semula, baik proses berhasil maupun gagal
                             buttonElement.innerHTML = originalHTML;
                             buttonElement.style.pointerEvents = 'auto'; // Mengaktifkan kembali pointer
                         });
@@ -812,7 +784,6 @@
             updateBulkDeleteButtonState();
         });
 
-        // Fungsi untuk tombol yang menyebabkan navigasi (seperti Edit Pesanan)
         function handleActionSubmit(form) {
             const button = form.querySelector('button[type="submit"]');
             if (button) {
@@ -822,13 +793,11 @@
                         Loading...
                     `;
             }
-            return true; // Lanjutkan submit
+            return true; 
         }
 
-        // Script untuk mengatasi masalah cache browser (bfcache)
         window.addEventListener('pageshow', function (event) {
             if (event.persisted) {
-                // Reset semua button states
                 const buttons = document.querySelectorAll('.dropdown-item-form button, .download-nota-direct');
                 buttons.forEach(button => {
                     button.disabled = false;
@@ -855,7 +824,5 @@
     </script>
 
 
-
-    <!-- Tambahkan CSRF token untuk JavaScript -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection

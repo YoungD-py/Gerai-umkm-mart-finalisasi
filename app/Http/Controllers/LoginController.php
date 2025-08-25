@@ -71,7 +71,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            $request->session()->forget('math_captcha_answer'); // Clear captcha from session
+            $request->session()->forget('math_captcha_answer'); 
 
             $welcomeMessage = 'Selamat Datang di Dashboard KasirKu';
             if ($user->isAdmin()) {

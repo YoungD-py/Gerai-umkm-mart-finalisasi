@@ -8,7 +8,6 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     }
 
-    /* General Card Style */
     .card {
         border: 1px solid #e6e7e9;
         box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
@@ -31,21 +30,19 @@
         margin: 0;
     }
 
-    /* Header */
     .page-header {
         display: flex;
-        flex-wrap: wrap; /* Izinkan item untuk wrap ke baris baru di layar kecil */
+        flex-wrap: wrap; 
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
-        gap: 1rem; /* Menambahkan jarak antar item */
+        gap: 1rem; 
     }
     .page-title {
         font-size: 1.5rem; 
         font-weight: 600;
     }
 
-    /* Date Filter */
     .date-filter .btn {
         font-weight: 500;
     }
@@ -56,13 +53,12 @@
     }
     .date-filter-wrapper {
         overflow-x: auto;
-        padding-bottom: 10px; /* Jarak agar shadow scrollbar tidak terpotong */
+        padding-bottom: 10px; 
     }
     .date-filter {
-        flex-wrap: nowrap; /* Mencegah tombol wrap ke baris baru */
+        flex-wrap: nowrap; 
     }
 
-    /* Stat Cards */
     .stat-card .stat-label {
         color: #6c757d;
         font-size: 0.875rem;
@@ -87,7 +83,6 @@
     .stat-card .stat-comparison.positive { color: #2fb344; }
     .stat-card .stat-comparison.negative { color: #d63939; }
 
-    /* Alert Cards */
     .card-alert-header {
         display: flex;
         justify-content: space-between;
@@ -114,7 +109,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Media query untuk layar besar */
     @media (min-width: 768px) {
         .page-title {
             font-size: 1.75rem;
@@ -127,7 +121,6 @@
         }
     }
 
-    /* Pagination*/
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -166,16 +159,13 @@
 </style>
 
         <div class="container-fluid py-4">
-            <!-- CARD HEADER + AKSI -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <!-- Salam -->
                     <div class="mb-3">
                         <h2 class="page-title mb-1">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
                         <p class="text-muted mb-0" id="live-clock"></p>
                     </div>
 
-                    <!-- Tombol Aksi -->
                     <div class="d-flex flex-column flex-sm-row gap-2">
                         @if(!auth()->user()->isManajer())
                             <a href="/dashboard/goods/create" 
@@ -198,8 +188,6 @@
         </div>
 
 
-    <!-- BARIS 2: FILTER TANGGAL -->
-    {{-- [RESPONSIVE] Layout untuk mobile --}}
     <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center mb-4">
         <div class="date-filter-wrapper mb-3 mb-md-0">
             <div class="btn-group date-filter">
@@ -213,8 +201,6 @@
         <div class="text-muted fw-bold text-start text-md-end">Laporan untuk: {{ $rangeTitle }}</div>
     </div>
 
-    <!-- BARIS 3: CARD STATISTIK UTAMA -->
-    {{-- [RESPONSIVE] Menambahkan col-12 untuk stacking di layar extra small --}}
     <div class="row g-4">
         <div class="col-12 col-md-6 col-lg-3">
             <div class="card stat-card">
@@ -280,7 +266,6 @@
         </div>
     </div>
 
-    <!-- BARIS 4: GRAFIK UTAMA -->
     <div class="row mt-2">
         <div class="col-12">
             <div class="card">
@@ -292,7 +277,6 @@
         </div>
     </div>
 
-    <!-- BARIS 5: GRAFIK TERLARIS -->
     <div class="row g-4 mt-1">
         <div class="col-lg-6">
             <div class="card">
@@ -312,9 +296,7 @@
         </div>
     </div>
 
-    <!-- BARIS 6: KARTU ALERT -->
     <div class="row g-4 mt-1">
-        <!-- Stok Segera Habis -->
         <div class="col-lg-6">
             <div class="card card-alert">
                 <div class="card-body">
@@ -324,7 +306,6 @@
                             <a href="{{ url('/dashboard/goods?status=low_stock') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                         @endif
                     </div>
-                    {{-- [RESPONSIVE] chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
                         <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="low-stock-chart" style="min-height: 250px;"></div></div>
                         <div class="col-12 col-md-6">
@@ -346,7 +327,6 @@
             </div>
         </div>
 
-        <!-- Segera Expired -->
         <div class="col-lg-6">
             <div class="card card-alert">
                 <div class="card-body">
@@ -356,7 +336,6 @@
                             <a href="{{ url('/dashboard/goods?status=expiring_soon') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                         @endif
                     </div>
-                    {{-- [RESPONSIVE] chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
                         <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="expiring-soon-chart" style="min-height: 250px;"></div></div>
                         <div class="col-12 col-md-6">
@@ -388,7 +367,6 @@
     document.addEventListener("DOMContentLoaded", function () {
         const formatCurrency = (value) => "Rp " + new Intl.NumberFormat('id-ID').format(value);
 
-        // --- GRAFIK UTAMA (PENDAPATAN & LABA) ---
         const optionsMainChart = {
             series: [
                 { name: 'Pendapatan', data: {!! $mainChartRevenue !!} },
@@ -406,7 +384,6 @@
         };
         new ApexCharts(document.querySelector("#main-chart"), optionsMainChart).render();
 
-        // --- GRAFIK PRODUK TERLARIS ---
         const optionsTopProducts = {
             series: [{ name: 'Unit Terjual', data: {!! $topProductsSeries !!} }],
             chart: { type: 'bar', height: 250, toolbar: { show: false } },
@@ -422,7 +399,6 @@
             document.querySelector("#top-products-chart").innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart-line fs-1"></i><p class="mt-2">Belum ada data penjualan.</p></div>';
         }
 
-        // --- GRAFIK MITRA TERLARIS ---
         const optionsTopMitra = {
             series: [{ name: 'Unit Terjual', data: {!! $topMitraSeries !!} }],
             chart: { type: 'bar', height: 250, toolbar: { show: false } },
@@ -438,7 +414,6 @@
             document.querySelector("#top-mitra-chart").innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-bar-chart-line fs-1"></i><p class="mt-2">Belum ada data penjualan.</p></div>';
         }
 
-        // --- GRAFIK STOK MENIPIS ---
         const optionsLowStock = {
             series: {!! $lowStockChart_series !!},
             chart: { type: 'donut', height: 280 },
@@ -450,7 +425,6 @@
         };
         new ApexCharts(document.querySelector("#low-stock-chart"), optionsLowStock).render();
 
-        // --- GRAFIK SEGERA EXPIRED --
         const optionsExpiringSoon = {
             series: {!! $expiringSoonChart_series !!},
             chart: { type: 'donut', height: 280 },
@@ -462,7 +436,6 @@
         };
         new ApexCharts(document.querySelector("#expiring-soon-chart"), optionsExpiringSoon).render();
 
-        // --- LIVE CLOCK ---
         function updateLiveClock() {
             const sekarang = new Date();
             const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
