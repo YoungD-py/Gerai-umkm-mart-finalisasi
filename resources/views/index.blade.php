@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login Kasir - GERAI UMKM MART</title>
+    <title>Login - GERAI UMKM MART</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -149,8 +149,9 @@
     <div class="login-page">
         <div class="login-header">
             <svg xmlns="http://www.w3.org/2000/svg" class="logo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M5 21v-14l8 -4v18" /><path d="M19 21v-10l-6 -4" /><path d="M9 9l0 .01" /><path d="M9 12l0 .01" /><path d="M9 15l0 .01" /><path d="M9 18l0 .01" /></svg>
-            <h1>Login Kasir</h1>
-            <p>Selamat datang kembali di GERAI UMKM MART </p>
+            <!-- Updated title and description for unified login -->
+            <h1>Login Sistem</h1>
+            <p>Selamat datang kembali di GERAI UMKM MART</p>
         </div>
 
         <div class="card">
@@ -159,6 +160,15 @@
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle-fill"></i>
                         {{ session('loginError') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                <!-- Added info alert for redirected users -->
+                @if(session()->has('info'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle-fill"></i>
+                        {{ session('info') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
@@ -206,15 +216,20 @@
                         @enderror
                     </div>
 
+                    <!-- Updated button text for unified login -->
                     <button type="submit" class="btn btn-primary w-100">
-                        Login Kasir
+                        Login Sistem
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- Removed admin login link since it's now unified -->
         <div class="footer-link">
-            <a href="/loginadmin"><i class="bi bi-gear"></i> Login sebagai Administrator</a>
+            <small class="text-muted">
+                <i class="bi bi-shield-check"></i> 
+                Sistem login terpadu untuk Kasir, Admin & Manajer
+            </small>
         </div>
     </div>
 
