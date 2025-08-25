@@ -172,15 +172,25 @@
             <h2 class="page-title">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
             <p class="text-muted mb-0" id="live-clock"></p>
         </div>
-        {{-- [RESPONSIVE] Tombol full-width untuk mobile dan auto di desktop --}}
-        <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
-            @if(!auth()->user()->isManajer())
-                <a href="/dashboard/goods/create" class="btn btn-light flex-grow-1"><i class="bi bi-plus-circle me-2"></i>Tambah Barang</a>
-                <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary flex-grow-1"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
-            @else
-                <a href="/dashboard/transactions" class="btn btn-primary flex-grow-1"><i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi</a>
-            @endif
-        </div>
+            {{-- [RESPONSIVE] Tombol full-width di mobile, auto di desktop --}}
+            <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
+                @if(!auth()->user()->isManajer())
+                    <a href="/dashboard/goods/create" 
+                    class="btn btn-light btn-sm flex-grow-1 flex-sm-grow-0">
+                    <i class="bi bi-plus-circle me-2"></i>Tambah Barang
+                    </a>
+                    <a href="/dashboard/cashier/quick-transaction" 
+                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                    <i class="bi bi-calculator me-2"></i>Tambah Transaksi
+                    </a>
+                @else
+                    <a href="/dashboard/transactions" 
+                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                    <i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi
+                    </a>
+                @endif
+            </div>
+
     </div>
 
     <!-- BARIS 2: FILTER TANGGAL -->
