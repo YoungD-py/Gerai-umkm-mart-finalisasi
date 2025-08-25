@@ -168,7 +168,7 @@
                 <div class="card shadow-sm border-0 mb-4" style="background: white;">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-upc-scan" style="font-size: 3rem; color: #198754;"></i>
-                        <h5 class="card-title mt-3 fw-bold">Sistem Kasir Siap</h5>
+                        <h5 class="card-title mt-3 fw-bold">Sistem Kasir Siap Untuk Digunakan</h5>
                         <p class="card-text text-muted">Silakan pindai barcode produk menggunakan scanner untuk menampilkan detail produk.</p>
                     </div>
                 </div>
