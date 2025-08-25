@@ -86,7 +86,7 @@
         }
 
         .main-content {
-            min-height: calc(100vh - 76px);
+            /* min-height: calc(100vh - 76px); */
             padding: 0;
         }
 
