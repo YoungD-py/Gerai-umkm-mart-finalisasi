@@ -72,9 +72,9 @@
         <div class="error-icon">
             <i class="bi bi-shield-exclamation"></i>
         </div>
-        <h1 class="error-title">MAU NGAPAIN HAYO?</h1>
+        <h1 class="error-title">Mohon Maaf Anda Tidak Bisa Mengakses Halaman Ini :)</h1>
         <p class="error-message">
-            Anda belum login! Silakan login terlebih dahulu untuk mengakses sistem.
+            Silakan login menggunakan akun yang sesuai kebutuhan anda untuk mengakses sistem.
         </p>
         <a href="/" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali ke Login
