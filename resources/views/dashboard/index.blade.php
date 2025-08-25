@@ -176,7 +176,7 @@
             <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
                 @if(!auth()->user()->isManajer())
                     <a href="/dashboard/goods/create" 
-                    class="btn btn-light btn-sm flex-grow-1 flex-sm-grow-0">
+                    class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
                     <i class="bi bi-plus-circle me-2"></i>Tambah Barang
                     </a>
                     <a href="/dashboard/cashier/quick-transaction" 
@@ -190,6 +190,7 @@
                     </a>
                 @endif
             </div>
+
 
     </div>
 
