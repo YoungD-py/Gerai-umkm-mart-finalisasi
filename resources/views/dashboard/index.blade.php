@@ -33,7 +33,6 @@
 
     /* Header */
     .page-header {
-        /* [RESPONSIVE] Menggunakan flexbox untuk layout yang fleksibel */
         display: flex;
         flex-wrap: wrap; /* Izinkan item untuk wrap ke baris baru di layar kecil */
         justify-content: space-between;
@@ -42,7 +41,7 @@
         gap: 1rem; /* Menambahkan jarak antar item */
     }
     .page-title {
-        font-size: 1.5rem; /* [RESPONSIVE] Ukuran font disesuaikan */
+        font-size: 1.5rem; 
         font-weight: 600;
     }
 
@@ -55,7 +54,6 @@
         color: white;
         font-weight: 600;
     }
-    /* [RESPONSIVE] Membuat grup tombol bisa di-scroll horizontal di layar kecil */
     .date-filter-wrapper {
         overflow-x: auto;
         padding-bottom: 10px; /* Jarak agar shadow scrollbar tidak terpotong */
@@ -116,7 +114,7 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* [RESPONSIVE] Media query untuk layar besar */
+    /* Media query untuk layar besar */
     @media (min-width: 768px) {
         .page-title {
             font-size: 1.75rem;
@@ -129,7 +127,7 @@
         }
     }
 
-        /* Pagination yang lebih jelas */
+    /* Pagination*/
     .pagination-wrapper .pagination {
         border-radius: 15px;
         overflow: hidden;
@@ -138,7 +136,7 @@
     .pagination-wrapper .page-link {
         border: none;
         padding: 12px 16px;
-        color: #28a745; /* Hijau tegas */
+        color: #28a745; 
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
@@ -146,7 +144,7 @@
     .pagination-wrapper .page-link:hover {
         background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
-        transform: trans lateY(-1px);
+        transform: translateY(-1px);
     }
     .pagination-wrapper .page-item.active .page-link {
         background: linear-gradient(135deg, #28a745, #20c997);
@@ -174,15 +172,19 @@
             <h2 class="page-title">{{ $greeting }}, {{ auth()->user()->nama }}!</h2>
             <p class="text-muted mb-0" id="live-clock"></p>
         </div>
-        {{-- [RESPONSIVE] Tombol dibuat full-width di mobile dan auto di desktop --}}
+        {{-- [RESPONSIVE] Tombol full-width untuk mobile dan auto di desktop --}}
         <div class="w-100 w-md-auto d-flex flex-column flex-sm-row gap-2">
-            <a href="/dashboard/goods/create" class="btn btn-light flex-grow-1"><i class="bi bi-plus-circle me-2"></i>Tambah Barang</a>
-            <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary flex-grow-1"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
+            @if(!auth()->user()->isManajer())
+                <a href="/dashboard/goods/create" class="btn btn-light flex-grow-1"><i class="bi bi-plus-circle me-2"></i>Tambah Barang</a>
+                <a href="/dashboard/cashier/quick-transaction" class="btn btn-primary flex-grow-1"><i class="bi bi-calculator me-2"></i>Tambah Transaksi</a>
+            @else
+                <a href="/dashboard/transactions" class="btn btn-primary flex-grow-1"><i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi</a>
+            @endif
         </div>
     </div>
 
     <!-- BARIS 2: FILTER TANGGAL -->
-    {{-- [RESPONSIVE] Layout diubah untuk mobile --}}
+    {{-- [RESPONSIVE] Layout untuk mobile --}}
     <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center mb-4">
         <div class="date-filter-wrapper mb-3 mb-md-0">
             <div class="btn-group date-filter">
@@ -196,7 +198,7 @@
         <div class="text-muted fw-bold text-start text-md-end">Laporan untuk: {{ $rangeTitle }}</div>
     </div>
 
-    <!-- BARIS 3: KARTU STATISTIK UTAMA -->
+    <!-- BARIS 3: CARD STATISTIK UTAMA -->
     {{-- [RESPONSIVE] Menambahkan col-12 untuk stacking di layar extra small --}}
     <div class="row g-4">
         <div class="col-12 col-md-6 col-lg-3">
@@ -303,9 +305,11 @@
                 <div class="card-body">
                     <div class="card-alert-header">
                         <h3 class="card-alert-title"><i class="bi bi-box-seam-fill text-danger"></i>Stok Segera Habis</h3>
-                        <a href="{{ url('/dashboard/goods?status=low_stock') }}" class="btn btn-sm btn-light">Lihat Semua</a>
+                        @if(!auth()->user()->isManajer())
+                            <a href="{{ url('/dashboard/goods?status=low_stock') }}" class="btn btn-sm btn-light">Lihat Semua</a>
+                        @endif
                     </div>
-                    {{-- [RESPONSIVE] Membuat chart dan list menumpuk di mobile --}}
+                    {{-- [RESPONSIVE] chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
                         <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="low-stock-chart" style="min-height: 250px;"></div></div>
                         <div class="col-12 col-md-6">
@@ -333,9 +337,11 @@
                 <div class="card-body">
                      <div class="card-alert-header">
                         <h3 class="card-alert-title"><i class="bi bi-calendar-x-fill text-warning"></i>Segera Expired</h3>
-                        <a href="{{ url('/dashboard/goods?status=expiring_soon') }}" class="btn btn-sm btn-light">Lihat Semua</a>
+                        @if(!auth()->user()->isManajer())
+                            <a href="{{ url('/dashboard/goods?status=expiring_soon') }}" class="btn btn-sm btn-light">Lihat Semua</a>
+                        @endif
                     </div>
-                    {{-- [RESPONSIVE] Membuat chart dan list menumpuk di mobile --}}
+                    {{-- [RESPONSIVE] chart dan list menumpuk di mobile --}}
                     <div class="row align-items-center">
                         <div class="col-12 col-md-6 mb-3 mb-md-0"><div id="expiring-soon-chart" style="min-height: 250px;"></div></div>
                         <div class="col-12 col-md-6">
