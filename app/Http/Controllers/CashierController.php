@@ -36,7 +36,7 @@ class CashierController extends Controller
         $tanggal = date('Ymd'); 
         $waktu = date('His');   
         $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT); // 001-999
-        $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random; // 20250109-085511-001
+        $no_nota_baru = $tanggal . '-' . $waktu . '-' . $random; 
 
         // Generate nomor nota unik
         while (Transaction::where('no_nota', $no_nota_baru)->exists()) {

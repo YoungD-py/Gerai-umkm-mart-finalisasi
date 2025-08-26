@@ -88,6 +88,24 @@
             font-weight: bold; 
         }
 
+        /* Added barcode styling for print version */
+        .barcode-section {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .barcode-container {
+            display: inline-block;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        .barcode-text {
+            font-size: 8px;
+            margin-top: 3px;
+            font-weight: bold;
+        }
+
         .print-button {
             position: fixed;
             top: 20px;
@@ -247,6 +265,22 @@
             </td>
         </tr>
 
+        <!-- Added barcode section for print version -->
+        <tr>
+            <td colspan="4" class="barcode-section">
+                @foreach($transaction as $trans)
+                @php
+                    $notaParts = explode('-', $trans->no_nota);
+                    $shortBarcode = (count($notaParts) >= 3) ? $notaParts[1] . '-' . $notaParts[2] : $trans->no_nota;
+                @endphp
+                <div class="barcode-container">
+                    <svg id="barcode-{{ $trans->no_nota }}" width="150" height="40"></svg>
+                    <div class="barcode-text">{{ $shortBarcode }}</div>
+                </div>
+                @endforeach
+            </td>
+        </tr>
+
         <tr>
              <td colspan="4" style="padding-top: 10px;">
                 <div class="dashed-divider"></div>
@@ -257,7 +291,25 @@
         </tr>
     </table>
 
+    <!-- Added JsBarcode library and barcode generation script for print version -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach($transaction as $trans)
+            @php
+                $notaParts = explode('-', $trans->no_nota);
+                $shortBarcode = (count($notaParts) >= 3) ? $notaParts[1] . '-' . $notaParts[2] : $trans->no_nota;
+            @endphp
+            JsBarcode("#barcode-{{ $trans->no_nota }}", "{{ $shortBarcode }}", {
+                format: "CODE128",
+                width: 1,
+                height: 40,
+                displayValue: false,
+                margin: 0
+            });
+            @endforeach
+        });
+
         // Auto print ketika halaman dimuat (opsional)
         // window.onload = function() {
         //     window.print();
