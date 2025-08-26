@@ -60,7 +60,6 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .font-bold { font-weight: bold; }
-        /* Updated barcode styling for PNG image */
         .barcode-section {
             text-align: center;
             padding: 10px 0;
@@ -168,7 +167,6 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
             </td>
         </tr>
 
-        <!-- Replaced SVG barcode with base64 PNG for better PDF compatibility -->
         <tr>
             <td colspan="4" class="barcode-section">
                 @foreach($transaction as $trans)

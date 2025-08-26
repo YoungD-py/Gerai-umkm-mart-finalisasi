@@ -1,6 +1,6 @@
-@extends('dashboard.layouts.main')
 
-@section('container')
+
+<?php $__env->startSection('container'); ?>
 <style>
     .umkm-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
@@ -273,19 +273,21 @@
        <p>Kelola data pengguna aplikasi GERAI UMKM MART</p>
    </div>
 
-   @if (session()->has('success'))
+   <?php if(session()->has('success')): ?>
        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-           <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-       </div>
-   @endif
+           <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-   @if (session()->has('error'))
-       <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
-           <i class="bi bi-x-circle-fill me-2"></i>{{ session('error') }}
            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
        </div>
-   @endif
+   <?php endif; ?>
+
+   <?php if(session()->has('error')): ?>
+       <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none;">
+           <i class="bi bi-x-circle-fill me-2"></i><?php echo e(session('error')); ?>
+
+           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+       </div>
+   <?php endif; ?>
 
    <div class="umkm-card">
        <div class="umkm-card-header">
@@ -295,9 +297,9 @@
                    Data Admin & Kasir
                </h3>
                <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                   <form id="bulk-delete-form" action="{{ route('users.bulkDelete') }}" method="POST" style="display: inline;">
-                       @csrf
-                       @method('DELETE')
+                   <form id="bulk-delete-form" action="<?php echo e(route('users.bulkDelete')); ?>" method="POST" style="display: inline;">
+                       <?php echo csrf_field(); ?>
+                       <?php echo method_field('DELETE'); ?>
                        <button type="button" id="bulk-delete-button" class="btn btn-danger btn-umkm-sm" style="display: none;">
                            <i class="bi bi-trash-fill"></i> Hapus Terpilih
                        </button>
@@ -320,7 +322,7 @@
                            </label>
                            <div class="input-group">
                                <input type="text" class="form-control" placeholder="Masukkan nama atau username pengguna..."
-                                      name="search" value="{{ request('search') }}">
+                                      name="search" value="<?php echo e(request('search')); ?>">
                                <button class="btn btn-umkm" type="submit">
                                    <i class="bi bi-search"></i>
                                </button>
@@ -328,7 +330,7 @@
                        </div>
                        <div class="col-12 col-md-4">
                            <div class="text-white text-md-end">
-                               <small><i class="bi bi-info-circle me-1"></i>Total: {{ $users->total() }} pengguna</small>
+                               <small><i class="bi bi-info-circle me-1"></i>Total: <?php echo e($users->total()); ?> pengguna</small>
                            </div>
                        </div>
                    </div>
@@ -351,78 +353,80 @@
                        </tr>
                    </thead>
                    <tbody>
-                           @forelse ($users as $key => $user)
+                           <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                            <tr>
                                <td class="text-center">
-                                   @if(auth()->user()->id !== $user->id)
-                                       <input class="form-check-input item-checkbox" type="checkbox" value="{{ $user->id }}">
-                                   @endif
+                                   <?php if(auth()->user()->id !== $user->id): ?>
+                                       <input class="form-check-input item-checkbox" type="checkbox" value="<?php echo e($user->id); ?>">
+                                   <?php endif; ?>
                                </td>
-                               <td><strong>{{ $users->firstItem() + $key }}</strong></td>
+                               <td><strong><?php echo e($users->firstItem() + $key); ?></strong></td>
                                <td>
                                    <div class="d-flex align-items-center">
                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white me-3" style="width: 40px; height: 40px; font-weight: bold;">
-                                           {{ strtoupper(substr($user->nama, 0, 1)) }}
+                                           <?php echo e(strtoupper(substr($user->nama, 0, 1))); ?>
+
                                        </div>
                                        <div>
-                                           <strong>{{ $user->nama }}</strong>
-                                           <small class="d-block d-sm-none text-muted">{{ $user->username }}</small>
+                                           <strong><?php echo e($user->nama); ?></strong>
+                                           <small class="d-block d-sm-none text-muted"><?php echo e($user->username); ?></small>
                                        </div>
                                    </div>
                                </td>
                                <td class="d-none d-sm-table-cell">
-                                   <code>{{ $user->username }}</code>
+                                   <code><?php echo e($user->username); ?></code>
                                </td>
                                <!-- <td>
-                                   @if($user->role == 'ADMIN')
-                                       <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>{{ $user->role }}</span>
-                                   @else
-                                       <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i>{{ $user->role }}</span>
-                                   @endif
+                                   <?php if($user->role == 'ADMIN'): ?>
+                                       <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i><?php echo e($user->role); ?></span>
+                                   <?php else: ?>
+                                       <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i><?php echo e($user->role); ?></span>
+                                   <?php endif; ?>
                                </td> -->
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                @if($user->role == 'ADMIN')
-                                                    <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>{{ $user->role }}</span>
-                                                @elseif($user->role == 'MANAJER')
-                                                    <span class="badge bg-warning text-dark"><i class="bi bi-person-gear me-1"></i>{{ $user->role }}</span>
-                                                @else
-                                                    <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i>{{ $user->role }}</span>
-                                                @endif
+                                                <?php if($user->role == 'ADMIN'): ?>
+                                                    <span class="badge bg-success"><i class="bi bi-shield-check me-1"></i><?php echo e($user->role); ?></span>
+                                                <?php elseif($user->role == 'MANAJER'): ?>
+                                                    <span class="badge bg-warning text-dark"><i class="bi bi-person-gear me-1"></i><?php echo e($user->role); ?></span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-primary"><i class="bi bi-person-badge me-1"></i><?php echo e($user->role); ?></span>
+                                                <?php endif; ?>
                                             </div>
                                         </td>
                                <td class="d-none d-lg-table-cell">
                                    <i class="bi bi-calendar3 text-muted me-1"></i>
-                                   {{ $user->created_at->format('d M Y') }}
+                                   <?php echo e($user->created_at->format('d M Y')); ?>
+
                                </td>
                                <td class="text-center">
                                    <div class="dropdown action-dropdown">
-                                       <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-{{$user->id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                       <button class="btn btn-action dropdown-toggle" type="button" id="dropdownMenuButton-<?php echo e($user->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                            <i class="bi bi-three-dots-vertical fs-5"></i>
                                        </button>
-                                       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{$user->id}}">
+                                       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-<?php echo e($user->id); ?>">
                                            <li>
-                                               <a class="dropdown-item" href="/dashboard/users/{{ $user->id }}/edit">
+                                               <a class="dropdown-item" href="/dashboard/users/<?php echo e($user->id); ?>/edit">
                                                    <i class="bi bi-pencil-square text-warning"></i> Edit
                                                </a>
                                            </li>
-                                           @if(auth()->user()->id !== $user->id)
+                                           <?php if(auth()->user()->id !== $user->id): ?>
                                            <li>
-                                               {{-- Form delete satuan, sekarang tidak bersarang --}}
-                                               <form action="/dashboard/users/{{ $user->id }}" method="post" class="dropdown-item-form">
-                                                   @method('delete')
-                                                   @csrf
-                                                   <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '{{ $user->nama }}')">
+                                               
+                                               <form action="/dashboard/users/<?php echo e($user->id); ?>" method="post" class="dropdown-item-form">
+                                                   <?php echo method_field('delete'); ?>
+                                                   <?php echo csrf_field(); ?>
+                                                   <button type="button" class="dropdown-item text-danger" onclick="showDeleteModal(this.form, '<?php echo e($user->nama); ?>')">
                                                        <i class="bi bi-trash"></i> Hapus
                                                    </button>
                                                </form>
                                            </li>
-                                           @endif
+                                           <?php endif; ?>
                                        </ul>
                                    </div>
                                </td>
                            </tr>
-                           @empty
+                           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                            <tr>
                                <td colspan="7" class="text-center py-5">
                                    <div class="text-muted">
@@ -436,20 +440,21 @@
                                    </div>
                                </td>
                            </tr>
-                           @endforelse
+                           <?php endif; ?>
                        </tbody>
                    </table>
                </div>
            </div>
 
            <!-- Pagination -->
-           @if($users->hasPages())
+           <?php if($users->hasPages()): ?>
            <div class="d-flex justify-content-center mt-4">
                <div class="pagination-wrapper">
-                   {{ $users->links() }}
+                   <?php echo e($users->links()); ?>
+
                </div>
            </div>
-           @endif
+           <?php endif; ?>
        </div>
    </div>
 </div>
@@ -577,4 +582,6 @@
        updateBulkDeleteButtonState();
    });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/users/index.blade.php ENDPATH**/ ?>

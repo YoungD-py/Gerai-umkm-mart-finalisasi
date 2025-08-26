@@ -88,7 +88,6 @@
             font-weight: bold; 
         }
 
-        /* Added barcode styling for print version */
         .barcode-section {
             text-align: center;
             padding: 10px 0;
@@ -265,7 +264,6 @@
             </td>
         </tr>
 
-        <!-- Added barcode section for print version -->
         <tr>
             <td colspan="4" class="barcode-section">
                 @foreach($transaction as $trans)
@@ -291,7 +289,6 @@
         </tr>
     </table>
 
-    <!-- Added JsBarcode library and barcode generation script for print version -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
