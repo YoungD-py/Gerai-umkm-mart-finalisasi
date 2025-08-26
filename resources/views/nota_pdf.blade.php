@@ -1,3 +1,6 @@
+@php
+use Picqer\Barcode\BarcodeGeneratorPNG;
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,6 +60,27 @@
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .font-bold { font-weight: bold; }
+        /* Updated barcode styling for PNG image */
+        .barcode-section {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .barcode-container {
+            display: inline-block;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        .barcode-image {
+            max-width: 150px;
+            height: auto;
+        }
+        .barcode-text {
+            font-size: 8px;
+            margin-top: 3px;
+            font-weight: bold;
+        }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -140,6 +164,25 @@
                         <td class="text-right">Rp {{ number_format($trans->kembalian, 0, ',', '.') }}</td>
                     </tr>
                 </table>
+                @endforeach
+            </td>
+        </tr>
+
+        <!-- Replaced SVG barcode with base64 PNG for better PDF compatibility -->
+        <tr>
+            <td colspan="4" class="barcode-section">
+                @foreach($transaction as $trans)
+                @php
+                    $notaParts = explode('-', $trans->no_nota);
+                    $shortBarcode = (count($notaParts) >= 3) ? $notaParts[1] . '-' . $notaParts[2] : $trans->no_nota;
+                    $generator = new BarcodeGeneratorPNG();
+                    $barcodeData = $generator->getBarcode($shortBarcode, $generator::TYPE_CODE_128);
+                    $barcodeBase64 = 'data:image/png;base64,' . base64_encode($barcodeData);
+                @endphp
+                <div class="barcode-container">
+                    <img src="{{ $barcodeBase64 }}" alt="Barcode" class="barcode-image">
+                    <div class="barcode-text">{{ $shortBarcode }}</div>
+                </div>
                 @endforeach
             </td>
         </tr>
