@@ -56,7 +56,7 @@
         }
 
         .btn-cashier {
-        background: linear-gradient(135deg, #17a2b8, #17a2b8);
+        background: linear-gradient(135deg, #206BC4, #4A90E2);
         border: none;
         border-radius: 15px;
         padding: 10px 20px;
