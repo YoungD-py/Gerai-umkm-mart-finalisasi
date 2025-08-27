@@ -511,7 +511,6 @@
                                                         </form>
                                                     </li>
 
-
                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>
@@ -730,9 +729,9 @@
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                     buttonElement.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            `;
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Loading...
+                    `;
                     buttonElement.style.pointerEvents = 'none';
 
                     fetch('/dashboard/cashiers/nota', {
@@ -784,6 +783,103 @@
             updateBulkDeleteButtonState();
         });
 
+        let barcodeBuffer = '';
+        let lastInputTime = Date.now();
+        
+        document.addEventListener('keydown', function(e) {
+            const currentTime = Date.now();
+            
+            // Reset buffer if too much time has passed (same timing as cashier/create)
+            if (currentTime - lastInputTime > 50) {
+                barcodeBuffer = '';
+            }
+            
+            if (e.key === 'Enter') {
+                // If we have accumulated enough characters and not focused on input/textarea
+                if (barcodeBuffer.length > 3) {
+                    e.preventDefault();
+                    const activeElement = document.activeElement.tagName;
+                    if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+                        // Process the scanned barcode using same logic as cashier/create
+                        processBarcode(barcodeBuffer);
+                    }
+                }
+                barcodeBuffer = '';
+            } else {
+                // Accumulate all single characters (same as cashier/create)
+                if (e.key.length === 1) {
+                    barcodeBuffer += e.key;
+                }
+            }
+            
+            lastInputTime = currentTime;
+        });
+
+        function processBarcode(barcode) {
+            barcode = barcode.trim();
+            if (!barcode) return;
+            
+            // Show immediate feedback that barcode was detected
+            showAlert('info', `🔍 Barcode Terdeteksi: <span class="badge bg-primary">${barcode}</span><br>Mencari transaksi...`);
+            
+            // Fill the search input with the scanned barcode
+            const searchInput = document.querySelector('input[name="search"]');
+            if (searchInput) {
+                searchInput.value = barcode;
+                
+                // Auto-submit the search form
+                const searchForm = searchInput.closest('form');
+                if (searchForm) {
+                    searchForm.submit();
+                } else {
+                    showAlert('danger', '❌ Error: Form pencarian tidak ditemukan');
+                }
+            } else {
+                showAlert('danger', '❌ Error: Input pencarian tidak ditemukan');
+            }
+        }
+
+        function showAlert(type, message) {
+            // Remove existing alerts first
+            const existingAlerts = document.querySelectorAll('.barcode-alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show shadow-sm barcode-alert`;
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                border-radius: 15px;
+                border: none;
+                font-weight: 600;
+            `;
+            
+            const iconMap = {
+                'success': 'check-circle-fill',
+                'danger': 'exclamation-triangle-fill',
+                'warning': 'exclamation-triangle-fill',
+                'info': 'info-circle-fill'
+            };
+            
+            alertDiv.innerHTML = `
+                <i class="bi bi-${iconMap[type]} me-2"></i>
+                <span>${message}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 4000);
+        }
+
         function handleActionSubmit(form) {
             const button = form.querySelector('button[type="submit"]');
             if (button) {
@@ -822,7 +918,6 @@
             }
         });
     </script>
-
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
