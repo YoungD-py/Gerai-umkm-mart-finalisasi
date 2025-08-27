@@ -69,7 +69,9 @@ class LoginController extends Controller
             return back()->with('loginError', 'Username/Password/Captcha Anda Salah, Coba Lagi!');
         }
 
-        if (Auth::attempt($credentials)) {
+        $remember = $request->has('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $request->session()->forget('math_captcha_answer'); 
 
