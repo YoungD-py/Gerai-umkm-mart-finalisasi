@@ -203,7 +203,7 @@
                             <select class="form-select" name="nama_pembeli" id="payment_method" required onchange="calculateTotal()">
                                 <option value="CASH" selected>CASH</option>
                                 <option value="QRIS">QRIS</option>
-                                <option value="P-Eats">P-Eats</option>
+                                <option value="P-Eats">P-Eats (Otomatis +12% pajak)</option>
                                 <option value="TRANSFER">TRANSFER</option>
                             </select>
                             <div class="tax-info mt-2" id="tax_info" style="display: none;">

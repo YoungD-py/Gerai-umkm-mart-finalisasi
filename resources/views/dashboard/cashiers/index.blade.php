@@ -247,7 +247,7 @@
                 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                     <h3 class="cashier-card-title mb-2 mb-md-0">
                         <i class="bi bi-receipt"></i>
-                        Riwayat Tansaksi
+                        Riwayat Transaksi
                     </h3>
                     <a href="/dashboard/cashier/quick-transaction" class="btn btn-cashier btn-cashier-sm w-100 w-md-auto mt-2 mt-md-0">
                         <i class="bi bi-plus-circle"></i>
