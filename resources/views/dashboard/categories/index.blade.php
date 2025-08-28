@@ -294,7 +294,7 @@
 
 <div class="container-fluid py-4">
    <div class="page-title">
-       <h1>🏢 MANAJEMEN DATA Mitra Binaan</h1>
+       <h1>🏢 MANAJEMEN DATA MITRA BINAAN</h1>
        <p>Kelola data mitra binaan GERAI UMKM MART</p>
    </div>
 
