@@ -276,8 +276,8 @@
               </div>
 
               <div class="row mt-5">
-                  <div class="col-lg-6 mb-4">
-                      <div class="main-card">
+                  <div class="col-xl-4 col-lg-6 mb-4">
+                      <div class="main-card h-100">
                           <div class="card-header-custom">
                               <h5 class="mb-0">
                                   <i class="bi bi-file-earmark-pdf me-2"></i>
@@ -324,8 +324,8 @@
                       </div>
                   </div>
 
-                  <div class="col-lg-6 mb-4">
-                      <div class="main-card">
+                  <div class="col-xl-4 col-lg-6 mb-4">
+                      <div class="main-card h-100">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #17a2b8, #138496);">
                               <h5 class="mb-0">
                                   <i class="bi bi-box-seam me-2"></i>
@@ -338,7 +338,7 @@
                                   <div class="form-group">
                                       <label class="form-label">
                                           <i class="bi bi-calendar-event text-info"></i>
-                                          Tanggal Mulai (Barang Masuk)
+                                          Tanggal Mulai
                                       </label>
                                       <input type="date" class="form-control" name="tgl_awal"
                                           value="{{ date('Y-m-01') }}">
@@ -346,7 +346,7 @@
                                   <div class="form-group">
                                       <label class="form-label">
                                           <i class="bi bi-calendar-check text-info"></i>
-                                          Tanggal Akhir (Barang Masuk)
+                                          Tanggal Akhir
                                       </label>
                                       <input type="date" class="form-control" name="tgl_akhir"
                                           value="{{ date('Y-m-d') }}">
@@ -371,12 +371,12 @@
                       </div>
                   </div>
 
-                  <div class="col-lg-6 mb-4">
-                      <div class="main-card">
+                  <div class="col-xl-4 col-lg-6 mb-4">
+                      <div class="main-card h-100">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #6f42c1, #8a2be2);">
                               <h5 class="mb-0">
                                   <i class="bi bi-arrow-left-right me-2"></i>
-                                  Cetak Laporan Restock & Return
+                                  Cetak Restock & Return
                               </h5>
                           </div>
                           <div class="form-section">
@@ -384,7 +384,7 @@
                                   @csrf
                                   <div class="form-group">
                                       <label class="form-label">
-                                          <i class="bi bi-calendar-event text-purple"></i>
+                                          <i class="bi bi-calendar-event" style="color: #6f42c1;"></i>
                                           Tanggal Mulai
                                       </label>
                                       <input type="date" class="form-control" name="tgl_awal"
@@ -392,7 +392,7 @@
                                   </div>
                                   <div class="form-group">
                                       <label class="form-label">
-                                          <i class="bi bi-calendar-check text-purple"></i>
+                                          <i class="bi bi-calendar-check" style="color: #6f42c1;"></i>
                                           Tanggal Akhir
                                       </label>
                                       <input type="date" class="form-control" name="tgl_akhir"
@@ -400,7 +400,7 @@
                                   </div>
                                   <div class="form-group">
                                       <label class="form-label">
-                                          <i class="bi bi-shop text-purple"></i>
+                                          <i class="bi bi-shop" style="color: #6f42c1;"></i>
                                           Mitra Binaan
                                       </label>
                                       <select class="form-control" name="category_id">
@@ -411,15 +411,15 @@
                                       </select>
                                   </div>
                                   <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #6f42c1, #8a2be2);">
-                                      <i class="bi bi-download me-2"></i>Cetak Laporan Restock & Return
+                                      <i class="bi bi-download me-2"></i>Cetak Restock & Return
                                   </button>
                               </form>
                           </div>
                       </div>
                   </div>
 
-                  <div class="col-lg-6 mb-4">
-                      <div class="main-card">
+                  <div class="col-xl-6 col-lg-6 mb-4">
+                      <div class="main-card h-100">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #dc3545, #c82333);">
                               <h5 class="mb-0">
                                   <i class="bi bi-wallet2 me-2"></i>
@@ -445,11 +445,7 @@
                                       <input type="date" class="form-control" name="tgl_akhir"
                                           value="{{ date('Y-m-d') }}" required>
                                   </div>
-                                  <div class="form-group" style="visibility: hidden;">
-                                      <label class="form-label">&nbsp;</label>
-                                      <select class="form-control"><option></option></select>
-                                  </div>
-                                  <button type="submit" class="btn btn-danger w-100">
+                                  <button type="submit" class="btn btn-danger w-100 mt-4">
                                       <i class="bi bi-download me-2"></i>Cetak Laporan Biaya Operasional
                                   </button>
                               </form>
@@ -457,8 +453,8 @@
                       </div>
                   </div>
 
-                  <div class="col-lg-6 mb-4">
-                      <div class="main-card">
+                  <div class="col-xl-6 col-lg-6 mb-4">
+                      <div class="main-card h-100">
                           <div class="card-header-custom" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
                               <h5 class="mb-0">
                                   <i class="bi bi-cash-coin me-2"></i>
@@ -484,11 +480,7 @@
                                       <input type="date" class="form-control" name="tgl_akhir"
                                           value="{{ date('Y-m-d') }}" required>
                                   </div>
-                                  <div class="form-group" style="visibility: hidden;">
-                                      <label class="form-label">&nbsp;</label>
-                                      <select class="form-control"><option></option></select>
-                                  </div>
-                                  <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
+                                  <button type="submit" class="btn btn-primary w-100 mt-4" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
                                       <i class="bi bi-download me-2"></i>Cetak Laporan Keuangan
                                   </button>
                               </form>
