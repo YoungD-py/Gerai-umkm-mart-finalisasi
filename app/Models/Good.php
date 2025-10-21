@@ -28,7 +28,9 @@ class Good extends Model
         'is_tebus_murah_active',
         'min_total_tebus_murah',
         'harga_tebus_murah',
-        'barcode'
+        'barcode',
+        'use_existing_barcode',
+        'existing_barcode'
     ];
 
     protected $casts = [

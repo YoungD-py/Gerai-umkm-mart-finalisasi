@@ -136,6 +136,8 @@ class GoodController extends Controller
           'is_tebus_murah_active' => 'boolean',
           'min_total_tebus_murah' => 'nullable|numeric|min:0',
           'harga_tebus_murah' => 'nullable|numeric|min:0',
+          'use_existing_barcode' => 'boolean',
+          'existing_barcode' => 'nullable|string|max:255',
       ]);
 
       if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
@@ -196,7 +198,21 @@ class GoodController extends Controller
           $validatedData['harga_tebus_murah'] = null;
       }
 
-      $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
+      $validatedData['use_existing_barcode'] = $request->has('use_existing_barcode') && $request->use_existing_barcode ? true : false;
+      
+      if ($validatedData['use_existing_barcode'] && !empty($validatedData['existing_barcode'])) {
+          // Check if barcode already exists
+          $existingGood = Good::where('barcode', $validatedData['existing_barcode'])->first();
+          if ($existingGood) {
+              return back()->withErrors(['existing_barcode' => "BARCODE {$validatedData['existing_barcode']} TERDAFTAR SEBAGAI {$existingGood->nama}. APAKAH ANDA MAU MENGGANTI ATAU MEREPLACE BARCODE INI?"])->withInput();
+          }
+          $validatedData['barcode'] = $validatedData['existing_barcode'];
+      } else {
+          // Generate automatic barcode
+          $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
+          $validatedData['existing_barcode'] = null;
+      }
+
       Good::create($validatedData);
       return redirect('/dashboard/goods')->with('success', 'Barang berhasil ditambahkan.');
   }
@@ -262,6 +278,8 @@ class GoodController extends Controller
           'is_tebus_murah_active' => 'boolean',
           'min_total_tebus_murah' => 'nullable|numeric|min:0',
           'harga_tebus_murah' => 'nullable|numeric|min:0',
+          'use_existing_barcode' => 'boolean',
+          'existing_barcode' => 'nullable|string|max:255',
       ];
 
       $validatedData = $request->validate($rules);
@@ -324,10 +342,24 @@ class GoodController extends Controller
           $validatedData['harga_tebus_murah'] = null;
       }
 
-      if (!$good->barcode) {
-          $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
+      $validatedData['use_existing_barcode'] = $request->has('use_existing_barcode') && $request->use_existing_barcode ? true : false;
+      
+      if ($validatedData['use_existing_barcode'] && !empty($validatedData['existing_barcode'])) {
+          // Check if barcode already exists (excluding current good)
+          $existingGood = Good::where('barcode', $validatedData['existing_barcode'])
+              ->where('id', '!=', $good->id)
+              ->first();
+          if ($existingGood) {
+              return back()->withErrors(['existing_barcode' => "BARCODE {$validatedData['existing_barcode']} TERDAFTAR SEBAGAI {$existingGood->nama}. APAKAH ANDA MAU MENGGANTI ATAU MEREPLACE BARCODE INI?"])->withInput();
+          }
+          $validatedData['barcode'] = $validatedData['existing_barcode'];
       } else {
-          $validatedData['barcode'] = $good->barcode;
+          if (!$good->barcode) {
+              $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
+          } else {
+              $validatedData['barcode'] = $good->barcode;
+          }
+          $validatedData['existing_barcode'] = null;
       }
 
       $good->update($validatedData);

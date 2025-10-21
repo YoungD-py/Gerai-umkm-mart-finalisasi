@@ -140,4 +140,4 @@
 </body>
 
 </html>
-<?php /**PATH D:\Kuliah\Magang Pelindo\project\Gerai-umkm-mart-finalisasi\resources\views/dashboard/layouts/main.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/layouts/main.blade.php ENDPATH**/ ?>

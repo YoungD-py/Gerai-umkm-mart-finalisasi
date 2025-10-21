@@ -42,7 +42,9 @@ class StoreGoodRequest extends FormRequest
             'expired_date' => 'nullable|date|after:today',
             'stok' => 'required|integer|min:0',
             'harga_asli' => 'required|numeric|min:0',
-            'markup_percentage' => 'nullable|numeric|min:0|max:100', // [BARU]
+            'markup_percentage' => 'nullable|numeric|min:0|max:100',
+            'use_existing_barcode' => 'boolean',
+            'existing_barcode' => 'nullable|string|max:255',
         ];
     }
 
@@ -73,7 +75,9 @@ class StoreGoodRequest extends FormRequest
             'harga_asli.min' => 'Harga asli barang tidak boleh kurang dari 0.',
             'markup_percentage.numeric' => 'Persentase markup harus berupa angka.', 
             'markup_percentage.min' => 'Persentase markup tidak boleh kurang dari 0.', 
-            'markup_percentage.max' => 'Persentase markup tidak boleh lebih dari 100.', 
+            'markup_percentage.max' => 'Persentase markup tidak boleh lebih dari 100.',
+            'existing_barcode.string' => 'Barcode harus berupa teks.',
+            'existing_barcode.max' => 'Barcode tidak boleh lebih dari 255 karakter.',
         ];
     }
 }

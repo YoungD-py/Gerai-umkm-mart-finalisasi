@@ -204,7 +204,7 @@
                             <select class="form-select" name="nama_pembeli" id="payment_method" required onchange="calculateTotal()">
                                 <option value="CASH" selected>CASH</option>
                                 <option value="QRIS">QRIS</option>
-                                <option value="P-Eats">P-Eats</option>
+                                <option value="P-Eats">P-Eats (Otomatis +12% pajak)</option>
                                 <option value="TRANSFER">TRANSFER</option>
                             </select>
                             <div class="tax-info mt-2" id="tax_info" style="display: none;">
@@ -332,4 +332,4 @@
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/dashboard/cashiers/checkout.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('dashboard.layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/cashiers/checkout.blade.php ENDPATH**/ ?>

@@ -62,4 +62,4 @@
     </script>
 </body>
 </html>
-<?php /**PATH /var/www/resources/views/dashboard/goods/print-barcode.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/goods/print-barcode.blade.php ENDPATH**/ ?>

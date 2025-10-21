@@ -276,4 +276,4 @@
         </div>
     </div>
 </header>
-<?php /**PATH /var/www/resources/views/dashboard/partials/navbar.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\SEMESTER 6\KERJA PRAKTEK PELINDO\project umkm\NEW\kasirku-main\resources\views/dashboard/partials/navbar.blade.php ENDPATH**/ ?>
