@@ -95,7 +95,7 @@ Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
     Route::get('/dashboard/goods/{good}/print-barcode', [GoodController::class, 'printBarcode']);
 
     // Customers - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
-    Route::resource('/dashboard/customers', CustomerController::class);
+    // Route::resource('/dashboard/customers', CustomerController::class);
 
     // Returns - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
     Route::delete('/dashboard/returns/bulk-delete', [ReturnController::class, 'bulkDelete'])->name('returns.bulkDelete');
