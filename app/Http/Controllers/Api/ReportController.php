@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
-    /**
-     * Mengambil laporan penjualan berdasarkan rentang tanggal
-     */
+
     public function sales(Request $request)
     {
         try {
@@ -25,16 +23,13 @@ class ReportController extends Controller
             $startDate = Carbon::parse($validated['tgl_awal'])->startOfDay();
             $endDate = Carbon::parse($validated['tgl_akhir'])->endOfDay();
 
-            // Ambil data transaksi sesuai logika web (LUNAS)
             $query = Transaction::where('status', 'LUNAS')
                         ->whereBetween('created_at', [$startDate, $endDate]);
             
-            // Ambil daftar transaksi
             $transactions = $query->with(['user', 'orders.good'])
                                   ->orderBy('created_at', 'desc')
                                   ->get();
             
-            // Hitung total dari kolom 'total_harga' (sesuai web controller index)
             $totalSales = $transactions->sum('total_harga');
             $transactionCount = $transactions->count();
 
@@ -57,9 +52,6 @@ class ReportController extends Controller
         }
     }
 
-    /**
-     * Mengambil laporan pengeluaran berdasarkan rentang tanggal
-     */
     public function expenses(Request $request)
     {
         try {
@@ -71,12 +63,10 @@ class ReportController extends Controller
             $startDate = Carbon::parse($validated['tgl_awal'])->startOfDay();
             $endDate = Carbon::parse($validated['tgl_akhir'])->endOfDay();
 
-            // Ambil data biaya operasional sesuai logika web (filter by 'tanggal')
             $query = BiayaOperasional::whereBetween('tanggal', [$startDate, $endDate]);
 
             $expenses = $query->orderBy('tanggal', 'desc')->get();
             
-            // Hitung total dari kolom 'nominal' (sesuai web & model)
             $totalExpenses = $expenses->sum('nominal');
             $expenseCount = $expenses->count();
 
@@ -99,9 +89,6 @@ class ReportController extends Controller
         }
     }
 
-    /**
-     * Mengambil ringkasan Pemasukan - Pengeluaran (Profit)
-     */
     public function summary(Request $request)
     {
         try {
@@ -113,18 +100,13 @@ class ReportController extends Controller
             $startDate = Carbon::parse($validated['tgl_awal'])->startOfDay();
             $endDate = Carbon::parse($validated['tgl_akhir'])->endOfDay();
 
-            // 1. Get total sales (sesuai logika web 'index' & 'cetakLaporanKeuangan')
-            // Kita sum total_harga dari transaksi yang LUNAS
             $totalSales = Transaction::where('status', 'LUNAS')
                             ->whereBetween('created_at', [$startDate, $endDate])
                             ->sum('total_harga'); 
 
-            // 2. Get total expenses (sesuai logika web)
-            // Kita sum 'nominal' dari 'biaya_operasional' berdasarkan 'tanggal'
             $totalExpenses = BiayaOperasional::whereBetween('tanggal', [$startDate, $endDate])
                             ->sum('nominal');
             
-            // 3. Calculate profit
             $profit = $totalSales - $totalExpenses;
 
             return response()->json([
@@ -146,10 +128,9 @@ class ReportController extends Controller
         }
     }
     
-    // --- Helper Function ---
     private function serverErrorResponse(\Exception $e, $message = 'Server Error')
     {
-        Log::error($message . ': ' . $e->getMessage()); // Catat error
+        Log::error($message . ': ' . $e->getMessage()); 
         return response()->json([
             'success' => false,
             'message' => $message . ': ' . $e->getMessage()

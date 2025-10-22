@@ -6,24 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Good;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException; // <-- WAJIB TAMBAHKAN
-use Illuminate\Support\Facades\DB; // <-- WAJIB TAMBAHKAN
+use Illuminate\Validation\ValidationException; 
+use Illuminate\Support\Facades\DB; 
 
 class GoodController extends Controller
 {
-    /**
-     * Menampilkan daftar barang (sudah disinkronkan)
-     */
     public function index(Request $request)
     {
         try {
             $perPage = $request->get('per_page', 15);
 
-            // Gunakan scopeFilter dari Model
             $query = Good::query()->with('category')
                         ->filter($request->only(['search', 'mitra', 'category']));
 
-            // --- Logic Sorting dari Web Controller (diadaptasi) ---
             $sortApplied = false;
 
             if ($request->get('sort_expired')) {
@@ -50,11 +45,9 @@ class GoodController extends Controller
                 $sortApplied = true;
             }
 
-            // Default sorting (from web)
             if (!$sortApplied) {
                 $query->latest(); 
             }
-            // --- Akhir Logic Sorting ---
 
             $goods = $query->paginate($perPage);
 
@@ -72,13 +65,9 @@ class GoodController extends Controller
         }
     }
 
-    /**
-     * Menyimpan barang baru (sudah disinkronkan)
-     */
     public function store(Request $request)
     {
         try {
-            // Validasi diambil penuh dari Web Controller
             $validatedData = $request->validate([
                 'category_id' => 'required|exists:categories,id',
                 'tgl_masuk' => 'required|date_format:Y-m-d',
@@ -108,7 +97,6 @@ class GoodController extends Controller
                 'existing_barcode' => 'nullable|string|max:255',
             ]);
 
-            // --- Logika Bisnis dari Web Controller ---
             if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
                 throw ValidationException::withMessages([
                     'expired_date' => 'Tanggal expired wajib diisi untuk jenis ' . $validatedData['type'] . '.'
@@ -119,7 +107,6 @@ class GoodController extends Controller
                 $validatedData['expired_date'] = null;
             }
 
-            // Perhitungan harga jual
             if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
                 $markup = $validatedData['markup_percentage'] / 100;
             } else {
@@ -127,7 +114,6 @@ class GoodController extends Controller
             }
             $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup); // <-- HARGA DIHITUNG
 
-            // Validasi Grosir
             $validatedData['is_grosir_active'] = $request->boolean('is_grosir_active');
             if ($validatedData['is_grosir_active']) {
                 if (empty($validatedData['min_qty_grosir']) || empty($validatedData['harga_grosir'])) {
@@ -144,7 +130,6 @@ class GoodController extends Controller
                 $validatedData['harga_grosir'] = null;
             }
 
-            // Validasi Tebus Murah
             $validatedData['is_tebus_murah_active'] = $request->boolean('is_tebus_murah_active');
             if ($validatedData['is_tebus_murah_active']) {
                 if (empty($validatedData['min_total_tebus_murah']) || empty($validatedData['harga_tebus_murah'])) {
@@ -158,7 +143,6 @@ class GoodController extends Controller
                 $validatedData['harga_tebus_murah'] = null;
             }
 
-            // Logika Barcode (Sesuai Web)
             $validatedData['use_existing_barcode'] = $request->boolean('use_existing_barcode');
             if ($validatedData['use_existing_barcode'] && !empty($validatedData['existing_barcode'])) {
                 $existingGood = Good::where('barcode', $validatedData['existing_barcode'])->first();
@@ -170,7 +154,7 @@ class GoodController extends Controller
                 $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
                 $validatedData['existing_barcode'] = null;
             }
-            // --- Akhir Logika Bisnis ---
+
 
             $good = Good::create($validatedData);
             $good->load('category');
@@ -195,9 +179,6 @@ class GoodController extends Controller
         }
     }
 
-    /**
-     * Menampilkan detail 1 barang
-     */
     public function show($id)
     {
         try {
@@ -217,9 +198,6 @@ class GoodController extends Controller
         }
     }
 
-    /**
-     * Update barang (sudah disinkronkan)
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -228,7 +206,6 @@ class GoodController extends Controller
                 return $this->notFoundResponse();
             }
 
-            // Validasi dari Web Controller (update)
             $rules = [
                 'category_id' => 'required|exists:categories,id',
                 'tgl_masuk' => 'required|date_format:Y-m-d',
@@ -259,13 +236,9 @@ class GoodController extends Controller
                 'existing_barcode' => 'nullable|string|max:255',
             ];
 
-            // Note: API tidak bisa memvalidasi 'stok' karena stok hanya bisa diubah via Restock.
-            // Jika Anda ingin API bisa update stok, tambahkan 'stok' => 'required|integer|min:0'
-            // Tapi saya sarankan JANGAN, agar konsisten dgn RestockController.
 
             $validatedData = $request->validate($rules);
             
-            // --- Logika Bisnis dari Web Controller (Update) ---
             if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
                 throw ValidationException::withMessages(['expired_date' => 'Tanggal expired wajib diisi untuk jenis ' . $validatedData['type'] . '.']);
             }
@@ -273,7 +246,6 @@ class GoodController extends Controller
                 $validatedData['expired_date'] = null;
             }
             
-            // Perhitungan harga jual
             if ($request->has('markup_percentage') && $request->markup_percentage !== null) {
                 $markup = $validatedData['markup_percentage'] / 100;
             } else {
@@ -281,31 +253,26 @@ class GoodController extends Controller
             }
             $validatedData['harga'] = $validatedData['harga_asli'] + ($validatedData['harga_asli'] * $markup);
 
-            // Validasi Grosir
             $validatedData['is_grosir_active'] = $request->boolean('is_grosir_active');
             if ($validatedData['is_grosir_active']) {
                 if (empty($validatedData['min_qty_grosir']) || empty($validatedData['harga_grosir'])) {
                     throw ValidationException::withMessages(['min_qty_grosir' => 'Minimal Qty & Harga grosir wajib diisi.']);
                 }
-                //... (validasi harga grosir lainnya seperti di store) ...
             } else {
                 $validatedData['min_qty_grosir'] = null;
                 $validatedData['harga_grosir'] = null;
             }
 
-            // Validasi Tebus Murah
             $validatedData['is_tebus_murah_active'] = $request->boolean('is_tebus_murah_active');
             if ($validatedData['is_tebus_murah_active']) {
                  if (empty($validatedData['min_total_tebus_murah']) || empty($validatedData['harga_tebus_murah'])) {
                     throw ValidationException::withMessages(['min_total_tebus_murah' => 'Minimal Total & Harga tebus murah wajib diisi.']);
                 }
-                //... (validasi harga tebus murah lainnya seperti di store) ...
             } else {
                 $validatedData['min_total_tebus_murah'] = null;
                 $validatedData['harga_tebus_murah'] = null;
             }
 
-            // Logika Barcode
             $validatedData['use_existing_barcode'] = $request->boolean('use_existing_barcode');
             if ($validatedData['use_existing_barcode'] && !empty($validatedData['existing_barcode'])) {
                 $existingGood = Good::where('barcode', $validatedData['existing_barcode'])->where('id', '!=', $good->id)->first();
@@ -314,13 +281,11 @@ class GoodController extends Controller
                 }
                 $validatedData['barcode'] = $validatedData['existing_barcode'];
             } else {
-                // Jangan generate ulang barcode jika sudah ada, kecuali diminta
                 if (!$good->barcode) {
                     $validatedData['barcode'] = Good::generateBarcodeStatic($validatedData['type'], $validatedData['nama']);
                 }
                 $validatedData['existing_barcode'] = null;
             }
-            // --- Akhir Logika Bisnis ---
 
             $good->update($validatedData);
             $good->load('category');
@@ -342,24 +307,13 @@ class GoodController extends Controller
         }
     }
 
-    /**
-     * Menghapus barang (sudah disinkronkan)
-     */
     public function destroy($id)
     {
-        // Logika destroy dari Web Controller sederhana, jadi API ini sudah benar.
-        // PERHATIAN: Pastikan Anda punya proteksi agar barang yg ada di transaksi
-        // tidak bisa dihapus (relasi foreign key).
         try {
             $good = Good::find($id);
             if (!$good) {
                 return $this->notFoundResponse();
             }
-
-            // Cek relasi (contoh, tambahkan jika perlu)
-            // if ($good->orders()->exists()) {
-            //     return response()->json(['success' => false, 'message' => 'Tidak bisa hapus, barang ini ada di riwayat transaksi.'], 409);
-            // }
 
             $good->delete();
 
@@ -372,7 +326,6 @@ class GoodController extends Controller
         }
     }
 
-    // --- Helper Functions ---
     private function notFoundResponse()
     {
         return response()->json([

@@ -13,7 +13,7 @@ class ExpiredProductController extends Controller
     {
         try {
             $perPage = $request->get('per_page', 15);
-            $status = $request->get('status'); // expired, expiring_soon, all
+            $status = $request->get('status');
 
             $query = Good::query();
 

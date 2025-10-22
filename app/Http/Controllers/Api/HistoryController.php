@@ -12,13 +12,9 @@ use Illuminate\Support\Facades\Log;
 
 class HistoryController extends Controller
 {
-    /**
-     * Menampilkan riwayat transaksi (penjualan)
-     */
     public function transactions(Request $request)
     {
         try {
-            // Validasi input tanggal
             $request->validate([
                 'tgl_awal' => 'nullable|date_format:Y-m-d',
                 'tgl_akhir' => 'nullable|date_format:Y-m-d|after_or_equal:tgl_awal',
@@ -30,12 +26,10 @@ class HistoryController extends Controller
 
             $query = Transaction::query();
 
-            // Filter berdasarkan rentang tanggal
             if ($startDate && $endDate) {
                 $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
             }
 
-            // FIX: Relasi yang benar adalah melalui 'orders'
             $transactions = $query->with(['user', 'orders.good'])
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
@@ -50,9 +44,6 @@ class HistoryController extends Controller
         }
     }
 
-    /**
-     * Menampilkan riwayat biaya operasional
-     */
     public function operational(Request $request)
     {
         try {
@@ -67,12 +58,10 @@ class HistoryController extends Controller
 
             $query = BiayaOperasional::query();
 
-            // FIX: Filter berdasarkan kolom 'tanggal'
             if ($startDate && $endDate) {
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
+                $query->whereBetween('tanggal', values: [$startDate, $endDate]);
             }
 
-            // FIX: Hapus with('user') karena tidak ada
             $expenses = $query->orderBy('tanggal', 'desc')
                 ->paginate($perPage);
 
@@ -86,9 +75,6 @@ class HistoryController extends Controller
         }
     }
 
-    /**
-     * Menampilkan riwayat restock
-     */
     public function restock(Request $request)
     {
         try {
@@ -103,7 +89,6 @@ class HistoryController extends Controller
             
             $query = Restock::query();
 
-            // FIX: Filter berdasarkan kolom 'tgl_restock'
             if ($startDate && $endDate) {
                 $query->whereBetween('tgl_restock', [$startDate, $endDate]);
             }
@@ -122,9 +107,6 @@ class HistoryController extends Controller
         }
     }
 
-    /**
-     * Menampilkan riwayat return
-     */
     public function return(Request $request)
     {
         try {
@@ -139,7 +121,6 @@ class HistoryController extends Controller
 
             $query = ReturnBarang::query();
 
-            // FIX: Filter berdasarkan kolom 'tgl_return'
             if ($startDate && $endDate) {
                 $query->whereBetween('tgl_return', [$startDate, $endDate]);
             }
@@ -158,7 +139,6 @@ class HistoryController extends Controller
         }
     }
 
-    // --- Helper Function ---
     private function serverErrorResponse(\Exception $e, $message = 'Server Error')
     {
         Log::error($message . ': ' . $e->getMessage());

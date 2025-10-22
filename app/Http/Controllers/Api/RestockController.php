@@ -11,9 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class RestockController extends Controller
 {
-    /**
-     * Menampilkan daftar RIWAYAT restock
-     */
+
     public function index(Request $request)
     {
         try {
@@ -45,38 +43,29 @@ class RestockController extends Controller
         }
     }
 
-    /**
-     * Menyimpan data restock baru (Menambah stok barang)
-     * Ini adalah padanan dari fungsi `update` di web controller Anda
-     */
     public function store(Request $request)
     {
         try {
-            // Kita samakan nama validasinya dengan web: stok_tambahan, keterangan
-            // Tapi mobile app sebaiknya mengirim good_id di body
             $validatedData = $request->validate([
                 'good_id' => 'required|exists:goods,id',
                 'stok_tambahan' => 'required|integer|min:1',
                 'keterangan' => 'nullable|string|max:255',
-                'tgl_restock' => 'required|date_format:Y-m-d', // Minta tgl dari App
+                'tgl_restock' => 'required|date_format:Y-m-d',
             ]);
 
             $restock = null;
 
-            // PERBAIKI DI SINI: Tambahkan $request ke dalam use()
             DB::transaction(function () use ($validatedData, &$restock, $request) {
                 $good = Good::find($validatedData['good_id']);
 
                 $stokSebelum = $good->stok;
                 $stokBaru = $stokSebelum + $validatedData['stok_tambahan'];
 
-                // 1. Update stok barang
                 $good->update(['stok' => $stokBaru]);
 
-                // 2. Buat catatan riwayat restock
                 $restock = Restock::create([
                     'good_id' => $good->id,
-                    'user_id' => $request->user()->id, // Baris ini yang error tadi
+                    'user_id' => $request->user()->id,
                     'qty_restock' => $validatedData['stok_tambahan'],
                     'keterangan' => $validatedData['keterangan'] ?? null,
                     'tgl_restock' => $validatedData['tgl_restock'],
@@ -106,9 +95,6 @@ class RestockController extends Controller
         }
     }
     
-    /**
-     * Menampilkan detail 1 riwayat restock
-     */
     public function show($id)
     {
         try {
@@ -128,10 +114,6 @@ class RestockController extends Controller
         }
     }
 
-    /**
-     * Mengubah data riwayat restock
-     * Ini adalah padanan dari fungsi `updateRestock` di web controller Anda
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -140,7 +122,6 @@ class RestockController extends Controller
                 return $this->notFoundResponse();
             }
 
-            // Validasi data input
             $validatedData = $request->validate([
                 'qty_restock' => 'required|integer|min:1',
                 'keterangan' => 'nullable|string|max:255',
@@ -150,22 +131,19 @@ class RestockController extends Controller
             DB::transaction(function () use ($restock, $validatedData) {
                 $oldQty = $restock->qty_restock;
                 $newQty = $validatedData['qty_restock'];
-                $qtyDifference = $newQty - $oldQty; // Selisih stok
+                $qtyDifference = $newQty - $oldQty;
 
                 $good = $restock->good;
                 $newStock = $good->stok + $qtyDifference;
 
-                // Validasi agar stok tidak negatif
                 if ($newStock < 0) {
                     throw ValidationException::withMessages([
                         'qty_restock' => 'Stok barang akan menjadi negatif. Sisa stok: ' . $good->stok
                     ]);
                 }
 
-                // 1. Update stok barang
                 $good->update(['stok' => $newStock]);
 
-                // 2. Update data restock
                 $restock->update($validatedData);
             });
 
@@ -191,10 +169,6 @@ class RestockController extends Controller
         }
     }
 
-    /**
-     * Menghapus 1 data riwayat restock
-     * Ini adalah padanan dari fungsi `destroy` di web controller Anda
-     */
     public function destroy(Request $request, $id)
     {
         try {
@@ -208,15 +182,12 @@ class RestockController extends Controller
                 $qtyToRestore = $restock->qty_restock;
                 $newStock = $good->stok - $qtyToRestore;
 
-                // Validasi agar stok tidak negatif
                 if ($newStock < 0) {
                     throw new \Exception('Gagal hapus: Stok barang akan menjadi negatif.');
                 }
 
-                // 1. Kembalikan stok barang
                 $good->update(['stok' => $newStock]);
 
-                // 2. Hapus riwayat restock
                 $restock->delete();
             });
 
@@ -233,9 +204,6 @@ class RestockController extends Controller
         }
     }
 
-    /**
-     * Helper function untuk respon Not Found
-     */
     private function notFoundResponse()
     {
         return response()->json([
