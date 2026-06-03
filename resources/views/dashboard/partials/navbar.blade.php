@@ -248,18 +248,12 @@
                             <span class="nav-link-title">Rekapitulasi</span>
                         </a>
                     </li>
-                    @if(auth()->check() && auth()->user()->isAdminOrManajer())
+                    @if(auth()->check() && auth()->user()->isAdmin())
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ Request::is('dashboard/users*') || Request::is('dashboard/transactions*') ? 'active' : '' }}"
                                href="#" data-bs-toggle="dropdown" role="button" aria-expanded="false">
                                 <span class="nav-link-icon"><i class="bi bi-gear"></i></span>
-                                <span class="nav-link-title">
-                                    @if(auth()->user()->isAdmin())
-                                        Admin
-                                    @else
-                                        Manajer
-                                    @endif
-                                </span>
+                                <span class="nav-link-title">Admin</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item {{ Request::is('dashboard/transactions*') ? 'active' : '' }}"
@@ -269,6 +263,16 @@
                                         href="/dashboard/users" class="dropdown-item"><i class="bi bi-people icon"></i> Data Pengguna</a>
                                 </li>
                             </ul>
+                        </li>
+                    @endif
+
+                    @if(auth()->check() && auth()->user()->isManajer())
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('dashboard/users*') ? 'active' : '' }}"
+                               href="/dashboard/users">
+                                <span class="nav-link-icon"><i class="bi bi-people"></i></span>
+                                <span class="nav-link-title">Data Pengguna</span>
+                            </a>
                         </li>
                     @endif
                 </ul>

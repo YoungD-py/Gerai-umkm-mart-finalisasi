@@ -263,6 +263,17 @@
         </div>
     @endif
 
+    <div id="barcode-instruction-card" class="card shadow-sm border-0 mb-3" style="position: fixed; top: 100px; right: 20px; z-index: 1000; width: 300px; background: white; border-radius: 15px;">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-upc-scan" style="font-size: 1.5rem; color: #198754;"></i>
+                <button type="button" class="btn-close btn-sm" onclick="closeInstructionCard()" aria-label="Close"></button>
+            </div>
+            <h6 class="card-title fw-bold mb-2">Pencarian Otomatis</h6>
+            <p class="card-text text-muted small mb-0">Pindai/Scan barcode untuk mencari data return secara otomatis.</p>
+        </div>
+    </div>
+
     <div class="umkm-card">
         <div class="umkm-card-header">
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 gap-2">
@@ -290,30 +301,17 @@
             <div class="search-section">
                 <form action="{{ route('returns.index') }}" method="GET" id="search-form">
                     <div class="row align-items-end">
-                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                        <div class="col-12 col-md-8 mb-3 mb-md-0">
                             <label class="form-label text-white fw-bold">
-                                <i class="bi bi-search me-2"></i>Cari Barang atau Mitra
+                                <i class="bi bi-search me-2"></i>Cari Nama Barang/Barcode/Mitra
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Masukkan nama barang atau mitra..."
-                                       name="search" value="{{ request('search') }}">
+                                <input type="text" class="form-control" placeholder="Masukkan nama barang, barcode, atau nama mitra..."
+                                       name="search" value="{{ request('search') }}" id="search-input">
                                 <button class="btn btn-umkm" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-4 mb-3 mb-md-0">
-                            <label class="form-label text-white fw-bold">
-                                <i class="bi bi-building me-2"></i>Filter Mitra Saja
-                            </label>
-                            <select class="form-select" name="category_id" id="category-filter">
-                                <option value="all">Semua Mitra</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="text-white text-md-end">
@@ -470,6 +468,13 @@
 
 {{-- Enhanced JavaScript with date sorting functionality --}}
 <script>
+    function closeInstructionCard() {
+        const card = document.getElementById('barcode-instruction-card');
+        if (card) {
+            card.style.display = 'none';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCRIPT UNTUK HAPUS SATUAN ---
         const deleteModalElement = document.getElementById('deleteConfirmationModal');
@@ -586,12 +591,88 @@
             });
         });
 
-        const categoryFilterSelect = document.getElementById('category-filter');
-        if (categoryFilterSelect) {
-            categoryFilterSelect.addEventListener('change', function() {
-                document.getElementById('search-form').submit();
-            });
+        let barcodeBuffer = '';
+        let lastInputTime = Date.now();
+
+        document.addEventListener('keydown', function(e) {
+            const currentTime = Date.now();
+
+            if (currentTime - lastInputTime > 50) {
+                barcodeBuffer = '';
+            }
+
+            if (e.key === 'Enter') {
+                if (barcodeBuffer.length > 3) {
+                    e.preventDefault();
+                    const activeElement = document.activeElement.tagName;
+                    if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+                        processBarcode(barcodeBuffer);
+                    }
+                }
+                barcodeBuffer = '';
+            } else if (e.key.length === 1) {
+                barcodeBuffer += e.key;
+            }
+
+            lastInputTime = currentTime;
+        });
+
+        function processBarcode(barcode) {
+            barcode = barcode.trim();
+            if (!barcode) return;
+
+            showAlert('info', `🔍 Barcode Terdeteksi: <span class="badge bg-primary">${barcode}</span><br>Mencari data return...`);
+
+            const searchInput = document.getElementById('search-input');
+            const searchForm = document.getElementById('search-form');
+
+            if (searchInput && searchForm) {
+                searchInput.value = barcode;
+                searchForm.submit();
+            } else {
+                showAlert('danger', '❌ Error: Form pencarian tidak ditemukan');
+            }
         }
+
+        function showAlert(type, message) {
+            const existingAlerts = document.querySelectorAll('.barcode-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show shadow-sm barcode-alert`;
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                border-radius: 15px;
+                border: none;
+                font-weight: 600;
+            `;
+
+            const iconMap = {
+                'success': 'check-circle-fill',
+                'danger': 'exclamation-triangle-fill',
+                'warning': 'exclamation-triangle-fill',
+                'info': 'info-circle-fill'
+            };
+
+            alertDiv.innerHTML = `
+                <i class="bi bi-${iconMap[type]} me-2"></i>
+                <span>${message}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 4000);
+        }
+
     });
 </script>
 @endsection

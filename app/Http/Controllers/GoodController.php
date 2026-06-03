@@ -13,6 +13,8 @@ use Carbon\Carbon;
 
 class GoodController extends Controller
 {
+    private const SIMILARITY_THRESHOLD = 50;
+
   /**
    * Display a listing of the resource.
    *
@@ -22,11 +24,14 @@ class GoodController extends Controller
   {
       $query = Good::query()->with('category'); 
 
-      // Filter by search term (nama or barcode)
+      // Filter by search term (nama, barcode, atau nama mitra)
       if (request('search')) {
           $query->where(function($q) {
               $q->where('nama', 'like', '%' . request('search') . '%')
-                ->orWhere('barcode', 'like', '%' . request('search') . '%');
+                ->orWhere('barcode', 'like', '%' . request('search') . '%')
+                ->orWhereHas('category', function ($categoryQuery) {
+                    $categoryQuery->where('nama', 'like', '%' . request('search') . '%');
+                });
           });
       }
 
@@ -100,6 +105,8 @@ class GoodController extends Controller
       return view('dashboard.goods.create', [
           'active' => 'data',
           'categories' => Category::all(),
+          'goodsForSuggestion' => Good::select('id', 'nama')->get(),
+          'similarityThreshold' => self::SIMILARITY_THRESHOLD,
       ]);
   }
 
@@ -138,7 +145,24 @@ class GoodController extends Controller
           'harga_tebus_murah' => 'nullable|numeric|min:0',
           'use_existing_barcode' => 'boolean',
           'existing_barcode' => 'nullable|string|max:255',
+          'force_create_similar' => 'nullable|boolean',
       ]);
+
+      $forceCreateSimilar = $request->boolean('force_create_similar');
+      $similarSuggestion = $this->findMostSimilarGood($validatedData['nama']);
+
+    if ($similarSuggestion && $similarSuggestion['score'] >= self::SIMILARITY_THRESHOLD && !$forceCreateSimilar) {
+          return back()
+              ->withErrors([
+                  'nama' => "Nama barang sangat mirip dengan '{$similarSuggestion['good']->nama}' ({$similarSuggestion['score']}%). Jika barang sama, silakan restock barang tersebut.",
+              ])
+              ->withInput()
+              ->with('similar_good_suggestion', [
+                  'id' => $similarSuggestion['good']->id,
+                  'nama' => $similarSuggestion['good']->nama,
+                  'score' => $similarSuggestion['score'],
+              ]);
+      }
 
       if (in_array($validatedData['type'], ['makanan', 'non_makanan']) && empty($validatedData['expired_date'])) {
           return back()->withErrors(['expired_date' => 'Tanggal expired wajib diisi untuk jenis ' . $validatedData['type'] . '.'])->withInput();
@@ -464,6 +488,56 @@ class GoodController extends Controller
   }
 
   /**
+   * Generate PDF for a single good barcode with dynamic quantity and size.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Models\Good  $good
+   * @return \Illuminate\Http\Response
+   */
+  public function generateSingleBarcodePdf(Request $request, Good $good)
+  {
+      if (!$good->barcode) {
+          return redirect()->back()->with('error', 'Barang ini belum memiliki barcode.');
+      }
+
+      $request->validate([
+          'qty' => 'required|integer|min:1|max:208',
+          'size' => 'required|in:small,medium,large',
+      ], [
+          'qty.required' => 'Jumlah cetak wajib diisi.',
+          'qty.integer' => 'Jumlah cetak harus berupa angka.',
+          'qty.min' => 'Jumlah cetak minimal 1.',
+          'qty.max' => 'Jumlah cetak maksimal 208 per proses.',
+          'size.required' => 'Ukuran barcode wajib dipilih.',
+          'size.in' => 'Ukuran barcode tidak valid.',
+      ]);
+
+      $qty = (int) $request->input('qty');
+      $size = $request->input('size', 'small');
+
+      $generator = new BarcodeGeneratorSVG();
+      $barcodeSvg = $generator->getBarcode($good->barcode, $generator::TYPE_CODE_128);
+
+      $barcodesData = [];
+      for ($i = 0; $i < $qty; $i++) {
+          $barcodesData[] = [
+              'nama' => $good->nama,
+              'harga' => $good->harga,
+              'barcode_value' => $good->barcode,
+              'barcode_svg' => $barcodeSvg,
+          ];
+      }
+
+      $pdf = PDF::loadView('multiple_barcode_pdf', [
+          'barcodesData' => $barcodesData,
+          'size' => $size,
+      ]);
+
+      $pdf->setPaper('A4', 'portrait');
+      return $pdf->download('barcode-' . $good->barcode . '-' . $qty . 'x.pdf');
+  }
+
+  /**
    * Generate PDF with multiple selected barcodes.
    *
    * @param  \Illuminate\Http\Request  $request
@@ -474,15 +548,41 @@ class GoodController extends Controller
       $request->validate([
           'selected_goods' => 'required|array|min:1|max:52',
           'selected_goods.*' => 'exists:goods,id',
+          'quantities' => 'required|array',
+          'sizes' => 'required|array',
       ], [
           'selected_goods.required' => 'Pilih setidaknya satu barang untuk dicetak.',
           'selected_goods.min' => 'Pilih setidaknya satu barang untuk dicetak.',
           'selected_goods.max' => 'Anda hanya dapat memilih maksimal 52 barang untuk dicetak dalam satu lembar.',
           'selected_goods.*.exists' => 'Salah satu barang yang dipilih tidak valid.',
+          'quantities.required' => 'Jumlah cetak per barang wajib diisi.',
+          'quantities.array' => 'Format jumlah cetak tidak valid.',
+          'sizes.required' => 'Ukuran barcode per barang wajib dipilih.',
+          'sizes.array' => 'Format ukuran barcode tidak valid.',
       ]);
 
-      $selectedGoodIds = $request->input('selected_goods');
-      $goodsToPrint = Good::whereIn('id', $selectedGoodIds)->get();
+      $selectedGoodIds = array_map('intval', $request->input('selected_goods', []));
+      $requestedQuantities = $request->input('quantities', []);
+      $requestedSizes = $request->input('sizes', []);
+      $totalRequestedQty = 0;
+
+      foreach ($selectedGoodIds as $goodId) {
+          $qty = (int) ($requestedQuantities[$goodId] ?? 0);
+          $size = (string) ($requestedSizes[$goodId] ?? '');
+          if ($qty < 1 || $qty > 208) {
+              return redirect()->back()->with('error', 'Jumlah cetak per barang harus antara 1 sampai 208.');
+          }
+          if (!in_array($size, ['small', 'medium', 'large'], true)) {
+              return redirect()->back()->with('error', 'Ukuran barcode per barang tidak valid.');
+          }
+          $totalRequestedQty += $qty;
+      }
+
+      if ($totalRequestedQty > 208) {
+          return redirect()->back()->with('error', 'Total cetak barcode maksimal 208 per proses.');
+      }
+
+      $goodsToPrint = Good::whereIn('id', $selectedGoodIds)->get()->keyBy('id');
 
       if ($goodsToPrint->isEmpty()) {
           return redirect()->back()->with('error', 'Tidak ada barang yang dipilih atau barang tidak ditemukan.');
@@ -491,14 +591,26 @@ class GoodController extends Controller
       $generator = new BarcodeGeneratorSVG();
       $barcodesData = [];
 
-      foreach ($goodsToPrint as $good) {
-          if ($good->barcode) {
-              $barcodeSvg = $generator->getBarcode($good->barcode, $generator::TYPE_CODE_128);
+      foreach ($selectedGoodIds as $goodId) {
+          $good = $goodsToPrint->get($goodId);
+          if (!$good || !$good->barcode) {
+              continue;
+          }
+
+          $qty = (int) ($requestedQuantities[$goodId] ?? 0);
+          $size = (string) ($requestedSizes[$goodId] ?? 'small');
+          if ($qty < 1) {
+              continue;
+          }
+
+          $barcodeSvg = $generator->getBarcode($good->barcode, $generator::TYPE_CODE_128);
+          for ($i = 0; $i < $qty; $i++) {
               $barcodesData[] = [
                   'nama' => $good->nama,
                   'harga' => $good->harga,
                   'barcode_value' => $good->barcode,
                   'barcode_svg' => $barcodeSvg,
+                  'size' => $size,
               ];
           }
       }
@@ -508,10 +620,88 @@ class GoodController extends Controller
       }
 
       $pdf = PDF::loadView('multiple_barcode_pdf', [
-          'barcodesData' => $barcodesData
+          'barcodesData' => $barcodesData,
       ]);
 
       $pdf->setPaper('A4', 'portrait');
       return $pdf->download('multiple-barcodes.pdf');
+  }
+
+  private function findMostSimilarGood(string $inputName): ?array
+  {
+      $normalizedInput = $this->normalizeGoodName($inputName);
+      $tokenSortedInput = $this->normalizeGoodNameByWords($inputName);
+      if ($normalizedInput === '' && $tokenSortedInput === '') {
+          return null;
+      }
+
+      $bestMatch = null;
+      $highestScore = 0;
+
+      $goods = Good::select('id', 'nama')->get();
+      foreach ($goods as $good) {
+          $normalizedExisting = $this->normalizeGoodName($good->nama);
+          $tokenSortedExisting = $this->normalizeGoodNameByWords($good->nama);
+
+          if (($normalizedExisting === '' && $tokenSortedExisting === '') || $normalizedExisting === $normalizedInput) {
+              continue;
+          }
+
+          $directScore = $this->calculateNameSimilarity($normalizedInput, $normalizedExisting);
+          $tokenSortedScore = $this->calculateNameSimilarity($tokenSortedInput, $tokenSortedExisting);
+          $score = max($directScore, $tokenSortedScore);
+
+          if ($score > $highestScore) {
+              $highestScore = $score;
+              $bestMatch = $good;
+          }
+      }
+
+      if (!$bestMatch) {
+          return null;
+      }
+
+      return [
+          'good' => $bestMatch,
+          'score' => (int) round($highestScore),
+      ];
+  }
+
+  private function normalizeGoodName(string $name): string
+  {
+      $normalized = preg_replace('/[^a-zA-Z0-9]+/', '', $name) ?? '';
+      return function_exists('mb_strtolower') ? mb_strtolower($normalized) : strtolower($normalized);
+  }
+
+  private function normalizeGoodNameByWords(string $name): string
+  {
+      $lowerName = function_exists('mb_strtolower') ? mb_strtolower($name) : strtolower($name);
+      $normalized = preg_replace('/[^a-zA-Z0-9\s]+/', ' ', $lowerName) ?? '';
+      $words = preg_split('/\s+/', trim($normalized)) ?: [];
+      $words = array_values(array_filter($words));
+
+      if (empty($words)) {
+          return '';
+      }
+
+      sort($words);
+      return implode(' ', $words);
+  }
+
+  private function calculateNameSimilarity(string $nameA, string $nameB): float
+  {
+      if ($nameA === '' || $nameB === '') {
+          return 0;
+      }
+
+      $maxLength = max(strlen($nameA), strlen($nameB));
+      if ($maxLength === 0) {
+          return 100;
+      }
+
+      $distance = levenshtein($nameA, $nameB);
+      $score = (1 - ($distance / $maxLength)) * 100;
+
+      return max(0, min(100, $score));
   }
 }

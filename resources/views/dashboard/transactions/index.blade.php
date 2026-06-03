@@ -490,12 +490,14 @@
                                                                 <i class="bi bi-download text-primary"></i> Unduh Nota
                                                             </a>
                                                     </li>
+                                                    @if(auth()->user()->isAdmin())
                                                     <li>
                                                         <a class="dropdown-item"
-                                                            href="/dashboard/transactions/{{ $transaction->id }}/edit">
-                                                            <i class="bi bi-credit-card text-success"></i> Pembayaran
+                                                            href="/dashboard/cashier/createorder?no_nota={{ $transaction->no_nota }}">
+                                                            <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan & Pembayaran
                                                         </a>
                                                     </li>
+                                                    @endif
                                                     <li style="display: none;">
                                                         <form action="/dashboard/transactions/{{ $transaction->id }}"
                                                             method="post" class="dropdown-item-form"
@@ -510,18 +512,6 @@
                                                             </button>
                                                         </form>
                                                     </li>
-                                                    <li>
-                                                        <form action="/dashboard/orders" method="post"
-                                                            class="dropdown-item-form" onsubmit="handleActionSubmit(this)">
-                                                            @csrf
-                                                            <input type="hidden" name="no_nota"
-                                                                value="{{ $transaction->no_nota }}">
-                                                            <button type="submit" class="dropdown-item">
-                                                                <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan
-                                                            </button>
-                                                        </form>
-                                                    </li>
-
                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>

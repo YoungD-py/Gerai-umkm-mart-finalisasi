@@ -116,7 +116,7 @@ class OrderController extends Controller
         // Logika kembalian dibalik agar benar
         // Rumus : Uang Bayar - Total Harga
         $kembalian = $transaction['bayar'] - $request->total_harga;
-
+        
         $rules = [
             'no_nota' => $request->no_nota,
             'total_harga' => $request->total_harga,

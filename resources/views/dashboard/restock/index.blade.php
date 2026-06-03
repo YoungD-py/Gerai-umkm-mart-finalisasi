@@ -220,6 +220,17 @@
         </div>
     @endif
 
+    <div id="barcode-instruction-card" class="card shadow-sm border-0 mb-3" style="position: fixed; top: 100px; right: 20px; z-index: 1000; width: 300px; background: white; border-radius: 15px;">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-upc-scan" style="font-size: 1.5rem; color: #198754;"></i>
+                <button type="button" class="btn-close btn-sm" onclick="closeInstructionCard()" aria-label="Close"></button>
+            </div>
+            <h6 class="card-title fw-bold mb-2">Pencarian Otomatis</h6>
+            <p class="card-text text-muted small mb-0">Pindai/Scan barcode barang untuk langsung masuk ke halaman restock.</p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="umkm-card">
@@ -234,25 +245,15 @@
                     <div class="search-box">
                         <form action="/dashboard/restock" id="search-form">
                             <div class="row g-2">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Cari nama barang atau mitra..."
+                                        <input type="text" class="form-control" placeholder="Cari nama barang, barcode, atau mitra..."
                                                name="search" value="{{ request('search') }}">
                                         <button class="btn btn-umkm" type="submit">
                                             <i class="bi bi-search"></i>
                                             <span class="d-none d-sm-inline ms-1">Cari</span>
                                         </button>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <select name="mitra" class="form-select" onchange="this.form.submit()">
-                                        <option value="">Semua Mitra</option>
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}" {{ request('mitra') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             </div>
                             @if(request('sort_stok'))
@@ -335,7 +336,7 @@
                                             $stockText = 'Aman';
                                         }
                                     @endphp
-                                    <tr class="{{ $stockClass }}">
+                                    <tr class="{{ $stockClass }}" data-good-id="{{ $good->id }}" data-barcode="{{ strtolower(trim($good->barcode ?? '')) }}">
                                         <td>{{ ($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -508,6 +509,13 @@
 
 <!-- Added JavaScript for sorting functionality like in returns page -->
 <script>
+    function closeInstructionCard() {
+        const card = document.getElementById('barcode-instruction-card');
+        if (card) {
+            card.style.display = 'none';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const sortButtons = document.querySelectorAll('.sort-toggle');
         sortButtons.forEach(button => {
@@ -529,5 +537,86 @@
             urlParams.set('filter_status', newStatus);
             window.location.search = urlParams.toString();
         });
+
+        let barcodeBuffer = '';
+        let lastInputTime = Date.now();
+
+        document.addEventListener('keydown', function(e) {
+            const currentTime = Date.now();
+
+            if (currentTime - lastInputTime > 50) {
+                barcodeBuffer = '';
+            }
+
+            if (e.key === 'Enter') {
+                if (barcodeBuffer.length > 3) {
+                    e.preventDefault();
+                    const activeElement = document.activeElement.tagName;
+                    if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+                        processBarcode(barcodeBuffer);
+                    }
+                }
+                barcodeBuffer = '';
+            } else if (e.key.length === 1) {
+                barcodeBuffer += e.key;
+            }
+
+            lastInputTime = currentTime;
+        });
+
+        function processBarcode(barcode) {
+            const normalizedBarcode = barcode.trim().toLowerCase();
+            if (!normalizedBarcode) return;
+
+            const matchedRow = Array.from(document.querySelectorAll('tr[data-barcode]')).find(row => {
+                return row.dataset.barcode === normalizedBarcode;
+            });
+
+            if (matchedRow && matchedRow.dataset.goodId) {
+                showAlert('info', `🔍 Barcode Terdeteksi: <span class="badge bg-primary">${barcode}</span><br>Mengarahkan ke halaman restock...`);
+                window.location.href = `/dashboard/restock/${matchedRow.dataset.goodId}/edit`;
+            } else {
+                showAlert('warning', `⚠️ Barcode <span class="badge bg-secondary">${barcode}</span> tidak ditemukan pada daftar barang restock.`);
+            }
+        }
+
+        function showAlert(type, message) {
+            const existingAlerts = document.querySelectorAll('.barcode-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show shadow-sm barcode-alert`;
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                border-radius: 15px;
+                border: none;
+                font-weight: 600;
+            `;
+
+            const iconMap = {
+                'success': 'check-circle-fill',
+                'danger': 'exclamation-triangle-fill',
+                'warning': 'exclamation-triangle-fill',
+                'info': 'info-circle-fill'
+            };
+
+            alertDiv.innerHTML = `
+                <i class="bi bi-${iconMap[type]} me-2"></i>
+                <span>${message}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 4000);
+        }
     });
 </script>

@@ -17,6 +17,7 @@ class ReturnBarang extends Model
         $query->when($filters['search'] ?? false, function ($query, $search) {
             return $query->whereHas('good', function ($query) use ($search) {
                 $query->where('nama', 'like', '%' . $search . '%')
+                      ->orWhere('barcode', 'like', '%' . $search . '%')
                       ->orWhereHas('category', function ($query) use ($search) {
                           $query->where('nama', 'like', '%' . $search . '%');
                       });

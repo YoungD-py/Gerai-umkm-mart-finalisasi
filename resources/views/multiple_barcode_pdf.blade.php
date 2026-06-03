@@ -70,6 +70,30 @@
 </head>
 <body>
     @php
+        $sizeConfigMap = [
+            'small' => [
+                'cell_height' => '20mm',
+                'img_height' => '25px',
+                'name_font' => '6.5pt',
+                'price_font' => '6.5pt',
+                'barcode_value_font' => '5.5pt',
+            ],
+            'medium' => [
+                'cell_height' => '26mm',
+                'img_height' => '34px',
+                'name_font' => '7.5pt',
+                'price_font' => '7.5pt',
+                'barcode_value_font' => '6.5pt',
+            ],
+            'large' => [
+                'cell_height' => '32mm',
+                'img_height' => '42px',
+                'name_font' => '8.5pt',
+                'price_font' => '8.5pt',
+                'barcode_value_font' => '7.5pt',
+            ],
+        ];
+
         $chunkedBarcodes = array_chunk($barcodesData, 52);
     @endphp
 
@@ -78,12 +102,15 @@
             @foreach (array_chunk($pageBarcodes, 4) as $row)
                 <tr>
                     @foreach ($row as $data)
-                        <td class="barcode-cell">
+                        @php
+                            $itemSize = $sizeConfigMap[$data['size'] ?? 'small'] ?? $sizeConfigMap['small'];
+                        @endphp
+                        <td class="barcode-cell" style="height: {{ $itemSize['cell_height'] }};">
                             <div class="barcode-item">
-                                <p class="item-name">{{ $data['nama'] }}</p>
-                                <p class="item-price">Rp {{ number_format($data['harga'], 0, ',', '.') }}</p>
-                                <img src="data:image/svg+xml;base64,{{ base64_encode($data['barcode_svg']) }}" alt="Barcode">
-                                <p class="item-barcode-value">{{ $data['barcode_value'] }}</p>
+                                <p class="item-name" style="font-size: {{ $itemSize['name_font'] }};">{{ $data['nama'] }}</p>
+                                <p class="item-price" style="font-size: {{ $itemSize['price_font'] }};">Rp {{ number_format($data['harga'], 0, ',', '.') }}</p>
+                                <img src="data:image/svg+xml;base64,{{ base64_encode($data['barcode_svg']) }}" alt="Barcode" style="height: {{ $itemSize['img_height'] }};">
+                                <p class="item-barcode-value" style="font-size: {{ $itemSize['barcode_value_font'] }};">{{ $data['barcode_value'] }}</p>
                             </div>
                         </td>
                     @endforeach

@@ -221,6 +221,17 @@
         </div>
     @endif
 
+    <div id="barcode-instruction-card" class="card shadow-sm border-0 mb-3" style="position: fixed; top: 100px; right: 20px; z-index: 1000; width: 300px; background: white; border-radius: 15px;">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-upc-scan" style="font-size: 1.5rem; color: #198754;"></i>
+                <button type="button" class="btn-close btn-sm" onclick="closeInstructionCard()" aria-label="Close"></button>
+            </div>
+            <h6 class="card-title fw-bold mb-2">Pencarian Otomatis</h6>
+            <p class="card-text text-muted small mb-0">Pindai/Scan barcode barang untuk langsung mengisi field Cari Barang.</p>
+        </div>
+    </div>
+
     <div class="row justify-content-center">
         <div class="col-xl-8 col-lg-10 col-md-12">
             <div class="return-card">
@@ -325,11 +336,20 @@
 </div>
 
 <script>
+function closeInstructionCard() {
+    const card = document.getElementById('barcode-instruction-card');
+    if (card) {
+        card.style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('good-search');
     const searchResults = document.getElementById('search-results');
     const selectedGoodId = document.getElementById('selected-good-id');
     let searchTimeout;
+    let barcodeBuffer = '';
+    let lastInputTime = Date.now();
 
     // Set initial value if editing
     if (selectedGoodId.value) {
@@ -368,6 +388,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
 
+    document.addEventListener('keydown', function(e) {
+        const currentTime = Date.now();
+
+        if (currentTime - lastInputTime > 50) {
+            barcodeBuffer = '';
+        }
+
+        if (e.key === 'Enter') {
+            if (barcodeBuffer.length > 3) {
+                e.preventDefault();
+                processBarcodeScan(barcodeBuffer);
+            }
+            barcodeBuffer = '';
+        } else if (e.key.length === 1) {
+            barcodeBuffer += e.key;
+        }
+
+        lastInputTime = currentTime;
+    });
+
     function showLoading() {
         searchResults.innerHTML = '<div class="loading-results"><i class="bi bi-hourglass-split"></i> Mencari...</div>';
         searchResults.style.display = 'block';
@@ -395,17 +435,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.querySelectorAll('.search-item').forEach(item => {
                 item.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    const name = this.dataset.name;
-                    const barcode = this.dataset.barcode;
-
-                    searchInput.value = `${name} (${barcode})`;
-                    selectedGoodId.value = id;
-                    hideResults();
+                    selectGood({
+                        id: this.dataset.id,
+                        nama: this.dataset.name,
+                        barcode: this.dataset.barcode
+                    });
                 });
             });
         }
         searchResults.style.display = 'block';
+    }
+
+    function selectGood(good) {
+        const barcodeValue = good.barcode || '-';
+        searchInput.value = `${good.nama} (${barcodeValue})`;
+        selectedGoodId.value = good.id;
+        hideResults();
+    }
+
+    function processBarcodeScan(barcode) {
+        const normalizedBarcode = barcode.trim().toLowerCase();
+        if (!normalizedBarcode) return;
+
+        fetch(`/dashboard/returns/search-goods?q=${encodeURIComponent(barcode.trim())}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    searchInput.value = barcode.trim();
+                    selectedGoodId.value = '';
+                    return;
+                }
+
+                const exactMatch = data.find(good => (good.barcode || '').toLowerCase() === normalizedBarcode);
+                const selectedGood = exactMatch || data[0];
+                selectGood(selectedGood);
+            })
+            .catch(error => {
+                console.error('Barcode scan error:', error);
+            });
     }
 
     function hideResults() {

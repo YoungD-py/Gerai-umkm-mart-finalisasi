@@ -247,8 +247,20 @@
                         </div>
                     @endif
 
+                    @if (session('similar_good_suggestion'))
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Apakah barang yang Anda maksud:</strong> {{ session('similar_good_suggestion.nama') }}?
+                            <div class="mt-2">
+                                <a href="/dashboard/restock/{{ session('similar_good_suggestion.id') }}/edit" class="btn btn-sm btn-warning fw-bold">Ya, lanjut ke Restock</a>
+                                <small class="ms-2 text-muted">Kemiripan sekitar {{ session('similar_good_suggestion.score') }}%</small>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <form method="post" action="/dashboard/goods" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" id="force_create_similar" name="force_create_similar" value="{{ old('force_create_similar', 0) }}">
 
                         <div class="form-section">
                             <div class="section-title">
@@ -292,6 +304,14 @@
                                             Nama Barang <span class="required">*</span>
                                         </label>
                                         <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required autofocus placeholder="Masukkan nama barang...">
+                                        <div id="name-suggestion-box" class="alert alert-warning mt-2 mb-0" style="display: none;">
+                                            <div class="fw-bold mb-1">Apakah barang yang Anda maksud: <span id="suggested-good-name"></span>?</div>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a id="btn-restock-suggested" href="#" class="btn btn-sm btn-warning fw-bold">Ya, lanjut ke Restock</a>
+                                                <button type="button" id="btn-keep-new-name" class="btn btn-sm btn-outline-secondary">Tidak, ini barang berbeda</button>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">Kemiripan nama: <span id="suggested-good-score"></span>%</small>
+                                        </div>
                                         @error('nama')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -549,6 +569,125 @@
 </div>
 
 <script>
+const GOODS_FOR_SUGGESTION = @json($goodsForSuggestion ?? []);
+const SIMILARITY_THRESHOLD = @json($similarityThreshold ?? 50);
+let currentNameSuggestion = null;
+let isNameSuggestionDismissed = false;
+
+function normalizeGoodName(name) {
+    return (name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function normalizeGoodNameByWords(name) {
+    const words = (name || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .sort();
+
+    return words.join(' ');
+}
+
+function levenshteinDistance(a, b) {
+    const m = a.length;
+    const n = b.length;
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            dp[i][j] = Math.min(
+                dp[i - 1][j] + 1,
+                dp[i][j - 1] + 1,
+                dp[i - 1][j - 1] + cost
+            );
+        }
+    }
+
+    return dp[m][n];
+}
+
+function calculateSimilarityScore(nameA, nameB) {
+    if (!nameA || !nameB) return 0;
+    const maxLength = Math.max(nameA.length, nameB.length);
+    if (!maxLength) return 100;
+
+    const distance = levenshteinDistance(nameA, nameB);
+    const score = (1 - distance / maxLength) * 100;
+
+    return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function getBestNameSuggestion(inputName) {
+    const normalizedInput = normalizeGoodName(inputName);
+    const tokenSortedInput = normalizeGoodNameByWords(inputName);
+
+    if (!normalizedInput && !tokenSortedInput) {
+        return null;
+    }
+
+    let bestSuggestion = null;
+    let bestScore = 0;
+
+    for (const good of GOODS_FOR_SUGGESTION) {
+        const normalizedExisting = normalizeGoodName(good.nama);
+        const tokenSortedExisting = normalizeGoodNameByWords(good.nama);
+
+        if ((!normalizedExisting && !tokenSortedExisting) || normalizedExisting === normalizedInput) {
+            continue;
+        }
+
+        const directScore = calculateSimilarityScore(normalizedInput, normalizedExisting);
+        const tokenSortedScore = calculateSimilarityScore(tokenSortedInput, tokenSortedExisting);
+        const score = Math.max(directScore, tokenSortedScore);
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestSuggestion = {
+                id: good.id,
+                nama: good.nama,
+                score: score,
+            };
+        }
+    }
+
+    if (!bestSuggestion || bestSuggestion.score < SIMILARITY_THRESHOLD) {
+        return null;
+    }
+
+    return bestSuggestion;
+}
+
+function hideNameSuggestion() {
+    const suggestionBox = document.getElementById('name-suggestion-box');
+    suggestionBox.style.display = 'none';
+    currentNameSuggestion = null;
+}
+
+function renderNameSuggestion(suggestion) {
+    const suggestionBox = document.getElementById('name-suggestion-box');
+    const suggestedGoodName = document.getElementById('suggested-good-name');
+    const suggestedGoodScore = document.getElementById('suggested-good-score');
+    const restockLink = document.getElementById('btn-restock-suggested');
+
+    if (!suggestion || isNameSuggestionDismissed) {
+        hideNameSuggestion();
+        return;
+    }
+
+    suggestedGoodName.textContent = suggestion.nama;
+    suggestedGoodScore.textContent = suggestion.score;
+    restockLink.href = `/dashboard/restock/${suggestion.id}/edit`;
+
+    currentNameSuggestion = suggestion;
+    suggestionBox.style.display = 'block';
+}
+
 function formatRupiah(input) {
     let value = input.value;
     let number_string = value.replace(/[^,\d]/g, '').toString();
@@ -738,6 +877,56 @@ function toggleExistingBarcodeSection() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const namaInput = document.getElementById('nama');
+    const formCreateGood = document.querySelector('form[action="/dashboard/goods"]');
+    const forceCreateInput = document.getElementById('force_create_similar');
+    const keepNewNameButton = document.getElementById('btn-keep-new-name');
+
+    if (keepNewNameButton) {
+        keepNewNameButton.addEventListener('click', function() {
+            forceCreateInput.value = '1';
+            isNameSuggestionDismissed = true;
+            hideNameSuggestion();
+        });
+    }
+
+    if (namaInput) {
+        namaInput.addEventListener('input', function() {
+            forceCreateInput.value = '0';
+            isNameSuggestionDismissed = false;
+
+            const suggestion = getBestNameSuggestion(this.value);
+            renderNameSuggestion(suggestion);
+        });
+
+        if (namaInput.value) {
+            const initialSuggestion = getBestNameSuggestion(namaInput.value);
+            renderNameSuggestion(initialSuggestion);
+        }
+    }
+
+    if (formCreateGood) {
+        formCreateGood.addEventListener('submit', function(event) {
+            if (!currentNameSuggestion || forceCreateInput.value === '1') {
+                return;
+            }
+
+            event.preventDefault();
+
+            const goToRestock = confirm(
+                `Nama barang sangat mirip dengan "${currentNameSuggestion.nama}" (${currentNameSuggestion.score}%).\n\nTekan OK untuk lanjut ke Restock.\nTekan Cancel jika memang barang berbeda dan tetap ingin simpan barang baru.`
+            );
+
+            if (goToRestock) {
+                window.location.href = `/dashboard/restock/${currentNameSuggestion.id}/edit`;
+                return;
+            }
+
+            forceCreateInput.value = '1';
+            this.submit();
+        });
+    }
+
     const existingBarcodeInput = document.getElementById('existing_barcode');
     
     if (existingBarcodeInput) {

@@ -16,4 +16,9 @@ class Order extends Model
     {
         return $this->belongsTo(Good::class);
     }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'no_nota', 'no_nota');
+    }
 }

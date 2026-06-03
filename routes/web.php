@@ -34,6 +34,10 @@ Route::post('/store-math-captcha', [LoginController::class, 'storeMathCaptcha'])
 Route::post('/store-captcha', [LoginController::class, 'storeCaptcha']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+Route::middleware(['auth', 'manager'])->group(function () {
+    Route::get('/dashboard/export/pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.manager.export-pdf');
+    Route::get('/dashboard/export/excel', [DashboardController::class, 'exportExcel'])->name('dashboard.manager.export-excel');
+});
 Route::get('/dashboard/cashier/quick-transaction', [CashierController::class, 'quickTransaction'])->middleware('auth');
 
 Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
@@ -46,12 +50,14 @@ Route::middleware(['auth', 'admin-or-manager'])->group(function () {
     // Users - ADMIN dan MANAJER bisa akses
     Route::delete('/dashboard/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulkDelete');
     Route::resource('/dashboard/users', UserController::class);
+});
 
-    // Transactions - ADMIN dan MANAJER bisa akses
+Route::middleware(['auth', 'admin'])->group(function () {
+    // Transactions - Hanya ADMIN bisa akses
     Route::delete('/dashboard/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('/dashboard/transactions', TransactionController::class);
 
-    // ORDER BY NOTA - ADMIN dan MANAJER bisa akses
+    // ORDER BY NOTA - Hanya ADMIN bisa akses
     Route::match(['get', 'post'], '/dashboard/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('/dashboard/orders/create', [OrderController::class, 'create']);
     Route::post('/dashboard/orders/store', [OrderController::class, 'store']);
@@ -93,6 +99,7 @@ Route::middleware(['auth', 'kasir-or-admin'])->group(function () {
     Route::post('/dashboard/goods/{good}/generate-barcode', [GoodController::class, 'generateBarcode']);
     Route::get('/dashboard/goods/{good}/download-barcode', [GoodController::class, 'downloadBarcode']);
     Route::get('/dashboard/goods/{good}/print-barcode', [GoodController::class, 'printBarcode']);
+    Route::post('/dashboard/goods/{good}/print-barcode-pdf', [GoodController::class, 'generateSingleBarcodePdf'])->name('goods.printbarcode.pdf');
 
     // Customers - KASIR dan ADMIN bisa akses (Manajer tidak bisa akses)
     // Route::resource('/dashboard/customers', CustomerController::class);

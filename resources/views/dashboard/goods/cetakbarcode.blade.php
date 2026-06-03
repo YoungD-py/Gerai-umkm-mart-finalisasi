@@ -158,7 +158,7 @@
                     <div class="form-text fw-bold">
                         <span id="selectedCount">Terpilih: 0</span> barang
                     </div>
-                    <button type="submit" class="btn btn-umkm w-100 w-sm-auto" id="printButton" disabled>
+                    <button type="button" class="btn btn-umkm w-100 w-sm-auto" id="printButton" disabled>
                         <i class="bi bi-printer"></i> Cetak Barcode
                     </button>
                 </div>
@@ -188,7 +188,7 @@
                             <tr>
                                 <td>
                                     <div class="form-check d-flex justify-content-center">
-                                        <input class="form-check-input good-checkbox" type="checkbox" name="selected_goods[]" value="{{ $good->id }}" id="goodCheckbox{{ $good->id }}" {{ $good->barcode ? '' : 'disabled' }}>
+                                        <input class="form-check-input good-checkbox" type="checkbox" name="selected_goods[]" value="{{ $good->id }}" id="goodCheckbox{{ $good->id }}" data-good-name="{{ $good->nama }}" data-good-barcode="{{ $good->barcode }}" {{ $good->barcode ? '' : 'disabled' }}>
                                     </div>
                                 </td>
                                 <td>{{ $loop->iteration }}</td>
@@ -216,14 +216,54 @@
                         </tbody>
                     </table>
                 </div>
+
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="printSetupModal" tabindex="-1" aria-labelledby="printSetupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius: 16px; border: none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="printSetupModalLabel">Atur Jumlah Cetak Barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info mb-3" style="border-radius: 12px;">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                        <span>Total barcode yang akan dicetak:</span>
+                        <strong id="modalTotalQty">0</strong>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Barcode</th>
+                                <th style="width: 160px;">Jumlah</th>
+                                <th style="width: 200px;">Ukuran</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalSelectedItemsBody"></tbody>
+                    </table>
+                </div>
+                <small class="text-muted d-block mt-3">Maksimal total cetak barcode per proses adalah 208.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" form="barcodePrintForm" class="btn btn-umkm" id="confirmPrintButton">
+                    <i class="bi bi-printer"></i> Proses Cetak
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
 function handleFormSubmit(form) {
-    const button = form.querySelector('button[type="submit"]');
+    const button = document.getElementById('confirmPrintButton');
     if (button && !button.disabled) {
         const originalButtonHTML = button.innerHTML;
 
@@ -236,7 +276,6 @@ function handleFormSubmit(form) {
         setTimeout(function() {
             button.disabled = false;
             button.innerHTML = originalButtonHTML;
-            updateSelectionCount();
         }, 3000);
     }
 }
@@ -246,8 +285,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('.good-checkbox');
     const selectedCountSpan = document.getElementById('selectedCount');
     const printButton = document.getElementById('printButton');
+    const confirmPrintButton = document.getElementById('confirmPrintButton');
     const searchInput = document.getElementById('searchInput');
     const tableBody = document.querySelector('.table-umkm tbody');
+    const modalSelectedItemsBody = document.getElementById('modalSelectedItemsBody');
+    const modalTotalQty = document.getElementById('modalTotalQty');
+    const printSetupModalEl = document.getElementById('printSetupModal');
+    const printSetupModal = printSetupModalEl ? new bootstrap.Modal(printSetupModalEl) : null;
+
+    function getCheckedGoods() {
+        return Array.from(document.querySelectorAll('.good-checkbox:checked')).map(function(checkbox) {
+            return {
+                id: checkbox.value,
+                name: checkbox.dataset.goodName || '-',
+                barcode: checkbox.dataset.goodBarcode || '-',
+            };
+        });
+    }
+
+    function updateModalTotalQty() {
+        let totalQty = 0;
+        modalSelectedItemsBody.querySelectorAll('.qty-input').forEach(function(input) {
+            const value = parseInt(input.value, 10);
+            if (!isNaN(value) && value > 0) {
+                totalQty += value;
+            }
+        });
+
+        modalTotalQty.textContent = totalQty;
+        confirmPrintButton.disabled = totalQty < 1 || totalQty > 208;
+    }
+
+    function buildModalSelectedItems() {
+        const selectedGoods = getCheckedGoods();
+        modalSelectedItemsBody.innerHTML = '';
+
+        selectedGoods.forEach(function(good) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${good.name}</strong></td>
+                <td>${good.barcode}</td>
+                <td>
+                    <input type="number" class="form-control qty-input" name="quantities[${good.id}]" form="barcodePrintForm" min="1" max="208" value="1" required>
+                </td>
+                <td>
+                    <select class="form-select size-input" name="sizes[${good.id}]" form="barcodePrintForm" required>
+                        <option value="small" selected>Kecil (20mm)</option>
+                        <option value="medium">Sedang (26mm)</option>
+                        <option value="large">Besar (32mm)</option>
+                    </select>
+                </td>
+            `;
+            modalSelectedItemsBody.appendChild(row);
+        });
+
+        updateModalTotalQty();
+    }
 
     function updateSelectionCount() {
         const checkedCount = document.querySelectorAll('.good-checkbox:checked').length;
@@ -291,6 +384,57 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', function() {
             updateSelectionCount();
         });
+    });
+
+    modalSelectedItemsBody.addEventListener('input', function(event) {
+        if (event.target.classList.contains('qty-input')) {
+            updateModalTotalQty();
+        }
+    });
+
+    printButton.addEventListener('click', function() {
+        if (printButton.disabled) {
+            return;
+        }
+
+        buildModalSelectedItems();
+        if (printSetupModal) {
+            printSetupModal.show();
+        }
+    });
+
+    confirmPrintButton.addEventListener('click', function(event) {
+        const qtyInputs = modalSelectedItemsBody.querySelectorAll('.qty-input');
+        const sizeInputs = modalSelectedItemsBody.querySelectorAll('.size-input');
+        let totalQty = 0;
+        let hasInvalidQty = false;
+        let hasInvalidSize = false;
+
+        qtyInputs.forEach(function(input) {
+            const value = parseInt(input.value, 10);
+            if (isNaN(value) || value < 1 || value > 208) {
+                hasInvalidQty = true;
+            } else {
+                totalQty += value;
+            }
+        });
+
+        sizeInputs.forEach(function(input) {
+            const value = input.value;
+            if (!['small', 'medium', 'large'].includes(value)) {
+                hasInvalidSize = true;
+            }
+        });
+
+        if (hasInvalidQty || hasInvalidSize || totalQty < 1 || totalQty > 208) {
+            event.preventDefault();
+            alert('Jumlah per barang harus antara 1 sampai 208, ukuran harus valid, dan total semua barcode maksimal 208.');
+            return;
+        }
+
+        if (printSetupModal) {
+            printSetupModal.hide();
+        }
     });
 
     searchInput.addEventListener('keyup', function() {

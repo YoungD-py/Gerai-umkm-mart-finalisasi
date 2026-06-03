@@ -10,12 +10,19 @@
 
     .card {
         border: 1px solid #e6e7e9;
-        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-        border-radius: 8px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
         margin-bottom: 1.5rem;
         background-color: #fff;
         height: 100%;
         animation: fadeInUp 0.4s ease-in-out;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        overflow: hidden;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+        border-color: #d7dde4;
     }
     .card-body { padding: 1.5rem; }
     .card-header {
@@ -104,6 +111,203 @@
         color: #6c757d;
     }
 
+    .manager-toolbar {
+        background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+        color: #fff;
+        border-radius: 18px;
+        padding: 1.15rem 1.25rem;
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+    }
+    .manager-toolbar .toolbar-label {
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.72);
+    }
+    .manager-toolbar .toolbar-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    .metric-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(30, 64, 175, 0.05), rgba(14, 165, 233, 0.02));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+    .metric-card:hover::before {
+        opacity: 1;
+    }
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    .metric-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+    .metric-subtitle {
+        color: #64748b;
+        font-size: 0.86rem;
+    }
+    .section-card {
+        border-radius: 20px;
+    }
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    .section-subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+    .summary-item {
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        padding: 0.95rem 1rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        height: 100%;
+    }
+    .summary-item .summary-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .summary-item .summary-label {
+        color: #64748b;
+        font-size: 0.84rem;
+        margin-bottom: 0.2rem;
+    }
+    .summary-item .summary-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .chart-shell {
+        position: relative;
+        min-height: 320px;
+    }
+    .chart-skeleton {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        align-content: center;
+        gap: 0.75rem;
+        padding: 1.5rem;
+        background: linear-gradient(90deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+        background-size: 200% 100%;
+        animation: skeletonPulse 1.4s ease-in-out infinite;
+        border-radius: 16px;
+        z-index: 1;
+    }
+    .chart-skeleton .sk-line,
+    .chart-skeleton .sk-block {
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.25);
+    }
+    .chart-skeleton .sk-line { height: 12px; }
+    .chart-skeleton .sk-block { height: 180px; border-radius: 18px; }
+    .chart-ready {
+        position: relative;
+        z-index: 2;
+    }
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 250px;
+        color: #64748b;
+        text-align: center;
+        padding: 1rem;
+    }
+    .empty-state i {
+        font-size: 2.35rem;
+        margin-bottom: 0.5rem;
+        color: #94a3b8;
+    }
+    .timeline-modern {
+        position: relative;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .timeline-modern::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        bottom: 8px;
+        left: 18px;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(59, 130, 246, 0.35), rgba(148, 163, 184, 0.18));
+    }
+    .timeline-item-modern {
+        position: relative;
+        padding-left: 58px;
+        margin-bottom: 1rem;
+    }
+    .timeline-item-modern:last-child { margin-bottom: 0; }
+    .timeline-item-modern .timeline-dot {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+    }
+    .timeline-item-modern .timeline-title {
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+    .timeline-item-modern .timeline-text {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+    .timeline-item-modern .timeline-time {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-top: 0.25rem;
+    }
+    @keyframes skeletonPulse {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+    }
+
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -177,9 +381,9 @@
                             <i class="bi bi-calculator me-2"></i>Tambah Transaksi
                             </a>
                         @else
-                            <a href="/dashboard/transactions" 
+                            <a href="/dashboard/users" 
                             class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
-                            <i class="bi bi-list-ul me-2"></i>Lihat Data Transaksi
+                            <i class="bi bi-people me-2"></i>Lihat Data Pengguna
                             </a>
                         @endif
                     </div>
@@ -199,6 +403,242 @@
             </div>
         </div>
         <div class="text-muted fw-bold text-start text-md-end">Laporan untuk: {{ $rangeTitle }}</div>
+    </div>
+
+    @if(auth()->user()->isManajer())
+        <div class="manager-toolbar mb-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <div class="toolbar-label mb-1">Dashboard Manajer</div>
+                    <div class="toolbar-title">Executive overview untuk penjualan, profitabilitas, risiko stok, dan aktivitas penting.</div>
+                    <div class="small text-white-50">Export tersedia langsung dari rentang laporan yang sedang dipilih.</div>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('dashboard.manager.export-pdf', ['range' => $range]) }}" class="btn btn-light btn-sm">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Export PDF
+                    </a>
+                    <a href="{{ route('dashboard.manager.export-excel', ['range' => $range]) }}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card metric-card h-100">
+                    <div class="card-body d-flex align-items-start gap-3">
+                        <div class="metric-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-pie-chart-fill"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="metric-subtitle mb-1">Margin Profit (%)</div>
+                            <div class="metric-value">{{ number_format($managerProfitMarginPercentage, 1) }}%</div>
+                            <div class="metric-subtitle mt-1">Dari total pendapatan periode ini</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card metric-card h-100">
+                    <div class="card-body d-flex align-items-start gap-3">
+                        <div class="metric-icon bg-success bg-opacity-10 text-success"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="metric-subtitle mb-1">Rata-rata transaksi harian</div>
+                            <div class="metric-value">{{ number_format($managerAverageDailyTransactions, 1) }}</div>
+                            <div class="metric-subtitle mt-1">Transaksi per hari pada rentang ini</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card metric-card h-100">
+                    <div class="card-body d-flex align-items-start gap-3">
+                        <div class="metric-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-calendar-x"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="metric-subtitle mb-1">Total barang hampir expired</div>
+                            <div class="metric-value">{{ number_format($managerExpiredSoonCount) }}</div>
+                            <div class="metric-subtitle mt-1">Maksimum 30 hari ke depan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card metric-card h-100">
+                    <div class="card-body d-flex align-items-start gap-3">
+                        <div class="metric-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-cart-x"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="metric-subtitle mb-1">Produk tidak terjual 30 hari</div>
+                            <div class="metric-value">{{ number_format($managerUnsoldProductsCount) }}</div>
+                            <div class="metric-subtitle mt-1">Produk tanpa penjualan 30 hari terakhir</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="card section-card h-100">
+                    <div class="card-body">
+                        <div class="section-heading">
+                            <div>
+                                <div class="section-title">Tren Penjualan</div>
+                                <div class="section-subtitle">Pergerakan penjualan bulanan selama 12 bulan terakhir.</div>
+                            </div>
+                            <i class="bi bi-graph-up text-primary fs-4"></i>
+                        </div>
+                        <div class="chart-shell">
+                            <div class="chart-skeleton" id="monthly-sales-skeleton">
+                                <div class="sk-line w-75"></div>
+                                <div class="sk-block"></div>
+                            </div>
+                            <div id="monthly-sales-chart" class="chart-ready"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="card section-card h-100">
+                    <div class="card-body">
+                        <div class="section-heading">
+                            <div>
+                                <div class="section-title">Top 5 Produk Terlaris</div>
+                                <div class="section-subtitle">Produk dengan penjualan tertinggi pada periode terpilih.</div>
+                            </div>
+                            <i class="bi bi-bar-chart-fill text-warning fs-4"></i>
+                        </div>
+                        <div class="chart-shell">
+                            <div class="chart-skeleton" id="top-products-manager-skeleton">
+                                <div class="sk-line w-50"></div>
+                                <div class="sk-block"></div>
+                            </div>
+                            <div id="top-products-manager-chart" class="chart-ready"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card section-card mb-4">
+            <div class="card-body">
+                <div class="section-heading">
+                    <div>
+                        <div class="section-title">Risiko Operasional</div>
+                        <div class="section-subtitle">Area yang butuh perhatian segera untuk menjaga stabilitas stok dan perputaran barang.</div>
+                    </div>
+                    <i class="bi bi-exclamation-triangle text-danger fs-4"></i>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-4">
+                        <div class="summary-item">
+                            <div class="summary-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-shield-exclamation"></i></div>
+                            <div>
+                                <div class="summary-label">Stok kritis</div>
+                                <div class="summary-value">{{ number_format($lowStockCount) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="summary-item">
+                            <div class="summary-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-calendar-x"></i></div>
+                            <div>
+                                <div class="summary-label">Barang hampir expired</div>
+                                <div class="summary-value">{{ number_format($managerExpiredSoonCount) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="summary-item">
+                            <div class="summary-icon bg-info bg-opacity-10 text-info"><i class="bi bi-cart-x"></i></div>
+                            <div>
+                                <div class="summary-label">Produk tidak terjual 30 hari</div>
+                                <div class="summary-value">{{ number_format($managerUnsoldProductsCount) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 bg-light h-100 mb-0">
+                            <div class="card-body">
+                                <div class="fw-semibold mb-2">Stok kritis teratas</div>
+                                @if($lowStockItems->count() > 0)
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach($lowStockItems->take(4) as $item)
+                                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                <span>{{ $item->nama }}</span>
+                                                <span class="badge bg-danger rounded-pill">{{ $item->stok }} stok</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="empty-state py-4 min-h-0">
+                                        <i class="bi bi-check-circle"></i>
+                                        <div class="fw-semibold text-dark">Tidak ada stok kritis</div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 bg-light h-100 mb-0">
+                            <div class="card-body">
+                                <div class="fw-semibold mb-2">Barang hampir expired teratas</div>
+                                @if($expiringSoonItems->count() > 0)
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach($expiringSoonItems->take(4) as $item)
+                                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                <span>{{ $item->nama }}</span>
+                                                <span class="badge bg-warning text-dark rounded-pill">{{ $item->days_remaining <= 0 ? 'Hari ini' : $item->days_remaining . ' hari' }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="empty-state py-4 min-h-0">
+                                        <i class="bi bi-shield-check"></i>
+                                        <div class="fw-semibold text-dark">Tidak ada barang hampir expired</div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card section-card mb-4">
+            <div class="card-body">
+                <div class="section-heading">
+                    <div>
+                        <div class="section-title">Aktivitas Terbaru</div>
+                        <div class="section-subtitle">Transaksi, restock, dan perubahan data barang paling mutakhir.</div>
+                    </div>
+                    <i class="bi bi-lightning-charge text-info fs-4"></i>
+                </div>
+                @if($recentActivities->count() > 0)
+                    <ul class="timeline-modern">
+                        @foreach($recentActivities as $activity)
+                            <li class="timeline-item-modern">
+                                <div class="timeline-dot bg-{{ $activity['color'] }}">
+                                    <i class="bi {{ $activity['icon'] }}"></i>
+                                </div>
+                                <div class="timeline-title">{{ $activity['title'] }}</div>
+                                <div class="timeline-text">{{ $activity['description'] }}</div>
+                                <div class="timeline-time">{{ $activity['timestamp']->format('d M Y, H:i') }}</div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <div class="fw-semibold text-dark mb-1">Belum ada aktivitas terbaru</div>
+                        <div>Aktivitas transaksi, restock, dan perubahan data barang akan muncul di sini.</div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endif
+
+    @unless(auth()->user()->isManajer())
     </div>
 
     <div class="row g-4">
@@ -360,6 +800,7 @@
             </div>
         </div>
     </div>
+    @endunless
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -367,6 +808,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         const formatCurrency = (value) => "Rp " + new Intl.NumberFormat('id-ID').format(value);
 
+        @unless(auth()->user()->isManajer())
         const optionsMainChart = {
             series: [
                 { name: 'Pendapatan', data: {!! $mainChartRevenue !!} },
@@ -424,17 +866,81 @@
             tooltip: { y: { formatter: (val) => val + " barang" } }
         };
         new ApexCharts(document.querySelector("#low-stock-chart"), optionsLowStock).render();
+        @endunless
 
-        const optionsExpiringSoon = {
-            series: {!! $expiringSoonChart_series !!},
-            chart: { type: 'donut', height: 280 },
-            labels: {!! $expiringSoonChart_labels !!},
-            plotOptions: { pie: { donut: { labels: { show: true, total: { show: true, label: 'Total Barang', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) } } } } },
-            colors: ['#d63939', '#f59f00', '#2fb344', '#6c757d'],
-            legend: { position: 'bottom', fontSize: '12px', markers: { width: 10, height: 10, radius: 4 }, itemMargin: { horizontal: 10 } },
-            tooltip: { y: { formatter: (val) => val + " barang" } }
+        @if(auth()->user()->isManajer())
+        const managerChartEmpty = (icon, title, text) => `
+            <div class="empty-state">
+                <i class="bi ${icon}"></i>
+                <div class="fw-semibold text-dark mb-1">${title}</div>
+                <div>${text}</div>
+            </div>
+        `;
+
+        const hideSkeleton = (elementId) => {
+            const skeleton = document.getElementById(elementId);
+            if (skeleton) {
+                skeleton.style.display = 'none';
+            }
         };
-        new ApexCharts(document.querySelector("#expiring-soon-chart"), optionsExpiringSoon).render();
+
+        const monthlyTrendLabels = {!! $monthlySalesTrendLabels !!};
+        const monthlyTrendSeries = {!! $monthlySalesTrendSeries !!};
+        const topProductsManagerLabels = {!! $topProductsLabels !!};
+        const topProductsManagerSeries = {!! $topProductsSeries !!};
+
+        const renderManagerChart = (selector, options, skeletonId, emptyStateHtml, hasData) => {
+            const chartElement = document.querySelector(selector);
+            if (!chartElement) {
+                return;
+            }
+
+            if (!hasData) {
+                chartElement.innerHTML = emptyStateHtml;
+                hideSkeleton(skeletonId);
+                return;
+            }
+
+            new ApexCharts(chartElement, options).render();
+            hideSkeleton(skeletonId);
+        };
+
+        renderManagerChart(
+            '#monthly-sales-chart',
+            {
+                series: [{ name: 'Penjualan', data: monthlyTrendSeries }],
+                chart: { type: 'area', height: 320, toolbar: { show: false }, zoom: { enabled: false } },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 },
+                xaxis: { categories: monthlyTrendLabels },
+                yaxis: { labels: { formatter: (value) => formatCurrency(value) } },
+                tooltip: { y: { formatter: (value) => formatCurrency(value) } },
+                colors: ['#1d4ed8'],
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 100] } },
+                grid: { borderColor: '#e2e8f0' }
+            },
+            'monthly-sales-skeleton',
+            managerChartEmpty('bi-graph-up-arrow', 'Belum ada data penjualan bulanan', 'Grafik akan muncul setelah transaksi tersedia.'),
+            Array.isArray(monthlyTrendSeries) && monthlyTrendSeries.some((value) => Number(value) > 0)
+        );
+
+        renderManagerChart(
+            '#top-products-manager-chart',
+            {
+                series: [{ name: 'Unit Terjual', data: topProductsManagerSeries }],
+                chart: { type: 'bar', height: 320, toolbar: { show: false } },
+                plotOptions: { bar: { borderRadius: 10, horizontal: true, distributed: true, barHeight: '70%' } },
+                dataLabels: { enabled: false },
+                xaxis: { categories: topProductsManagerLabels },
+                colors: ['#1d4ed8', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444'],
+                grid: { borderColor: '#e2e8f0' },
+                tooltip: { y: { formatter: (value) => `${value} unit terjual` } }
+            },
+            'top-products-manager-skeleton',
+            managerChartEmpty('bi-bar-chart-line', 'Belum ada produk terjual', 'Data top produk akan muncul setelah ada transaksi.'),
+            Array.isArray(topProductsManagerSeries) && topProductsManagerSeries.some((value) => Number(value) > 0)
+        );
+        @endif
 
         function updateLiveClock() {
             const sekarang = new Date();
