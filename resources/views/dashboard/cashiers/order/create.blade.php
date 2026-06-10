@@ -132,6 +132,10 @@
 
     {{-- [RESPONSIVE] --}}
     <div class="container-fluid py-3">
+        @php
+            $isEditMode = $is_edit_mode ?? false;
+        @endphp
+
         <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-3 px-3 mb-3 border-bottom"
             style="background: linear-gradient(90deg, #4e54c8, #8f94fb); border-radius: 10px;">
             <h1 class="h4 text-light mb-2 mb-md-0 text-center text-md-start">
@@ -139,6 +143,18 @@
                 <span class="text-warning fw-semibold">{{ $no_nota }}</span>
             </h1>
         </div>
+
+        @if($isEditMode)
+            <div class="alert alert-warning border-0 shadow-sm mb-4 persistent-banner">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="bi bi-pencil-square fs-3 text-warning"></i>
+                    <div>
+                        <h5 class="mb-1 fw-bold">Mode Edit Transaksi Lama</h5>
+                        <p class="mb-0">Pesanan dan pembayaran yang dibuka di sini berasal dari transaksi yang sudah lunas. Perubahan akan dihitung sebagai selisih, bukan transaksi baru.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         @if (session()->has('success'))
             <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
@@ -356,9 +372,10 @@
                                     @csrf
                                     <input type="hidden" name="no_nota" value="{{ $no_nota }}">
                                     <input type="hidden" name="total_harga" value="{{ $orders->sum('subtotal') }}" id="checkout-total">
+                                    <input type="hidden" name="edit_mode" value="{{ $isEditMode ? 1 : 0 }}">
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-success btn-lg py-3 fw-bold">
-                                            <i class="bi bi-credit-card"></i> LANJUT KE PEMBAYARAN
+                                            <i class="bi bi-credit-card"></i> {{ $isEditMode ? 'LANJUT KE PENYESUAIAN PEMBAYARAN' : 'LANJUT KE PEMBAYARAN' }}
                                         </button>
                                     </div>
                                 </form>

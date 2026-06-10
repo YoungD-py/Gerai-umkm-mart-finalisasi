@@ -130,7 +130,7 @@
 
     <script>
         setTimeout(function () {
-            $('.alert').fadeOut('slow');
+            $('.alert').not('.persistent-banner').fadeOut('slow');
         }, 5000);
 
         $('form').on('submit', function () {

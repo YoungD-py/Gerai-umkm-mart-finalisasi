@@ -493,7 +493,7 @@
                                                     @if(auth()->user()->isAdmin())
                                                     <li>
                                                         <a class="dropdown-item"
-                                                            href="/dashboard/cashier/createorder?no_nota={{ $transaction->no_nota }}">
+                                                            href="/dashboard/cashier/createorder?no_nota={{ $transaction->no_nota }}&mode=edit">
                                                             <i class="bi bi-pencil-square text-warning"></i> Edit Pesanan & Pembayaran
                                                         </a>
                                                     </li>

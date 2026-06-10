@@ -147,10 +147,33 @@
 </style>
 
 <div class="container-fluid py-4">
+    @php
+        $isEditMode = $is_edit_mode ?? false;
+        $currentTotal = isset($total_harga) ? (float) $total_harga : 0;
+        $previousTotal = isset($previous_total_harga) ? (float) $previous_total_harga : 0;
+        $paymentDue = isset($payment_due) ? (float) $payment_due : $currentTotal;
+    @endphp
+
     <div class="page-title">
         <h1>💳 CHECKOUT PEMBAYARAN</h1>
         <p>Selesaikan transaksi untuk nota nomor <strong>{{ $no_nota }}</strong></p>
     </div>
+
+    @if($isEditMode)
+        <div class="row justify-content-center mb-4">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="alert alert-warning border-0 shadow-sm mb-0 persistent-banner">
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-arrow-left-right fs-3 text-warning"></i>
+                        <div>
+                            <h5 class="mb-1 fw-bold">Mode Penyesuaian Transaksi</h5>
+                            <p class="mb-0">Total lama: Rp {{ number_format($previousTotal, 0, ',', '.') }} | Total baru: Rp {{ number_format($currentTotal, 0, ',', '.') }} | Selisih: Rp <span id="edit-diff-value">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="row justify-content-center">
         {{-- [RESPONSIVE] Mengubah col-lg-8 fleksibel --}}
@@ -186,6 +209,10 @@
                         @csrf
                         <input type="hidden" name="id" value="{{ $transaction->id }}">
                         <input type="hidden" name="no_nota" value="{{ $no_nota }}">
+                        <input type="hidden" name="edit_mode" value="{{ $isEditMode ? 1 : 0 }}">
+                        <input type="hidden" id="is_edit_mode" value="{{ $isEditMode ? 1 : 0 }}">
+                        <input type="hidden" id="previous_total_harga" value="{{ $previousTotal }}">
+                        <input type="hidden" id="previous_paid_amount" value="{{ $previous_paid ?? 0 }}">
 
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
@@ -222,18 +249,18 @@
                             </div>
                            <div class="col-12 col-md-6 mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <input type="text" class="form-control" name="status" id="status" value="BELUM BAYAR" readonly>
+                                <input type="text" class="form-control" name="status" id="status" value="{{ $isEditMode ? 'LUNAS' : 'BELUM BAYAR' }}" readonly>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
-                                <label for="bayar_display" class="form-label">Jumlah Bayar</label>
+                                <label for="bayar_display" class="form-label" id="bayar-label-text">{{ $isEditMode ? 'Tambahan Bayar' : 'Jumlah Bayar' }}</label>
                                 <input type="text" class="form-control" id="bayar_display" placeholder="Masukkan Jumlah Bayar..." required>
                                 <input type="hidden" name="bayar" id="bayar">
                             </div>
                             <div class="col-12 col-md-6 mb-3">
-                                <label for="kembalian_display" class="form-label">Kembalian</label>
+                                <label for="kembalian_display" class="form-label" id="kembalian-label-text">{{ $isEditMode ? 'Pengembalian Uang' : 'Kembalian' }}</label>
                                 <input type="text" class="form-control" id="kembalian_display" value="Rp 0" readonly>
                                 <input type="hidden" name="kembalian" id="kembalian" value="0">
                             </div>
@@ -263,15 +290,34 @@
     function calculateChange() {
         const bayar = parseFloat(unformatNumber(document.getElementById('bayar').value)) || 0;
         const total = parseFloat(document.getElementById('total_harga').value) || 0;
-        const kembalian = bayar - total;
+        const isEditMode = document.getElementById('is_edit_mode').value === '1';
+        const previousTotal = parseFloat(document.getElementById('previous_total_harga').value) || 0;
+        const delta = total - previousTotal;
+        const paymentDue = isEditMode ? Math.max(delta, 0) : total;
+        const refundDue = isEditMode && delta < 0 ? Math.abs(delta) : 0;
+        const kembalian = isEditMode
+            ? (delta < 0 ? refundDue : bayar - paymentDue)
+            : (bayar - paymentDue);
 
         document.getElementById('kembalian').value = kembalian;
         document.getElementById('kembalian_display').value = 'Rp ' + formatNumber(kembalian);
 
+        if (isEditMode) {
+            const diffValue = delta;
+            const diffDisplay = document.getElementById('edit-diff-value');
+            if (diffDisplay) {
+                diffDisplay.textContent = formatNumber(Math.abs(Math.round(diffValue)));
+                diffDisplay.className = diffValue >= 0 ? 'text-danger fw-bold' : 'text-success fw-bold';
+            }
+        }
+
         const statusField = document.getElementById("status");
         const btnSelesai = document.getElementById("btnSelesai");
 
-        if (bayar >= total && total > 0) {
+        if (isEditMode) {
+            statusField.value = "LUNAS";
+            btnSelesai.disabled = delta > 0 && bayar < paymentDue;
+        } else if (bayar >= total && total > 0) {
             statusField.value = "LUNAS";
             btnSelesai.disabled = false;
         } else {
@@ -283,6 +329,8 @@
     function calculateTotal() {
         const paymentMethod = document.getElementById("payment_method").value;
         const originalTotal = parseFloat(document.getElementById("original_total").value) || 0;
+        const isEditMode = document.getElementById('is_edit_mode').value === '1';
+        const previousTotal = parseFloat(document.getElementById('previous_total_harga').value) || 0;
         const taxInfo = document.getElementById("tax_info");
 
         let finalTotal = originalTotal;
@@ -301,14 +349,34 @@
 
         const bayarDisplayInput = document.getElementById('bayar_display');
         const bayarHiddenInput = document.getElementById('bayar');
+        const paymentDue = isEditMode ? Math.max(finalTotal - previousTotal, 0) : finalTotal;
+        const refundDue = isEditMode && finalTotal < previousTotal ? Math.abs(finalTotal - previousTotal) : 0;
 
-        bayarDisplayInput.value = formatNumber(finalTotal);
-        bayarHiddenInput.value = finalTotal;
+        if (isEditMode && finalTotal < previousTotal) {
+            bayarDisplayInput.value = formatNumber(refundDue);
+            bayarHiddenInput.value = refundDue;
+        } else {
+            bayarDisplayInput.value = formatNumber(paymentDue);
+            bayarHiddenInput.value = paymentDue;
+        }
+
+        const bayarLabelText = document.getElementById('bayar-label-text');
+        if (bayarLabelText) {
+            bayarLabelText.textContent = (isEditMode && finalTotal < previousTotal) ? 'Pengembalian' : (isEditMode ? 'Tambahan Bayar' : 'Jumlah Bayar');
+        }
+
+        const kembalianLabel = document.getElementById('kembalian-label-text');
+        if (kembalianLabel) {
+            kembalianLabel.textContent = (isEditMode && finalTotal < previousTotal) ? 'Pengembalian Uang' : 'Kembalian';
+        }
 
         calculateChange();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('is_edit_mode').value = '{{ $isEditMode ? 1 : 0 }}';
+        document.getElementById('previous_total_harga').value = '{{ $previousTotal }}';
+        document.getElementById('previous_paid_amount').value = '{{ $previousPaid ?? 0 }}';
         const bayarDisplayInput = document.getElementById('bayar_display');
         const bayarHiddenInput = document.getElementById('bayar');
 

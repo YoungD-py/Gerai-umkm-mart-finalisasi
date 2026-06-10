@@ -84,6 +84,7 @@ class CashierController extends Controller
     {
         // Handle both GET and POST requests
         $no_nota = $request->input('no_nota') ?? $request->get('no_nota');
+        $isEditMode = $request->input('mode') === 'edit' || $request->boolean('edit_mode');
 
         if (!$no_nota) {
             return redirect('/dashboard/cashier/createtransaction')->with('error', 'Nomor nota tidak ditemukan. Silakan buat transaksi baru.');
@@ -96,12 +97,51 @@ class CashierController extends Controller
             return redirect('/dashboard/cashier/createtransaction')->with('error', 'Transaksi tidak ditemukan. Silakan buat transaksi baru.');
         }
 
+        if ($isEditMode) {
+            if (!auth()->user()->isAdmin()) {
+                return redirect('/dashboard/transactions')->with('error', 'Hanya admin yang dapat mengedit pesanan dan pembayaran transaksi lama.');
+            }
+
+            if (strtolower(trim($transaction->status)) !== 'lunas') {
+                return redirect('/dashboard/transactions')->with('error', 'Hanya transaksi yang sudah lunas yang bisa diedit.');
+            }
+
+            if (!$transaction->is_editing) {
+                $this->restoreStockForEditing($transaction);
+                $transaction->update(['is_editing' => true]);
+            }
+        }
+
         return view('dashboard.cashiers.order.create', [
             'active' => 'cashier',
             'goods' => Good::where('stok', '>', 0)->get(), // Still pass all goods for initial data, though search will filter
             'no_nota' => $no_nota,
             'transaction' => $transaction,
             'orders' => Order::where('no_nota', $no_nota)->with('good')->get(),
+            'is_edit_mode' => $isEditMode,
+        ]);
+    }
+
+    /**
+     * Restore stock so an already finished transaction can be edited safely.
+     */
+    protected function restoreStockForEditing(Transaction $transaction)
+    {
+        $orders = Order::where('no_nota', $transaction->no_nota)->get();
+
+        foreach ($orders as $order) {
+            $good = Good::find($order->good_id);
+
+            if ($good) {
+                \DB::table('goods')
+                    ->where('id', $good->id)
+                    ->increment('stok', $order->qty);
+            }
+        }
+
+        Log::info('Stock restored for edit mode', [
+            'no_nota' => $transaction->no_nota,
+            'orders_count' => $orders->count(),
         ]);
     }
 
@@ -594,27 +634,56 @@ class CashierController extends Controller
      */
     public function finishing(Request $request)
     {
+        $transaction = Transaction::find($request->id);
+        if (!$transaction) {
+            return redirect('/dashboard/cashier')->with('error', 'Transaksi tidak ditemukan.');
+        }
+
+        $isEditMode = $request->boolean('edit_mode');
+        $currentTotal = (float) $request->total_harga;
+        $previousTotal = (float) $transaction->total_harga;
+        $previousPaid = (float) $transaction->bayar;
+        $paymentNow = max((float) $request->bayar, 0);
+
         // Update transaction - ambil nama_pembeli dari request (dari form checkout)
         $rules = [
             'status' => $request->status,
-            'total_harga' => $request->total_harga,
-            'bayar' => $request->bayar,
+            'total_harga' => $currentTotal,
+            'bayar' => $paymentNow,
             'kembalian' => $request->kembalian,
             'metode_pembayaran' => $request->nama_pembeli,
         ];
 
-        $transaction = Transaction::find($request->id);
+        if ($isEditMode) {
+            $delta = $currentTotal - $previousTotal;
+
+            if ($delta > 0 && $paymentNow < $delta) {
+                return redirect()->back()->with('error', 'Tambahan pembayaran belum mencukupi untuk selisih transaksi.');
+            }
+
+            $rules['status'] = 'LUNAS';
+            if ($delta > 0) {
+                $rules['bayar'] = $previousPaid + $paymentNow;
+                $rules['kembalian'] = max($paymentNow - $delta, 0);
+            } else {
+                $rules['bayar'] = $previousPaid;
+                $rules['kembalian'] = max($previousPaid - $currentTotal, 0);
+            }
+            $rules['is_editing'] = false;
+        }
+
         $transaction->update($rules);
 
         // Log untuk debug
         Log::info('Finishing transaction', [
             'transaction_id' => $request->id,
             'status' => $request->status,
-            'no_nota' => $transaction->no_nota
+            'no_nota' => $transaction->no_nota,
+            'edit_mode' => $isEditMode,
         ]);
 
         // Kurangi stok jika status lunas
-        if (strtolower(trim($request->status)) === 'lunas') {
+        if (strtolower(trim($rules['status'])) === 'lunas') {
             $orders = Order::where('no_nota', $transaction->no_nota)->get();
             
             Log::info('Processing stock reduction', [
@@ -783,11 +852,25 @@ class CashierController extends Controller
     public function checkout(Request $request)
     {
         $transaction = Transaction::where('no_nota', $request->no_nota)->first();
+        $isEditMode = $request->boolean('edit_mode');
+        $currentTotal = (float) $request->total_harga;
+        $previousTotal = $transaction ? (float) $transaction->total_harga : 0;
+
+        if ($isEditMode && !auth()->user()->isAdmin()) {
+            return redirect('/dashboard/transactions')->with('error', 'Hanya admin yang dapat melanjutkan checkout transaksi edit.');
+        }
+
+        $paymentDue = $isEditMode ? max($currentTotal - $previousTotal, 0) : $currentTotal;
+        $previousPaid = $transaction ? (float) $transaction->bayar : 0;
 
         return view('dashboard.cashiers.checkout', [
             'active' => 'cashier',
             'no_nota' => $request->no_nota,
-            'total_harga' => $request->total_harga,
+            'total_harga' => $currentTotal,
+            'previous_total_harga' => $previousTotal,
+            'previous_paid' => $previousPaid,
+            'payment_due' => $paymentDue,
+            'is_edit_mode' => $isEditMode,
             'users' => User::all(),
             'transaction' => $transaction,
         ]);
