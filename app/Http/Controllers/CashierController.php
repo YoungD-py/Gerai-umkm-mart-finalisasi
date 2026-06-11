@@ -664,7 +664,7 @@ class CashierController extends Controller
             $rules['status'] = 'LUNAS';
             if ($delta > 0) {
                 $rules['bayar'] = $previousPaid + $paymentNow;
-                $rules['kembalian'] = max($paymentNow - $delta, 0);
+                $rules['kembalian'] = (float) $transaction->kembalian;
             } else {
                 $rules['bayar'] = $previousPaid;
                 $rules['kembalian'] = max($previousPaid - $currentTotal, 0);
@@ -713,7 +713,9 @@ class CashierController extends Controller
             }
         }
 
-        return redirect('/dashboard/cashier')->with('success', 'Transaksi Sukses!');
+        $redirectPath = $isEditMode ? '/dashboard/transactions' : '/dashboard/cashier';
+
+        return redirect($redirectPath)->with('success', 'Transaksi Sukses!');
     }
 
     /**
