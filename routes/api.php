@@ -85,7 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/operational/{id}', [OperationalController::class, 'destroy']);
 
     Route::post('/barcode/generate', [BarcodeController::class, 'generate']);
-    Route::post('/barcode/validate', [BarcodeController::class, 'validate']);
+    Route::post('/barcode/validate', [BarcodeController::class, 'validateBarcode']);
     Route::get('/barcode/{barcode}', [BarcodeController::class, 'getByBarcode']);
     Route::post('/barcode/scan', [BarcodeController::class, 'scan']);
 });
